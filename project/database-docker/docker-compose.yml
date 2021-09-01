@@ -1,0 +1,23 @@
+version: '3.3'
+
+services:
+  postgres.db:
+    container_name: postgres-yapp
+    image: postgres-ko:13.0
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - postgres13.0-data:/var/lib/postgresql/data
+  postgres.gui:
+    container_name: pgadmin4-yapp
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: yapp@example.com
+      PGADMIN_DEFAULT_PASSWORD: yapp
+    ports:
+      - "5050:80"
+volumes:
+  postgres13.0-data:
