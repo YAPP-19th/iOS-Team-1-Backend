@@ -4,7 +4,12 @@ Yapp 19기 iOS 1팀 개발 프로젝트입니다.
 
 ## Project Info
 
-- Tech. Stack : [작성중]
+- Platform: SpringBoot
+- Java version: 11
+- Build Tool: Gradle
+- DataBase: PostgreSQL
+- CI/ CD: Docker, Jenkins
+- API Documentation: Swagger
 
 </br>
 
