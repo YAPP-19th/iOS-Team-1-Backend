@@ -32,7 +32,14 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	// [JWT]
-	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+	// [REDIS]
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.5.4'
+	implementation 'io.lettuce:lettuce-core:6.1.4.RELEASE'
+
+
 }
 
 test {
