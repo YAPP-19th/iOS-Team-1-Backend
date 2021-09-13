@@ -3,7 +3,7 @@ version: '3.3'
 services:
   postgres.db:
     container_name: postgres-yapp
-    image: postgres-ko:13.0
+    image: vixx170627/postgres-ko
     restart: unless-stopped
     ports:
       - "54320:5432"
