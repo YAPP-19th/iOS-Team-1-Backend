@@ -1,4 +1,4 @@
-package com.yapp.project.config.jwt;
+package com.yapp.project.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
