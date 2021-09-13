@@ -44,6 +44,7 @@ public class AuthService {
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
 
+        // refreshToken redis에 저장
         ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
         valueOperations.set(authentication.getName(),tokenDto.getRefreshToken());
         return tokenDto;
@@ -66,7 +67,7 @@ public class AuthService {
         }
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
-
+        // redis refreshToken update
         valueOperations.set(authentication.getName(),tokenDto.getRefreshToken());
 
         return tokenDto;
