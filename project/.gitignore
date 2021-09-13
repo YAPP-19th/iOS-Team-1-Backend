@@ -1,4 +1,4 @@
-database-docker/.env
+dockerfile/.env
 .idea
 HELP.md
 .gradle
