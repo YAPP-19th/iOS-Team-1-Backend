@@ -3,7 +3,7 @@ version: '3.3'
 services:
   postgres.db:
     container_name: postgres-yapp
-    image: postgres-ko:13.0
+    image: vixx170627/postgres-ko
     restart: unless-stopped
     ports:
       - "54320:5432"
@@ -14,11 +14,18 @@ services:
   postgres.gui:
     container_name: pgadmin4-yapp
     image: dpage/pgadmin4
-    restart: always
+    restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: yapp@example.com
       PGADMIN_DEFAULT_PASSWORD: yapp
     ports:
       - "5050:80"
+  redis:
+    container_name: yapp_redis
+    image: redis
+    restart: unless-stopped
+    ports:
+      - "63790:6379"
+
 volumes:
   postgres13.0-data:
