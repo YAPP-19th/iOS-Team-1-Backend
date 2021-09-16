@@ -6,6 +6,9 @@ import com.yapp.project.account.domain.dto.AccountResponseDto;
 import com.yapp.project.account.domain.dto.TokenDto;
 import com.yapp.project.account.domain.dto.TokenRequestDto;
 import com.yapp.project.account.domain.repository.AccountRepository;
+import com.yapp.project.base.PrefixType;
+import com.yapp.project.base.StatusEnum;
+import com.yapp.project.config.exception.EmailDuplicateException;
 import com.yapp.project.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -30,7 +33,7 @@ public class AuthService {
     @Transactional
     public AccountResponseDto signup(AccountRequestDto accountRequestDto){
         if (accountRepository.existsByEmail(accountRequestDto.getEmail())){
-            throw new IllegalArgumentException("이미 가입되어 있는 유저입니다. ");
+            throw new EmailDuplicateException("이미 가입되어 있는 유저입니다. ", StatusEnum.BAD_REQUEST);
         }
         Account account = accountRequestDto.toAccount(passwordEncoder);
         return AccountResponseDto.of(accountRepository.save(account));
@@ -38,6 +41,9 @@ public class AuthService {
 
     @Transactional
     public TokenDto login(AccountRequestDto accountRequestDto){
+        Account account = accountRepository.findByEmail(accountRequestDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("알맞은 회원정보가 없습니다."));
+        account.updateLastLoginAccount();
         UsernamePasswordAuthenticationToken authenticationToken = accountRequestDto.toAuthentication();
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
@@ -46,7 +52,8 @@ public class AuthService {
 
         // refreshToken redis에 저장
         ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(authentication.getName(),tokenDto.getRefreshToken());
+        String key = PrefixType.PREFIX_REFRESH_TOKEN + authentication.getName();
+        valueOperations.set(key, tokenDto.getRefreshToken());
         return tokenDto;
     }
 
@@ -68,8 +75,8 @@ public class AuthService {
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
         // redis refreshToken update
-        valueOperations.set(authentication.getName(),tokenDto.getRefreshToken());
-
+        String key = PrefixType.PREFIX_REFRESH_TOKEN + authentication.getName();
+        valueOperations.set(key, tokenDto.getRefreshToken());
         return tokenDto;
     }
 
