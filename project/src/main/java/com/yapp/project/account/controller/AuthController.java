@@ -1,12 +1,14 @@
 package com.yapp.project.account.controller;
 
 import com.yapp.project.account.domain.dto.AccountRequestDto;
-import com.yapp.project.account.domain.dto.AccountResponseDto;
 import com.yapp.project.account.domain.dto.TokenDto;
 import com.yapp.project.account.domain.dto.TokenRequestDto;
 import com.yapp.project.account.service.AuthService;
+import com.yapp.project.base.Message;
+import com.yapp.project.base.StatusEnum;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,8 +23,11 @@ public class AuthController {
 
     @ApiOperation(value = "회원가입", tags = "auth-controller")
     @PostMapping("/signup")
-    public ResponseEntity<AccountResponseDto> signup(@RequestBody AccountRequestDto accountRequestDto){
-        return ResponseEntity.ok(authService.signup(accountRequestDto));
+    public ResponseEntity<Message> signup(@RequestBody AccountRequestDto accountRequestDto){
+        return new ResponseEntity<>(
+                Message.builder().status(StatusEnum.OK).success(true).msg("회원가입 축하드립니다.")
+                        .data(authService.signup(accountRequestDto)).build(),
+                HttpStatus.OK);
     }
 
     @ApiOperation(value = "로그인", tags = "auth-controller")
