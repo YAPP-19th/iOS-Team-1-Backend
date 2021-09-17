@@ -42,4 +42,8 @@ public class Account {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastLogin;
 
+    public void updateLastLoginAccount(){
+        this.lastLogin = new Date();
+    }
+
 }
