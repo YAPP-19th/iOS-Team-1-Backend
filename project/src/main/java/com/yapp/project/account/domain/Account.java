@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -14,6 +14,7 @@ import java.util.Date;
 @Builder
 @Entity
 public class Account {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,13 +41,13 @@ public class Account {
     private Authority authority;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date lastLogin;
+    private LocalDateTime lastLogin;
 
     public void updateLastLoginAccount(){
-        this.lastLogin = new Date();
+        this.lastLogin = LocalDateTime.now();
     }
 
 }

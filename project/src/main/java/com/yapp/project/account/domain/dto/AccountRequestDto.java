@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
@@ -25,8 +25,8 @@ public class AccountRequestDto {
                 .username(username)
                 .password(passwordEncoder.encode(password))
                 .authority(Authority.ROLE_USER)
-                .createdAt(new Date())
-                .lastLogin(new Date())
+                .createdAt(LocalDateTime.now())
+                .lastLogin(LocalDateTime.now())
                 .build();
     }
 
