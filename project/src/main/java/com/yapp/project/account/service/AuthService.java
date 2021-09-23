@@ -66,7 +66,7 @@ public class AuthService {
             throw new TokenInvalidException("Refresh Token이 유효하지 않습니다.", StatusEnum.BAD_REQUEST);
         }
         Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getRefreshToken());
-        String refreshToken = valueOperations.get(authentication.getName());
+        String refreshToken = valueOperations.get(PrefixType.PREFIX_REFRESH_TOKEN + authentication.getName());
         if (refreshToken == null){
             throw new NotFoundUserInformationException("로그아웃된 사용자입니다.",StatusEnum.BAD_REQUEST);
         }
