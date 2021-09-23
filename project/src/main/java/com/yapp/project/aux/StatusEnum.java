@@ -1,4 +1,4 @@
-package com.yapp.project.base;
+package com.yapp.project.aux;
 
 public enum StatusEnum {
     OK(200, "OK"),
