@@ -4,8 +4,8 @@ import com.yapp.project.account.domain.dto.AccountRequestDto;
 import com.yapp.project.account.domain.dto.TokenDto;
 import com.yapp.project.account.domain.dto.TokenRequestDto;
 import com.yapp.project.account.service.AuthService;
-import com.yapp.project.base.Message;
-import com.yapp.project.base.StatusEnum;
+import com.yapp.project.aux.Message;
+import com.yapp.project.aux.StatusEnum;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<Message> signup(@RequestBody AccountRequestDto accountRequestDto){
         return new ResponseEntity<>(
-                Message.builder().status(StatusEnum.OK).success(true).msg("회원가입 축하드립니다.")
+                Message.builder().status(StatusEnum.OK).msg("회원가입 축하드립니다.")
                         .data(authService.signup(accountRequestDto)).build(),
                 HttpStatus.OK);
     }
