@@ -29,6 +29,9 @@ public class Account {
 
     private  String profile;
 
+    @Column(columnDefinition = "integer default 1")
+    private int level;
+
     private  String kakaoId;
 
     private  String appleId;
