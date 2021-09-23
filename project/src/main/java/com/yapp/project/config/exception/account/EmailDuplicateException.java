@@ -1,6 +1,6 @@
-package com.yapp.project.config.exception;
+package com.yapp.project.config.exception.account;
 
-import com.yapp.project.base.StatusEnum;
+import com.yapp.project.aux.StatusEnum;
 import lombok.Getter;
 
 @Getter
