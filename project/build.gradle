@@ -44,6 +44,10 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:2.5.4'
 
+	// [TEST]
+	testImplementation 'org.assertj:assertj-core:3.21.0'
+
+
 }
 
 test {
