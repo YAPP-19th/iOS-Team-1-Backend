@@ -40,10 +40,8 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime lastLogin;
 
     public void updateLastLoginAccount(){
