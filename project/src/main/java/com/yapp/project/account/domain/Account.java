@@ -33,9 +33,8 @@ public class Account {
     @Column(columnDefinition = "integer default 1")
     private int level;
 
-    private  String kakaoId;
-
-    private  String appleId;
+    @Enumerated(EnumType.STRING)
+    private AuthProvider authProvider;
 
     @Enumerated(EnumType.STRING)
     private Authority authority;
