@@ -20,4 +20,13 @@ public class Message {
                                 .build();
     }
 
+    public static Message of(String msg,Object data){
+        return Message.builder().status(StatusEnum.OK)
+                .msg(msg).data(data).build();
+    }
+
+    public static Message of(String msg){
+        return Message.of(msg,null);
+    }
+
 }
