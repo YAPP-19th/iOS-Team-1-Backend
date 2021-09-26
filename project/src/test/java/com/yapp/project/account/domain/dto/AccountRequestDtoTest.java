@@ -26,7 +26,6 @@ class AccountRequestDtoTest {
     void toAuthentication() {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = accountRequestDto.toAuthentication();
         assertThat(usernamePasswordAuthenticationToken.getName()).isEqualTo(accountRequestDto.getEmail());
-        assertThat(usernamePasswordAuthenticationToken.getPrincipal()).isEqualTo(accountRequestDto.getEmail());
         assertThat(usernamePasswordAuthenticationToken.getCredentials()).isEqualTo(accountRequestDto.getPassword());
     }
 }

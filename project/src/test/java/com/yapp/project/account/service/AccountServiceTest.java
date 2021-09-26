@@ -3,12 +3,12 @@ package com.yapp.project.account.service;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.dto.AccountResponseDto;
 import com.yapp.project.account.domain.repository.AccountRepository;
-import com.yapp.project.aux.Common;
-import org.junit.jupiter.api.BeforeEach;
+import com.yapp.project.aux.test.account.AccountTemplate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -22,23 +22,12 @@ class AccountServiceTest {
     @Autowired
     AccountRepository accountRepository;
 
-    private final String email = "meaning@example.com";
-
-    private Account account;
-
-    @BeforeEach
-    void setup(){
-        if(accountRepository.findById(1L).isEmpty()){
-            String username = "미닝";
-            account = Common.makeTestAccount(username, email);
-            accountRepository.save(account);
-        }
-    }
-
-
     @Test
+    @Transactional
     void getAccountInfo() {
-        AccountResponseDto accountResponseDto = accountService.getAccountInfo(email);
+        Account account = AccountTemplate.makeTestAccount();
+        accountRepository.save(account);
+        AccountResponseDto accountResponseDto = accountService.getAccountInfo(AccountTemplate.EMAIL);
         assertThat(accountResponseDto.getEmail()).isEqualTo(account.getEmail());
     }
 
@@ -49,8 +38,9 @@ class AccountServiceTest {
     }
 
     @Test
+    @Transactional
     void getUserInfo() {
         AccountResponseDto accountResponseDto = accountService.getUserInfo();
-        assertThat(accountResponseDto.getEmail()).isEqualTo(account.getEmail());
+        assertThat(accountResponseDto.getEmail()).isEqualTo(AccountTemplate.FIRST_EMAIL);
     }
 }
