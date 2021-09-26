@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
-@WithMockUser(value = "1",password = AccountTemplate.PASSWORD)
+@WithMockUser(value = AccountTemplate.EMAIL,password = AccountTemplate.PASSWORD)
 class AuthServiceTest {
 
     @Autowired

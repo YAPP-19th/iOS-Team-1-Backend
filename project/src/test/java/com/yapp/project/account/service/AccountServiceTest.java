@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
-@WithMockUser(value="1",password = "test1234")
+@WithMockUser(value=AccountTemplate.EMAIL, password = AccountTemplate.PASSWORD)
 class AccountServiceTest {
 
     @Autowired
@@ -40,7 +40,8 @@ class AccountServiceTest {
     @Test
     @Transactional
     void getUserInfo() {
+        accountRepository.save(AccountTemplate.makeTestAccount());
         AccountResponseDto accountResponseDto = accountService.getUserInfo();
-        assertThat(accountResponseDto.getEmail()).isEqualTo(AccountTemplate.FIRST_EMAIL);
+        assertThat(accountResponseDto.getEmail()).isEqualTo(AccountTemplate.EMAIL);
     }
 }

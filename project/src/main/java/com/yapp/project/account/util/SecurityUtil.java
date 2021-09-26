@@ -9,12 +9,11 @@ public class SecurityUtil {
     private SecurityUtil(){
     }
 
-    public static Long getCurrentAccountId() {
+    public static String getCurrentAccountEmail() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         if (authentication == null || authentication.getName() ==null){
             throw new IllegalArgumentException("Security Context에 대한 인증 정보가 없습니다.");
         }
-        return Long.parseLong(authentication.getName());
+        return authentication.getName();
     }
 }

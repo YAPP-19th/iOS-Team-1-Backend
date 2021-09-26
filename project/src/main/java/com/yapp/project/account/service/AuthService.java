@@ -36,8 +36,8 @@ public class AuthService {
     @Transactional
     public Message logout(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long accountId = Long.parseLong(authentication.getName());
-        if (accountRepository.findById(accountId).isPresent()){
+        String accountEmail = authentication.getName();
+        if (accountRepository.findByEmail(accountEmail).isPresent()){
             redisTemplate.delete(PrefixType.PREFIX_REFRESH_TOKEN+authentication.getName());
         }
         return Message.of("로그아웃 되었습니다.");
