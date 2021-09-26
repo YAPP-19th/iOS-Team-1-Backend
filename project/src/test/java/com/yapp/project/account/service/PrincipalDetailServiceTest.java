@@ -1,19 +1,19 @@
 package com.yapp.project.account.service;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.repository.AccountRepository;
-import com.yapp.project.aux.Common;
-import org.junit.jupiter.api.BeforeEach;
+import com.yapp.project.aux.test.account.AccountTemplate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
-@WithMockUser(value="springboot@example.com",password = "test1234",username = "스프링")
+@WithMockUser(value="1",password = "test1234")
 class PrincipalDetailServiceTest {
 
     @Autowired
@@ -22,18 +22,16 @@ class PrincipalDetailServiceTest {
     @Autowired
     AccountRepository accountRepository;
 
-    @BeforeEach
-    void setUp(){
-        if (accountRepository.findById(1L).isEmpty()){
-            Account account = Common.makeTestAccount();
-            accountRepository.save(account);
-        }
-    }
 
     @Test
+    @Transactional
     void loadUserByUserNameTest(){
-        UserDetails userDetails = principalDetailService.loadUserByUsername("springboot@example.com");
-        assertThat(userDetails.getUsername()).isEqualTo("1");
+        Account account = AccountTemplate.makeTestAccount();
+        accountRepository.save(account);
+        UserDetails userDetails = principalDetailService.loadUserByUsername(AccountTemplate.EMAIL);
+        Account findAccount = accountRepository.findByEmail(AccountTemplate.EMAIL).orElse(null);
+        assert findAccount != null;
+        assertThat(Long.parseLong(userDetails.getUsername())).isEqualTo(findAccount.getId());
     }
 
     @Test
