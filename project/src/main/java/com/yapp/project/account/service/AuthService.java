@@ -6,6 +6,7 @@ import com.yapp.project.account.domain.dto.AccountResponseDto;
 import com.yapp.project.account.domain.dto.TokenDto;
 import com.yapp.project.account.domain.dto.TokenRequestDto;
 import com.yapp.project.account.domain.repository.AccountRepository;
+import com.yapp.project.aux.Message;
 import com.yapp.project.aux.PrefixType;
 import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.config.exception.account.EmailDuplicateException;
@@ -18,6 +19,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,15 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final RedisTemplate<String,String> redisTemplate;
 
+    @Transactional
+    public Message logout(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long accountId = Long.parseLong(authentication.getName());
+        if (accountRepository.findById(accountId).isPresent()){
+            redisTemplate.delete(PrefixType.PREFIX_REFRESH_TOKEN+authentication.getName());
+        }
+        return Message.of("로그아웃 되었습니다.");
+    }
 
     @Transactional
     public AccountResponseDto signup(AccountRequestDto accountRequestDto){

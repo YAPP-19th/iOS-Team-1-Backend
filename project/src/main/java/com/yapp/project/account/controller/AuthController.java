@@ -10,10 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/auth")
@@ -34,6 +31,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<TokenDto> login(@RequestBody AccountRequestDto accountRequestDto){
         return ResponseEntity.ok(authService.login(accountRequestDto));
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<Message> logout(){
+        return ResponseEntity.ok(authService.logout());
     }
 
     @ApiOperation(value = "토큰 재발행", tags = "auth-controller")
