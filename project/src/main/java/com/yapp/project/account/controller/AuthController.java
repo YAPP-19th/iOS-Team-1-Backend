@@ -33,6 +33,7 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(accountRequestDto));
     }
 
+    @ApiOperation(value = "로그아웃", tags = "auth-controller")
     @GetMapping("/logout")
     public ResponseEntity<Message> logout(){
         return ResponseEntity.ok(authService.logout());
