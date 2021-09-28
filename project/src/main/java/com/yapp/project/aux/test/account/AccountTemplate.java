@@ -18,13 +18,7 @@ public class AccountTemplate {
     public static final String PASSWORD = "test1234";
     public static final String USERNAME = "스프링";
     public static final String EMAIL = "springboot@example.com";
-    public static final String FIRST_USERNAME = "first";
-    public static final String FIRST_EMAIL = "first@example.com";
 
-
-    public static AccountRequestDto makeFirstUserRequestDto(){
-        return new AccountRequestDto(FIRST_EMAIL,FIRST_USERNAME,PASSWORD);
-    }
 
     public static Account makeTestAccount(){
         return Account.builder().id(id++).username(USERNAME).password(bCryptPasswordEncoder.encode(PASSWORD))
