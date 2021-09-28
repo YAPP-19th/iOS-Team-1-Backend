@@ -21,6 +21,8 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.*;
 
+//TODO: SpringBootTest -> ExtendWith(MockitoExtension.class)로 변경하기!!
+
 @SpringBootTest
 @WithMockUser(value = AccountTemplate.EMAIL,password = AccountTemplate.PASSWORD)
 class AuthServiceTest {
@@ -52,7 +54,9 @@ class AuthServiceTest {
     @Test
     @Transactional
     void loginSuccess() {
-        AccountRequestDto accountRequestDto = AccountTemplate.makeFirstUserRequestDto();
+        Account account = AccountTemplate.makeTestAccount();
+        accountRepository.save(account);
+        AccountRequestDto accountRequestDto = AccountTemplate.makeAccountRequestDto();
         TokenDto tokenDto = authService.login(accountRequestDto);
         assertThat(tokenDto.getAccessToken()).isNotNull();
         assertThat(tokenDto.getRefreshToken()).isNotNull();
@@ -70,7 +74,8 @@ class AuthServiceTest {
     @Test
     @Transactional
     void reissue() throws InterruptedException {
-        AccountRequestDto accountRequestDto = AccountTemplate.makeFirstUserRequestDto();
+        AccountRequestDto accountRequestDto = AccountTemplate.makeAccountRequestDto();
+        accountRepository.save(AccountTemplate.makeTestAccount());
         TokenDto tokenDto = authService.login(accountRequestDto);
         TokenRequestDto tokenRequestDto = new TokenRequestDto(tokenDto.getRefreshToken());
         TimeUnit.MICROSECONDS.sleep(1);
