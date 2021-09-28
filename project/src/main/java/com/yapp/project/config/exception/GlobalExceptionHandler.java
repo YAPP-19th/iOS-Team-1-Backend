@@ -1,6 +1,7 @@
 package com.yapp.project.config.exception;
 
-import com.yapp.project.base.Message;
+import com.yapp.project.aux.Message;
+import com.yapp.project.config.exception.account.EmailDuplicateException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

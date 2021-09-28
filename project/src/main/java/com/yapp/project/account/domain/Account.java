@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -14,6 +14,7 @@ import java.util.Date;
 @Builder
 @Entity
 public class Account {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,21 +30,21 @@ public class Account {
 
     private  String profile;
 
-    private  String kakaoId;
+    @Column(columnDefinition = "integer default 1")
+    private int level;
 
-    private  String appleId;
+    @Enumerated(EnumType.STRING)
+    private AuthProvider authProvider;
 
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastLogin;
+    private LocalDateTime lastLogin;
 
     public void updateLastLoginAccount(){
-        this.lastLogin = new Date();
+        this.lastLogin = LocalDateTime.now();
     }
 
 }

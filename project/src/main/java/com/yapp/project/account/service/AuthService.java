@@ -6,9 +6,12 @@ import com.yapp.project.account.domain.dto.AccountResponseDto;
 import com.yapp.project.account.domain.dto.TokenDto;
 import com.yapp.project.account.domain.dto.TokenRequestDto;
 import com.yapp.project.account.domain.repository.AccountRepository;
-import com.yapp.project.base.PrefixType;
-import com.yapp.project.base.StatusEnum;
-import com.yapp.project.config.exception.EmailDuplicateException;
+import com.yapp.project.aux.Message;
+import com.yapp.project.aux.PrefixType;
+import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.config.exception.account.EmailDuplicateException;
+import com.yapp.project.config.exception.account.NotFoundUserInformationException;
+import com.yapp.project.config.exception.account.TokenInvalidException;
 import com.yapp.project.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,6 +19,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +33,15 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final RedisTemplate<String,String> redisTemplate;
 
+    @Transactional
+    public Message logout(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String accountEmail = authentication.getName();
+        if (accountRepository.findByEmail(accountEmail).isPresent()){
+            redisTemplate.delete(PrefixType.PREFIX_REFRESH_TOKEN+authentication.getName());
+        }
+        return Message.of("로그아웃 되었습니다.");
+    }
 
     @Transactional
     public AccountResponseDto signup(AccountRequestDto accountRequestDto){
@@ -42,7 +55,7 @@ public class AuthService {
     @Transactional
     public TokenDto login(AccountRequestDto accountRequestDto){
         Account account = accountRepository.findByEmail(accountRequestDto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("알맞은 회원정보가 없습니다."));
+                .orElseThrow(() -> new NotFoundUserInformationException("알맞은 회원정보가 없습니다.",StatusEnum.NOT_FOUND));
         account.updateLastLoginAccount();
         UsernamePasswordAuthenticationToken authenticationToken = accountRequestDto.toAuthentication();
 
@@ -61,16 +74,16 @@ public class AuthService {
     public TokenDto reissue(TokenRequestDto tokenRequestDto){
         ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
         if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())){
-            throw new IllegalArgumentException("Refresh Token이 유효하지 않습니다.");
+            throw new TokenInvalidException("Refresh Token이 유효하지 않습니다.", StatusEnum.BAD_REQUEST);
         }
         Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getRefreshToken());
-        String refreshToken = valueOperations.get(authentication.getName());
+        String refreshToken = valueOperations.get(PrefixType.PREFIX_REFRESH_TOKEN + authentication.getName());
         if (refreshToken == null){
-            throw new IllegalArgumentException("로그아웃된 사용자입니다.");
+            throw new NotFoundUserInformationException("로그아웃된 사용자입니다.",StatusEnum.BAD_REQUEST);
         }
 
         if (!refreshToken.equals(tokenRequestDto.getRefreshToken())){
-            throw new IllegalArgumentException("토큰의 유저 정보가 일치하지 않습니다. ");
+            throw new TokenInvalidException("토큰의 유저 정보가 일치하지 않습니다. ", StatusEnum.NOT_FOUND);
         }
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);

@@ -1,4 +1,4 @@
-package com.yapp.project.base;
+package com.yapp.project.aux;
 
 public class PrefixType {
     private PrefixType(){
