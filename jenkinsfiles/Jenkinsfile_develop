@@ -21,6 +21,12 @@ pipeline {
       }
     }
 
+    stage('test') {
+      steps {
+        sh './gradlew clean test'
+      }
+    }
+
     stage('change properties') {
       steps {
         sh 'cp ../properties/develop/application.properties ./src/main/resources'
@@ -29,7 +35,7 @@ pipeline {
 
     stage('build') {
       steps {
-        sh './gradlew build'
+        sh './gradlew clean build'
       }
     }
 
@@ -68,6 +74,5 @@ pipeline {
               )
             }
           }
-
   }
 }
