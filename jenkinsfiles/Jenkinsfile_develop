@@ -14,7 +14,7 @@ pipeline {
 
         stage('setting properties') {
           steps {
-            sh 'mkdir ./src/resources'
+            sh 'mkdir ./src//main/resources'
             sh 'cp ../properties/application.properties ./src/main/resources'
           }
         }
