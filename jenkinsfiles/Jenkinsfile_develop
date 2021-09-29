@@ -1,0 +1,69 @@
+pipeline {
+  agent any
+  stages {
+    stage('db restart') {
+      parallel {
+        stage('db restart') {
+          steps {
+            sh 'docker rm -f postgres'
+            sh 'docker rm -f redis'
+            sh 'docker run -p 54320:5432 --name postgres -e POSTGRES_HOST_AUTH_METHOD=$POSTGRES_HOST_AUTH_METHOD -e POSTGRES_DB=$POSTGRES_DB -e POSTGRES_USER=$POSTGRES_USER -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -d vixx170627/postgres-ko'
+            sh 'docker run -p 63790:6379 --name redis -d redis'
+          }
+        }
+
+        stage('setting properties') {
+          steps {
+            sh 'mkdir ./src/resources'
+            sh 'cp ../properties/application.properties ./src/resources'
+          }
+        }
+
+      }
+    }
+
+    stage('build') {
+      steps {
+        sh './gradlew build'
+      }
+    }
+
+    stage('docker build') {
+      steps {
+        sh 'docker build --tag yapp19th/develop .'
+        sh 'docker push yapp19th/develop'
+        sh 'docker rmi -f $(docker images -f "dangling=true" -q)'
+      }
+    }
+
+    stage('db stop') {
+      steps {
+        sh 'docker rm -f postgres'
+        sh 'docker rm -f redis'
+      }
+    }
+
+    stage('SSH transfer') {
+            steps([$class: 'BapSshPromotionPublisherPlugin']) {
+              sshPublisher(
+                continueOnError: false, failOnError: true,
+                publishers: [
+                  sshPublisherDesc(
+                    configName: "develop",//Jenkins 시스템 정보에 사전 입력한 서버 ID
+                    verbose: true,
+                    transfers: [
+                      sshTransfer(
+                         sourceFiles: "run.zsh", //전송할 파일
+                         removePrefix: "", //파일에서 삭제할 경로가 있다면 작성
+                         remoteDirectory: "", //배포할 위치
+                         execCommand: "sh run.zsh" //원격지에서 실행할 커맨드
+                      )
+                    ]
+                  )
+                ]
+              )
+            }
+          }
+
+  }
+}

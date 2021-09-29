@@ -1,4 +1,4 @@
-dockerfile/.env
+dockerfiles/.env
 src/main/resources/application.properties
 .idea
 HELP.md
