@@ -9,6 +9,7 @@ import com.yapp.project.account.domain.repository.AccountRepository;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.aux.test.account.AccountTemplate;
+import com.yapp.project.config.exception.Content;
 import com.yapp.project.config.exception.account.EmailDuplicateException;
 import com.yapp.project.config.exception.account.NotFoundUserInformationException;
 import org.junit.jupiter.api.Test;
@@ -20,8 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.*;
-
-//TODO: SpringBootTest -> ExtendWith(MockitoExtension.class)로 변경하기!!
 
 @SpringBootTest
 @WithMockUser(value = AccountTemplate.EMAIL,password = AccountTemplate.PASSWORD)
@@ -48,7 +47,7 @@ class AuthServiceTest {
         AccountRequestDto accountRequestDto = AccountTemplate.makeAccountRequestDto();
         accountRepository.save(account);
         assertThatThrownBy(() -> authService.signup(accountRequestDto)).isInstanceOf(EmailDuplicateException.class)
-                .hasMessage("이미 가입되어 있는 유저입니다. ");
+                .hasMessage(Content.EMAIL_DUPLICATE);
     }
 
     @Test
@@ -68,7 +67,7 @@ class AuthServiceTest {
         AccountRequestDto accountRequestDto = AccountTemplate.makeAccountRequestDto("fail@example.com"
                                                                                         ,"fail");
         assertThatThrownBy(() ->authService.login(accountRequestDto)).isInstanceOf(NotFoundUserInformationException.class)
-                .hasMessage("알맞은 회원정보가 없습니다.");
+                .hasMessage(Content.NOT_FOUND_USER_INFORMATION);
     }
 
     @Test
