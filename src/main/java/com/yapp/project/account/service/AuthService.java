@@ -9,6 +9,7 @@ import com.yapp.project.account.domain.repository.AccountRepository;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.PrefixType;
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.config.exception.Content;
 import com.yapp.project.config.exception.account.EmailDuplicateException;
 import com.yapp.project.config.exception.account.NotFoundUserInformationException;
 import com.yapp.project.config.exception.account.TokenInvalidException;
@@ -39,6 +40,8 @@ public class AuthService {
         String accountEmail = authentication.getName();
         if (accountRepository.findByEmail(accountEmail).isPresent()){
             redisTemplate.delete(PrefixType.PREFIX_REFRESH_TOKEN+authentication.getName());
+        }else{
+            throw new NotFoundUserInformationException(Content.NOT_FOUND_USER_INFORMATION,StatusEnum.BAD_REQUEST);
         }
         return Message.of("로그아웃 되었습니다.");
     }
@@ -46,7 +49,7 @@ public class AuthService {
     @Transactional
     public AccountResponseDto signup(AccountRequestDto accountRequestDto){
         if (accountRepository.existsByEmail(accountRequestDto.getEmail())){
-            throw new EmailDuplicateException("이미 가입되어 있는 유저입니다. ", StatusEnum.BAD_REQUEST);
+            throw new EmailDuplicateException(Content.EMAIL_DUPLICATE, StatusEnum.BAD_REQUEST);
         }
         Account account = accountRequestDto.toAccount(passwordEncoder);
         return AccountResponseDto.of(accountRepository.save(account));
@@ -55,7 +58,7 @@ public class AuthService {
     @Transactional
     public TokenDto login(AccountRequestDto accountRequestDto){
         Account account = accountRepository.findByEmail(accountRequestDto.getEmail())
-                .orElseThrow(() -> new NotFoundUserInformationException("알맞은 회원정보가 없습니다.",StatusEnum.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundUserInformationException(Content.NOT_FOUND_USER_INFORMATION,StatusEnum.NOT_FOUND));
         account.updateLastLoginAccount();
         UsernamePasswordAuthenticationToken authenticationToken = accountRequestDto.toAuthentication();
 
@@ -74,16 +77,16 @@ public class AuthService {
     public TokenDto reissue(TokenRequestDto tokenRequestDto){
         ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
         if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())){
-            throw new TokenInvalidException("Refresh Token이 유효하지 않습니다.", StatusEnum.BAD_REQUEST);
+            throw new TokenInvalidException(Content.REFRESH_TOKEN_INVALID, StatusEnum.BAD_REQUEST);
         }
         Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getRefreshToken());
         String refreshToken = valueOperations.get(PrefixType.PREFIX_REFRESH_TOKEN + authentication.getName());
         if (refreshToken == null){
-            throw new NotFoundUserInformationException("로그아웃된 사용자입니다.",StatusEnum.BAD_REQUEST);
+            throw new NotFoundUserInformationException(Content.LOGOUT_USER,StatusEnum.BAD_REQUEST);
         }
 
         if (!refreshToken.equals(tokenRequestDto.getRefreshToken())){
-            throw new TokenInvalidException("토큰의 유저 정보가 일치하지 않습니다. ", StatusEnum.NOT_FOUND);
+            throw new TokenInvalidException(Content.TOKEN_NOT_EQUAL_USER_INFORMATION, StatusEnum.NOT_FOUND);
         }
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
