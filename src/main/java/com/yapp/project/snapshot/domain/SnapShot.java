@@ -1,4 +1,4 @@
-package com.yapp.project.image.domain;
+package com.yapp.project.snapshot.domain;
 
 import com.yapp.project.organization.domain.Organization;
 import lombok.*;
@@ -9,10 +9,10 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Image {
+public class SnapShot {
 
     @Builder
-    public Image(Organization organization, String picture){
+    public SnapShot(Organization organization, String picture){
         this.organization = organization;
         this.createdAt = LocalDateTime.now();
         this.picture = picture;
@@ -26,7 +26,7 @@ public class Image {
     @JoinColumn(name = "organization_id")
     private Organization organization;
 
-    // routine 관계
+    // retrospect
 
     private LocalDateTime createdAt;
 

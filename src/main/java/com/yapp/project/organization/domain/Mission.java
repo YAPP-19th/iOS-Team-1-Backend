@@ -11,12 +11,12 @@ import java.time.LocalDateTime;
 public class Mission {
 
     @Builder
-    public Mission(Organization organization, LocalDateTime startDate, LocalDateTime finishDate, Integer successCount, Integer failCount){
+    public Mission(Organization organization, LocalDateTime startDate, LocalDateTime finishDate, Integer successCount, Integer failureCount){
         this.organization = organization;
         this.startDate = startDate;
         this.finishDate = finishDate;
         this.successCount = successCount;
-        this.failCount = failCount;
+        this.failureCount = failureCount;
     }
 
     @Id
@@ -32,6 +32,6 @@ public class Mission {
 
     private Integer successCount;
 
-    private Integer failCount;
+    private Integer failureCount;
 
 }

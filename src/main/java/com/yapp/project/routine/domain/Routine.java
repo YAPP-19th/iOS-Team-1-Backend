@@ -6,18 +6,21 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @NoArgsConstructor
 public class Routine {
 
     @Builder
-    public Routine(Account account, String title, String purpose, String color, LocalDateTime createdAt, Boolean notification){
+    public Routine(Account account, String title, String goal, String color, LocalDateTime createdAt,
+                   LocalTime startTime, Boolean notification){
         this.account = account;
         this.title = title;
-        this.purpose = purpose;
+        this.goal = goal;
         this.color = color;
         this.createdAt = createdAt;
+        this.startTime = startTime;
         this.notification = notification;
     }
 
@@ -31,9 +34,11 @@ public class Routine {
 
     private String title;
 
-    private String purpose;
+    private String goal;
 
     private String color;
+
+    private LocalTime startTime;
 
     private LocalDateTime createdAt;
 

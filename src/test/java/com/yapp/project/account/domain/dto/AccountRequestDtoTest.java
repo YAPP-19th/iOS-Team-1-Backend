@@ -16,7 +16,7 @@ class AccountRequestDtoTest {
     void toAccount() {
         Account account = accountRequestDto.toAccount(passwordEncoder);
         assertThat(account.getEmail()).isEqualTo(accountRequestDto.getEmail());
-        assertThat(account.getUsername()).isEqualTo(accountRequestDto.getUsername());
+        assertThat(account.getNickname()).isEqualTo(accountRequestDto.getUsername());
         assertThat(account.getPassword()).isNotEqualTo(accountRequestDto.getPassword());
         assertThat(account.getLastLogin()).isNotNull();
         assertThat(account.getCreatedAt()).isNotNull();

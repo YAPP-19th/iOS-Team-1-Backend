@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class Organization {
 
     @Builder
-    public Organization(String title, Theme theme, String image, String recommend, String capture, String promise, double achievementRate){
+    public Organization(String title, Theme theme, String image, String recommend, String capture, String promise, double rate){
         Assert.hasText(title,"제목은 반드시 있어야 합니다.");
         this.title = title;
         this.theme = theme;
@@ -20,7 +20,7 @@ public class Organization {
         this.recommend = recommend;
         this.capture = capture;
         this.promise = promise;
-        this.achievementRate = achievementRate;
+        this.rate = rate;
     }
 
     @Id
@@ -40,6 +40,6 @@ public class Organization {
 
     private String promise;
 
-    private double achievementRate;
+    private double rate;
 
 }
