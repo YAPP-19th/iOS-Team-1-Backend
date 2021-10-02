@@ -16,13 +16,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class AccountRequestDto {
     private String email;
-    private String username;
+    private String nickname;
     private String password;
 
     public Account toAccount(PasswordEncoder passwordEncoder){
         return Account.builder()
                 .email(email)
-                .username(username)
+                .nickname(nickname)
                 .password(passwordEncoder.encode(password))
                 .authority(Authority.ROLE_USER)
                 .createdAt(LocalDateTime.now())

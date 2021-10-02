@@ -20,7 +20,7 @@ public class Account {
     private Long id;
 
     @Column(nullable = false)
-    private String username;
+    private String nickname;
 
     @Column(nullable = false)
     private String password;
@@ -34,7 +34,7 @@ public class Account {
     private int level;
 
     @Enumerated(EnumType.STRING)
-    private AuthProvider authProvider;
+    private SocialType socialType;
 
     @Enumerated(EnumType.STRING)
     private Authority authority;
