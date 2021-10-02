@@ -1,21 +1,22 @@
 package com.yapp.project.snapshot.domain;
 
 import com.yapp.project.organization.domain.Organization;
+import com.yapp.project.retrospect.domain.Retrospect;
 import lombok.*;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SnapShot {
+@AllArgsConstructor
+public class Snapshot {
 
     @Builder
-    public SnapShot(Organization organization, String picture){
+    public Snapshot(Organization organization, String picture){
         this.organization = organization;
         this.createdAt = LocalDateTime.now();
-        this.picture = picture;
+        this.url = url;
     }
 
     @Id
@@ -27,8 +28,11 @@ public class SnapShot {
     private Organization organization;
 
     // retrospect
+    @OneToOne
+    @JoinColumn(name = "retrospect_id")
+    private Retrospect retrospect;
 
     private LocalDateTime createdAt;
 
-    private String picture;
+    private String url;
 }

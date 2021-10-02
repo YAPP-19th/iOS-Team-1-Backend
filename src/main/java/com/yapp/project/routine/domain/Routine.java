@@ -1,15 +1,19 @@
 package com.yapp.project.routine.domain;
 
 import com.yapp.project.account.domain.Account;
+import com.yapp.project.retrospect.domain.Retrospect;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 public class Routine {
 
     @Builder
@@ -31,6 +35,12 @@ public class Routine {
     @ManyToOne(targetEntity = Account.class,fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
     private Account account;
+
+    @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL)
+    private List<Cron> crons = new ArrayList<>();
+
+    @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL)
+    private List<Retrospect> retrospects = new ArrayList<>();
 
     private String title;
 

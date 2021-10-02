@@ -17,7 +17,7 @@ class AccountTest {
             .password(bCryptPasswordEncoder.encode("test1234"))
             .lastLogin(LocalDateTime.now())
             .createdAt(LocalDateTime.now())
-            .username("testMan").build();
+            .nickname("testMan").build();
 
 
     @Test

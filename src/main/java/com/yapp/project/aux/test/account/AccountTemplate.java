@@ -21,25 +21,25 @@ public class AccountTemplate {
 
 
     public static Account makeTestAccount(){
-        return Account.builder().id(id++).username(USERNAME).password(bCryptPasswordEncoder.encode(PASSWORD))
+        return Account.builder().id(id++).nickname(USERNAME).password(bCryptPasswordEncoder.encode(PASSWORD))
                 .email(EMAIL).createdAt(LocalDateTime.now()).lastLogin(LocalDateTime.now())
                 .authority(Authority.ROLE_USER).build();
     }
 
     public static Account makeTestAccount(String username){
-        return Account.builder().id(id++).username(username).password(bCryptPasswordEncoder.encode(PASSWORD))
+        return Account.builder().id(id++).nickname(username).password(bCryptPasswordEncoder.encode(PASSWORD))
                 .email(EMAIL).createdAt(LocalDateTime.now()).lastLogin(LocalDateTime.now())
                 .authority(Authority.ROLE_USER).build();
     }
 
     public static Account makeTestAccount(String username, String email){
-        return Account.builder().id(id++).username(username).password(bCryptPasswordEncoder.encode(PASSWORD))
+        return Account.builder().id(id++).nickname(username).password(bCryptPasswordEncoder.encode(PASSWORD))
                 .email(email).createdAt(LocalDateTime.now()).lastLogin(LocalDateTime.now())
                 .authority(Authority.ROLE_USER).build();
     }
 
     public static Account makeTestAccount(String username, String email, Authority authority){
-        return Account.builder().id(id++).username(username).password(bCryptPasswordEncoder.encode(PASSWORD))
+        return Account.builder().id(id++).nickname(username).password(bCryptPasswordEncoder.encode(PASSWORD))
                 .email(email).createdAt(LocalDateTime.now()).lastLogin(LocalDateTime.now())
                 .authority(authority).build();
     }
