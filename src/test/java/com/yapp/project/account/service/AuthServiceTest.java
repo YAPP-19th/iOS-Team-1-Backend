@@ -9,7 +9,7 @@ import com.yapp.project.account.domain.repository.AccountRepository;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.aux.test.account.AccountTemplate;
-import com.yapp.project.config.exception.account.EmailDuplicateException;
+import com.yapp.project.config.exception.account.DuplicateException;
 import com.yapp.project.config.exception.account.NotFoundUserInformationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ class AuthServiceTest {
         Account account = AccountTemplate.makeTestAccount();
         AccountRequestDto accountRequestDto = AccountTemplate.makeAccountRequestDto();
         accountRepository.save(account);
-        assertThatThrownBy(() -> authService.signup(accountRequestDto)).isInstanceOf(EmailDuplicateException.class)
+        assertThatThrownBy(() -> authService.signup(accountRequestDto)).isInstanceOf(DuplicateException.class)
                 .hasMessage("이미 가입되어 있는 유저입니다. ");
     }
 
