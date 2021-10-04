@@ -13,21 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AccountService {
     private final AccountRepository accountRepository;
-
-    @Transactional(readOnly = true)
-    public AccountResponseDto getAccountInfo(String email){
-        return accountRepository.findByEmail(email)
-                .map(AccountResponseDto::of)
-                .orElseThrow(() -> new RuntimeException("유저 정보가 없습니다."));
-    }
-
     @Transactional(readOnly = true)
     public AccountResponseDto getUserInfo() {
         return accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
                 .map(AccountResponseDto::of)
                 .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
     }
-
-
-
 }

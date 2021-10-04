@@ -22,20 +22,6 @@ class AccountServiceTest {
     @Autowired
     AccountRepository accountRepository;
 
-    @Test
-    @Transactional
-    void getAccountInfo() {
-        Account account = AccountTemplate.makeTestAccount();
-        accountRepository.save(account);
-        AccountResponseDto accountResponseDto = accountService.getAccountInfo(AccountTemplate.EMAIL);
-        assertThat(accountResponseDto.getEmail()).isEqualTo(account.getEmail());
-    }
-
-    @Test
-    void getAccountInfoFail(){
-        assertThatThrownBy(() -> accountService.getAccountInfo("fail@example.com"))
-                .isInstanceOf(RuntimeException.class).hasMessage("유저 정보가 없습니다.");
-    }
 
     @Test
     @Transactional

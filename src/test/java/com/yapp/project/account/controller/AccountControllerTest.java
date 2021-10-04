@@ -13,8 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import java.util.Objects;
-
 import static org.mockito.BDDMockito.given;
 import static org.assertj.core.api.Assertions.*;
 
@@ -37,13 +35,4 @@ class AccountControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
-    @Test
-    void getAccountInfo() {
-        Account account = AccountTemplate.makeTestAccount();
-        given(accountService.getAccountInfo(AccountTemplate.EMAIL)).willReturn(AccountResponseDto.of(account));
-        ResponseEntity<AccountResponseDto> response = accountController.getAccountInfo(AccountTemplate.EMAIL);
-        assertThat(response).isNotNull();
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(Objects.requireNonNull(response.getBody()).getEmail()).isEqualTo(AccountTemplate.EMAIL);
-    }
 }
