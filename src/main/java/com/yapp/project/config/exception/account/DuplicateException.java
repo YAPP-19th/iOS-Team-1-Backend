@@ -4,9 +4,9 @@ import com.yapp.project.aux.StatusEnum;
 import lombok.Getter;
 
 @Getter
-public class EmailDuplicateException extends RuntimeException{
+public class DuplicateException extends RuntimeException{
     private final StatusEnum status;
-    public EmailDuplicateException(String message, StatusEnum status){
+    public DuplicateException(String message, StatusEnum status){
         super(message);
         this.status = status;
     }
