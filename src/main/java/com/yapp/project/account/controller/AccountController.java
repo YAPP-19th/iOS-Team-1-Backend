@@ -1,13 +1,13 @@
 package com.yapp.project.account.controller;
 
 import com.yapp.project.account.domain.dto.AccountResponseDto;
+import com.yapp.project.account.domain.dto.NicknameRequestDto;
 import com.yapp.project.account.service.AccountService;
+import com.yapp.project.aux.Message;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,6 +19,12 @@ public class AccountController {
     @GetMapping("/me")
     public ResponseEntity<AccountResponseDto> getMyAccountInfo() {
         return ResponseEntity.ok(accountService.getUserInfo());
+    }
+
+    @ApiOperation(value = "닉네임 중복 확인", tags = "account-controller")
+    @PostMapping("/check/nickname")
+    public ResponseEntity<Message> existByNickname(@RequestBody NicknameRequestDto requestDto){
+        return ResponseEntity.ok(accountService.existByNickname(requestDto));
     }
 
 }
