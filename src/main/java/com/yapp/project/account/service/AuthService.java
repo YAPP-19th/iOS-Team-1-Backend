@@ -36,7 +36,7 @@ public class AuthService {
     private String suffix;
 
     @Transactional
-    public Message socialAccess(SocialRequestDto requestDto){
+    public Message socialAccess(SocialDto.Request requestDto){
         String emailSuffix = "";
         SocialType socialType = null;
         if (requestDto.getSocialType().equalsIgnoreCase(SocialType.KAKAO.toString())){
@@ -50,18 +50,18 @@ public class AuthService {
             Account account = accountRepository.findByEmail(requestDto.getId()+emailSuffix).orElse(null);
             assert  account!=null;
             TokenDto tokenDto = login(account.toAccountRequestDto(suffix));
-            SocialResponseDto responseDto = new SocialResponseDto("LOGIN",tokenDto);
+            SocialDto.Response responseDto = new SocialDto.Response("LOGIN",tokenDto);
             return Message.builder().status(StatusEnum.OK).msg("소셜 로그인 성공").data(responseDto).build();
         }else {
             Account account = Account.builder().email(requestDto.getId()+emailSuffix).socialType(socialType)
                     .build();
-            SocialResponseDto responseDto = new SocialResponseDto("SIGNUP",account);
+            SocialDto.Response responseDto = new SocialDto.Response("SIGNUP",account);
             return Message.builder().status(StatusEnum.OK).msg("소셜 회원가입 진행중").data(responseDto).build();
         }
     }
 
     @Transactional
-    public Message socialSignUp(SocialSignUpRequestDto requestDto){
+    public Message socialSignUp(SocialDto.SignUpRequest requestDto){
         if (accountRepository.existsByEmail(requestDto.getEmail())){
             throw new DuplicateException(Content.EMAIL_DUPLICATE, StatusEnum.BAD_REQUEST);
         }
@@ -88,7 +88,7 @@ public class AuthService {
     }
 
     @Transactional
-    public AccountResponseDto signup(AccountRequestDto accountRequestDto){
+    public AccountDto.Response signup(AccountDto.Request accountRequestDto){
         if (accountRepository.existsByEmail(accountRequestDto.getEmail())){
             throw new DuplicateException(Content.EMAIL_DUPLICATE, StatusEnum.BAD_REQUEST);
         }
@@ -96,11 +96,11 @@ public class AuthService {
             throw new DuplicateException(Content.NICKNAME_DUPLICATE,StatusEnum.BAD_REQUEST);
         }
         Account account = accountRequestDto.toAccount(passwordEncoder);
-        return AccountResponseDto.of(accountRepository.save(account));
+        return AccountDto.Response.of(accountRepository.save(account));
     }
 
     @Transactional
-    public TokenDto login(AccountRequestDto accountRequestDto){
+    public TokenDto login(AccountDto.Request accountRequestDto){
         Account account = accountRepository.findByEmail(accountRequestDto.getEmail())
                 .orElseThrow(() -> new NotFoundUserInformationException(Content.NOT_FOUND_USER_INFORMATION,StatusEnum.NOT_FOUND));
         account.updateLastLoginAccount();

@@ -1,10 +1,7 @@
 package com.yapp.project.account.service;
 
 import com.yapp.project.account.domain.Account;
-import com.yapp.project.account.domain.dto.AccountRequestDto;
-import com.yapp.project.account.domain.dto.AccountResponseDto;
-import com.yapp.project.account.domain.dto.TokenDto;
-import com.yapp.project.account.domain.dto.TokenRequestDto;
+import com.yapp.project.account.domain.dto.*;
 import com.yapp.project.account.domain.repository.AccountRepository;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
@@ -35,8 +32,8 @@ class AuthServiceTest {
     @Test
     @Transactional
     void signupSuccess() {
-        AccountRequestDto accountRequestDto = AccountTemplate.makeAccountRequestDto("hello@example.com");
-        AccountResponseDto accountResponseDto = authService.signup(accountRequestDto);
+        AccountDto.Request accountRequestDto = AccountTemplate.makeAccountRequestDto("hello@example.com");
+        AccountDto.Response accountResponseDto = authService.signup(accountRequestDto);
         assertThat(accountResponseDto.getEmail()).isEqualTo(accountRequestDto.getEmail());
     }
 
@@ -44,7 +41,7 @@ class AuthServiceTest {
     @Transactional
     void signupFail() {
         Account account = AccountTemplate.makeTestAccount();
-        AccountRequestDto accountRequestDto = AccountTemplate.makeAccountRequestDto();
+        AccountDto.Request accountRequestDto = AccountTemplate.makeAccountRequestDto();
         accountRepository.save(account);
         assertThatThrownBy(() -> authService.signup(accountRequestDto)).isInstanceOf(DuplicateException.class)
                 .hasMessage(Content.EMAIL_DUPLICATE);
@@ -55,7 +52,7 @@ class AuthServiceTest {
     void loginSuccess() {
         Account account = AccountTemplate.makeTestAccount();
         accountRepository.save(account);
-        AccountRequestDto accountRequestDto = AccountTemplate.makeAccountRequestDto();
+        AccountDto.Request accountRequestDto = AccountTemplate.makeAccountRequestDto();
         TokenDto tokenDto = authService.login(accountRequestDto);
         assertThat(tokenDto.getAccessToken()).isNotNull();
         assertThat(tokenDto.getRefreshToken()).isNotNull();
@@ -64,7 +61,7 @@ class AuthServiceTest {
     @Test
     @Transactional
     void loginFail(){
-        AccountRequestDto accountRequestDto = AccountTemplate.makeAccountRequestDto("fail@example.com"
+        AccountDto.Request accountRequestDto = AccountTemplate.makeAccountRequestDto("fail@example.com"
                 ,"fail");
         assertThatThrownBy(() ->authService.login(accountRequestDto)).isInstanceOf(NotFoundUserInformationException.class)
                 .hasMessage(Content.NOT_FOUND_USER_INFORMATION);
@@ -73,7 +70,7 @@ class AuthServiceTest {
     @Test
     @Transactional
     void reissue() throws InterruptedException {
-        AccountRequestDto accountRequestDto = AccountTemplate.makeAccountRequestDto();
+        AccountDto.Request accountRequestDto = AccountTemplate.makeAccountRequestDto();
         accountRepository.save(AccountTemplate.makeTestAccount());
         TokenDto tokenDto = authService.login(accountRequestDto);
         TokenRequestDto tokenRequestDto = new TokenRequestDto(tokenDto.getRefreshToken());

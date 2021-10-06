@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.*;
 class AccountRequestDtoTest {
 
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    AccountRequestDto accountRequestDto = new AccountRequestDto("test@example.com","test","test1234");
+    AccountDto.Request accountRequestDto = new AccountDto.Request("test@example.com","test","test1234");
 
     @Test
     void toAccount() {

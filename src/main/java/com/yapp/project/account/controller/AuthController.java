@@ -19,29 +19,29 @@ public class AuthController {
 
     @ApiOperation(value = "회원가입", tags = "auth-controller")
     @PostMapping("/signup")
-    public ResponseEntity<Message> signup(@RequestBody AccountRequestDto accountRequestDto){
+    public ResponseEntity<Message> signup(@RequestBody AccountDto.Request request){
         return new ResponseEntity<>(
                 Message.builder().status(StatusEnum.OK).msg("회원가입 축하드립니다.")
-                        .data(authService.signup(accountRequestDto)).build(),
+                        .data(authService.signup(request)).build(),
                 HttpStatus.OK);
     }
 
     @ApiOperation(value = "소셜 로그인 접근", tags = "auth-controller", notes = AccountNotes.SOCIAL_NOTES)
     @PostMapping("/social")
-    public ResponseEntity<Message> socialAccess(@RequestBody SocialRequestDto requestDto){
+    public ResponseEntity<Message> socialAccess(@RequestBody SocialDto.Request requestDto){
         return new ResponseEntity<>(authService.socialAccess(requestDto),HttpStatus.OK);
     }
 
     @ApiOperation(value = "소셜 회원가입 및 로그인", tags = "auth-controller", notes = AccountNotes.SOCIAL_SIGNUP_NOTES)
     @PostMapping("/social/signup")
-    public ResponseEntity<Message> socialSignUp(@RequestBody SocialSignUpRequestDto requestDto){
+    public ResponseEntity<Message> socialSignUp(@RequestBody SocialDto.SignUpRequest requestDto){
         return new ResponseEntity<>(authService.socialSignUp(requestDto),HttpStatus.OK);
     }
 
     @ApiOperation(value = "로그인", tags = "auth-controller")
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody AccountRequestDto accountRequestDto){
-        return ResponseEntity.ok(authService.login(accountRequestDto));
+    public ResponseEntity<TokenDto> login(@RequestBody AccountDto.Request request){
+        return ResponseEntity.ok(authService.login(request));
     }
 
     @ApiOperation(value = "로그아웃", tags = "auth-controller")
