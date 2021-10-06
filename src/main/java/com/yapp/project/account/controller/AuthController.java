@@ -1,11 +1,10 @@
 package com.yapp.project.account.controller;
 
-import com.yapp.project.account.domain.dto.AccountRequestDto;
-import com.yapp.project.account.domain.dto.TokenDto;
-import com.yapp.project.account.domain.dto.TokenRequestDto;
+import com.yapp.project.account.domain.dto.*;
 import com.yapp.project.account.service.AuthService;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.aux.note.account.AccountNotes;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +24,18 @@ public class AuthController {
                 Message.builder().status(StatusEnum.OK).msg("회원가입 축하드립니다.")
                         .data(authService.signup(accountRequestDto)).build(),
                 HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "소셜 로그인 접근", tags = "auth-controller", notes = AccountNotes.SOCIAL_NOTES)
+    @PostMapping("/social")
+    public ResponseEntity<Message> socialAccess(@RequestBody SocialRequestDto requestDto){
+        return new ResponseEntity<>(authService.socialAccess(requestDto),HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "소셜 회원가입 및 로그인", tags = "auth-controller", notes = AccountNotes.SOCIAL_SIGNUP_NOTES)
+    @PostMapping("/social/signup")
+    public ResponseEntity<Message> socialSignUp(@RequestBody SocialSignUpRequestDto requestDto){
+        return new ResponseEntity<>(authService.socialSignUp(requestDto),HttpStatus.OK);
     }
 
     @ApiOperation(value = "로그인", tags = "auth-controller")

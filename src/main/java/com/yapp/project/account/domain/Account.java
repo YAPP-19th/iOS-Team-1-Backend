@@ -1,9 +1,7 @@
 package com.yapp.project.account.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.yapp.project.account.domain.dto.AccountRequestDto;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,13 +11,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Entity
+@ToString
 public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String nickname;
 
     @Column(nullable = false)
@@ -45,6 +44,10 @@ public class Account {
 
     public void updateLastLoginAccount(){
         this.lastLogin = LocalDateTime.now();
+    }
+
+    public AccountRequestDto toAccountRequestDto(String suffix){
+        return new AccountRequestDto(email,nickname,email+suffix);
     }
 
 }
