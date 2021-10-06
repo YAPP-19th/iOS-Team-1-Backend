@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SocialResponseDto {
     private String processes;
-    private Object token;
+    private Object data;
 }
