@@ -4,6 +4,8 @@ import lombok.*;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -12,7 +14,7 @@ import javax.persistence.*;
 public class Organization {
 
     @Builder
-    public Organization(String title, Theme theme, String image, String recommend, String capture, String promise, double rate){
+    public Organization(String title, Theme theme, String image, String recommend, String capture, String promise, Double rate){
         Assert.hasText(title,"제목은 반드시 있어야 합니다.");
         this.title = title;
         this.theme = theme;
@@ -27,6 +29,9 @@ public class Organization {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToMany(mappedBy = "organization",cascade = CascadeType.ALL)
+    private final List<Participant> participants = new ArrayList<>();
+
     private String title;
 
     @Enumerated(EnumType.STRING)
@@ -40,6 +45,6 @@ public class Organization {
 
     private String promise;
 
-    private double rate;
+    private Double rate;
 
 }
