@@ -27,7 +27,7 @@ pipeline {
       }
     }
 
-    stage('change properties') {
+    stage('change properties to develop') {
       steps {
         sh 'cp ../properties/develop/application.properties ./src/main/resources'
       }
