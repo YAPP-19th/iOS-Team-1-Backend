@@ -1,7 +1,6 @@
 package com.yapp.project.account.service;
 
-import com.yapp.project.account.domain.Account;
-import com.yapp.project.account.domain.dto.AccountResponseDto;
+import com.yapp.project.account.domain.dto.AccountDto;
 import com.yapp.project.account.domain.repository.AccountRepository;
 import com.yapp.project.aux.test.account.AccountTemplate;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,7 @@ class AccountServiceTest {
     @Transactional
     void getUserInfo() {
         accountRepository.save(AccountTemplate.makeTestAccount());
-        AccountResponseDto accountResponseDto = accountService.getUserInfo();
+        AccountDto.Response accountResponseDto = accountService.getUserInfo();
         assertThat(accountResponseDto.getEmail()).isEqualTo(AccountTemplate.EMAIL);
     }
 }

@@ -1,7 +1,7 @@
 package com.yapp.project.account.controller;
 
 import com.yapp.project.account.domain.Account;
-import com.yapp.project.account.domain.dto.AccountResponseDto;
+import com.yapp.project.account.domain.dto.AccountDto;
 import com.yapp.project.account.service.AccountService;
 import com.yapp.project.aux.test.account.AccountTemplate;
 import org.junit.jupiter.api.Test;
@@ -29,8 +29,8 @@ class AccountControllerTest {
     @Test
     void getMyAccountInfo() {
         Account account = AccountTemplate.makeTestAccount();
-        given(accountService.getUserInfo()).willReturn(AccountResponseDto.of(account));
-        ResponseEntity<AccountResponseDto> response = accountController.getMyAccountInfo();
+        given(accountService.getUserInfo()).willReturn(AccountDto.Response.of(account));
+        ResponseEntity<AccountDto.Response> response = accountController.getMyAccountInfo();
         assertThat(response).isNotNull();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
