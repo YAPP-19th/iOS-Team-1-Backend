@@ -16,41 +16,43 @@ import java.util.List;
 @AllArgsConstructor
 public class Routine {
 
-    @Builder
-    public Routine(Account account, String title, String goal, String color, LocalDateTime createdAt,
-                   LocalTime startTime, Boolean notification){
-        this.account = account;
-        this.title = title;
-        this.goal = goal;
-        this.color = color;
-        this.createdAt = createdAt;
-        this.startTime = startTime;
-        this.notification = notification;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(targetEntity = Account.class,fetch = FetchType.LAZY)
+    /** Category 도메인 변경에 따라 결정
+     * private String category
+     * @OneToOne
+     * private Category category
+     * */
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
     private Account account;
-
-    @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL)
-    private List<Cron> crons = new ArrayList<>();
-
-    @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL)
-    private List<Retrospect> retrospects = new ArrayList<>();
 
     private String title;
 
     private String goal;
 
-    private String color;
-
     private LocalTime startTime;
 
     private LocalDateTime createdAt;
 
-    private Boolean notification;
+    private Boolean isDelete;
+
+    @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL)
+    private List<Cron> crons = new ArrayList<>();
+
+    @OneToMany(mappedBy = "routine", cascade = CascadeType.DETACH)
+    private List<Retrospect> retrospects = new ArrayList<>();
+
+
+    @Builder
+    public Routine(Account account, String title, String goal, LocalTime startTime,
+                   LocalDateTime createdAt){
+        this.account = account;
+        this.title = title;
+        this.goal = goal;
+        this.startTime = startTime;
+        this.createdAt = createdAt;
+    }
 }
