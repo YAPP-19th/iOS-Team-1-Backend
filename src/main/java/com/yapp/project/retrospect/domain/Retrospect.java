@@ -22,14 +22,17 @@ public class Retrospect {
     @JoinColumn(name = "routine_id")
     private Routine routine;
 
+    @OneToOne
+    @JoinColumn(name = "image_id")
+    private Snapshot image;
+
     private String content;
 
     private LocalDateTime date;
 
     private String result;
 
-    @OneToOne(mappedBy = "retrospect")
-    private Snapshot snapshot;
+    private Boolean isReport;
 
     private LocalDateTime createdAt;
 
