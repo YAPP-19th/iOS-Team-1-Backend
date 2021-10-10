@@ -87,4 +87,24 @@ class AuthServiceTest {
         Message message = authService.logout();
         assertThat(message.getStatus()).isEqualTo(StatusEnum.OK);
     }
+
+    @Test
+    @Transactional
+    void test_닉네임_이미_존재할_때(){
+        Account account = AccountTemplate.makeTestAccount();
+        accountRepository.save(account);
+        String nickname = account.getNickname();
+        assertThatThrownBy(() -> authService.existByNickname(nickname)).isInstanceOf(DuplicateException.class)
+                .hasMessage(Content.NICKNAME_DUPLICATE);
+    }
+
+    @Test
+    @Transactional
+    void test_닉네임_존재하지_않을_때(){
+        Account account = AccountTemplate.makeTestAccount("hello");
+        accountRepository.save(account);
+        String nickname = account.getNickname();
+        assertThatThrownBy(() -> authService.existByNickname(nickname)).isInstanceOf(DuplicateException.class)
+                .hasMessage(Content.NICKNAME_DUPLICATE);
+    }
 }

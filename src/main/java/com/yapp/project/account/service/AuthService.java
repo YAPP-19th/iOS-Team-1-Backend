@@ -139,5 +139,11 @@ public class AuthService {
         return tokenDto;
     }
 
+    @Transactional(readOnly = true)
+    public Message existByNickname(String nickname){
+        if (accountRepository.existsByNickname(nickname))
+            throw new DuplicateException(Content.NICKNAME_DUPLICATE, StatusEnum.BAD_REQUEST);
+        return Message.of("중복되는 닉네임이 없습니다.");
+    }
 
 }
