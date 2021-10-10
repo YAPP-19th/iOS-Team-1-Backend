@@ -39,7 +39,7 @@ public class Routine {
     @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL)
     private List<Cron> crons = new ArrayList<>();
 
-    @OneToMany(mappedBy = "routine", cascade = CascadeType.DETACH)
+    @OneToMany(mappedBy = "routine")
     private List<Retrospect> retrospects = new ArrayList<>();
 
 
