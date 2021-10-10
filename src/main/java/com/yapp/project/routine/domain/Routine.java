@@ -20,11 +20,6 @@ public class Routine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** Category 도메인 변경에 따라 결정
-     * private String category
-     * @OneToOne
-     * private Category category
-     * */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
     private Account account;
@@ -38,6 +33,8 @@ public class Routine {
     private LocalDateTime createdAt;
 
     private Boolean isDelete;
+
+    private String category;
 
     @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL)
     private List<Cron> crons = new ArrayList<>();
