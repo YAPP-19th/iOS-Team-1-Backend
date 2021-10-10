@@ -1,6 +1,7 @@
 package com.yapp.project.routine.domain;
 
 import com.yapp.project.account.domain.Account;
+import com.yapp.project.base.Cron;
 import com.yapp.project.retrospect.domain.Retrospect;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,41 +17,41 @@ import java.util.List;
 @AllArgsConstructor
 public class Routine {
 
-    @Builder
-    public Routine(Account account, String title, String goal, String color, LocalDateTime createdAt,
-                   LocalTime startTime, Boolean notification){
-        this.account = account;
-        this.title = title;
-        this.goal = goal;
-        this.color = color;
-        this.createdAt = createdAt;
-        this.startTime = startTime;
-        this.notification = notification;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(targetEntity = Account.class,fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
     private Account account;
-
-    @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL)
-    private List<Cron> crons = new ArrayList<>();
-
-    @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL)
-    private List<Retrospect> retrospects = new ArrayList<>();
 
     private String title;
 
     private String goal;
 
-    private String color;
-
     private LocalTime startTime;
 
     private LocalDateTime createdAt;
 
-    private Boolean notification;
+    private Boolean isDelete;
+
+    private String category;
+
+    @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL)
+    private List<Cron> crons = new ArrayList<>();
+
+    @OneToMany(mappedBy = "routine")
+    private List<Retrospect> retrospects = new ArrayList<>();
+
+
+    @Builder
+    public Routine(Account account, String title, String goal, LocalTime startTime, Boolean isDelete, String category){
+        this.account = account;
+        this.title = title;
+        this.goal = goal;
+        this.startTime = startTime;
+        this.isDelete = isDelete;
+        this.category = category;
+        this.createdAt = LocalDateTime.now();;
+    }
 }
