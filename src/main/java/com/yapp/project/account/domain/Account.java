@@ -42,6 +42,10 @@ public class Account {
 
     private LocalDateTime lastLogin;
 
+    private Boolean isDelete;
+
+    private String fcmToken;
+
     public void updateLastLoginAccount(){
         this.lastLogin = LocalDateTime.now();
     }

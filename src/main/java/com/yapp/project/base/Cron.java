@@ -1,6 +1,6 @@
 package com.yapp.project.base;
 
-import com.yapp.project.organization.domain.Mission;
+import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.routine.domain.Routine;
 import com.yapp.project.routine.domain.Week;
 import lombok.AllArgsConstructor;

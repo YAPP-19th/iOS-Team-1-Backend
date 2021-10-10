@@ -52,6 +52,6 @@ public class Routine {
         this.startTime = startTime;
         this.isDelete = isDelete;
         this.category = category;
-        this.createdAt = LocalDateTime.now();;
+        this.createdAt = LocalDateTime.now();
     }
 }
