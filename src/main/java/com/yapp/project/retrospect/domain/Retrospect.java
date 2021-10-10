@@ -38,14 +38,13 @@ public class Retrospect {
     private LocalDateTime createdAt;
 
     @Builder
-    public Retrospect(Routine routine, Snapshot image, String content, String result, Boolean isReport,
-                   LocalDateTime createdAt){
+    public Retrospect(Routine routine, Snapshot image, String content, String result, Boolean isReport){
         this.routine = routine;
         this.image = image;
         this.content = content;
         this.result = result;
         this.isReport = isReport;
-        this.createdAt = createdAt;
+        this.createdAt = LocalDateTime.now();
     }
 
 }

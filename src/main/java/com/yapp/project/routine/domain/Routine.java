@@ -1,6 +1,7 @@
 package com.yapp.project.routine.domain;
 
 import com.yapp.project.account.domain.Account;
+import com.yapp.project.base.Cron;
 import com.yapp.project.retrospect.domain.Retrospect;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,14 +45,13 @@ public class Routine {
 
 
     @Builder
-    public Routine(Account account, String title, String goal, LocalTime startTime, Boolean isDelete, String category,
-                   LocalDateTime createdAt){
+    public Routine(Account account, String title, String goal, LocalTime startTime, Boolean isDelete, String category){
         this.account = account;
         this.title = title;
         this.goal = goal;
         this.startTime = startTime;
         this.isDelete = isDelete;
         this.category = category;
-        this.createdAt = createdAt;
+        this.createdAt = LocalDateTime.now();;
     }
 }
