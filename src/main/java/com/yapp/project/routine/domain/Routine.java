@@ -44,12 +44,14 @@ public class Routine {
 
 
     @Builder
-    public Routine(Account account, String title, String goal, LocalTime startTime,
+    public Routine(Account account, String title, String goal, LocalTime startTime, Boolean isDelete, String category,
                    LocalDateTime createdAt){
         this.account = account;
         this.title = title;
         this.goal = goal;
         this.startTime = startTime;
+        this.isDelete = isDelete;
+        this.category = category;
         this.createdAt = createdAt;
     }
 }

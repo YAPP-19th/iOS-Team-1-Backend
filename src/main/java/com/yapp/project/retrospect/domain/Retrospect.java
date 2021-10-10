@@ -3,6 +3,7 @@ package com.yapp.project.retrospect.domain;
 import com.yapp.project.routine.domain.Routine;
 import com.yapp.project.snapshot.domain.Snapshot;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
@@ -35,5 +36,16 @@ public class Retrospect {
     private Boolean isReport;
 
     private LocalDateTime createdAt;
+
+    @Builder
+    public Retrospect(Routine routine, Snapshot image, String content, String result, Boolean isReport,
+                   LocalDateTime createdAt){
+        this.routine = routine;
+        this.image = image;
+        this.content = content;
+        this.result = result;
+        this.isReport = isReport;
+        this.createdAt = createdAt;
+    }
 
 }
