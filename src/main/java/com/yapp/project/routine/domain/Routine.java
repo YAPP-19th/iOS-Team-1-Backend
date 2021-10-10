@@ -3,6 +3,7 @@ package com.yapp.project.routine.domain;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.base.Cron;
 import com.yapp.project.retrospect.domain.Retrospect;
+import com.yapp.project.routine.domain.dto.RequestRoutineDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,7 +52,7 @@ public class Routine {
     private List<Retrospect> retrospects = new ArrayList<>();
 
     @Builder
-    public Routine(Account account, RoutineDTO.Request newRoutine){
+    public Routine(Account account, RequestRoutineDto newRoutine){
         this.account = account;
         this.title = newRoutine.getTitle();
         this.goal = newRoutine.getGoal();

@@ -4,15 +4,14 @@ import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.repository.AccountRepository;
 import com.yapp.project.base.Cron;
 import com.yapp.project.routine.domain.Routine;
-import com.yapp.project.routine.domain.RoutineDTO;
 import com.yapp.project.routine.domain.RoutineRepository;
 import com.yapp.project.routine.domain.Week;
+import com.yapp.project.routine.domain.dto.RequestRoutineDto;
+import com.yapp.project.routine.domain.dto.ResponseRoutineDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,18 +22,18 @@ public class RoutineService {
     private final RoutineRepository routineRepository;
     private final AccountRepository accountRepository; // will delete
 
-    public RoutineDTO.Response createRoutine(RoutineDTO.Request newRoutine) throws BindException {
+    public ResponseRoutineDto createRoutine(RequestRoutineDto newRoutine) throws BindException {
         checkDataIsNull(newRoutine);
         Routine routine = Routine.builder()
                 .account(getAccount())
                 .newRoutine(newRoutine).build();
         setCron(newRoutine.getDays(), routine);
 
-        return RoutineDTO.Response.builder()
+        return ResponseRoutineDto.builder()
                 .routine(routineRepository.save(routine)).build();
     }
 
-    private Boolean checkDataIsNull(RoutineDTO.Request newRoutine) throws BindException {
+    private Boolean checkDataIsNull(RequestRoutineDto newRoutine) throws BindException {
         if( newRoutine.getTitle().isBlank() ||
             newRoutine.getGoal().isBlank() ||
             newRoutine.getDays().isEmpty() ||

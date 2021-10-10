@@ -1,7 +1,9 @@
 package com.yapp.project.routine.controller;
 
-import com.yapp.project.routine.domain.RoutineDTO;
+import com.yapp.project.routine.domain.dto.RequestRoutineDto;
+import com.yapp.project.routine.domain.dto.ResponseRoutineDto;
 import com.yapp.project.routine.service.RoutineService;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +15,9 @@ public class RoutineController {
 
     private final RoutineService routineService;
 
+    @ApiOperation(value = "루틴 추가", notes = "새로운 루틴 추가하기")
     @PostMapping("/")
-    public RoutineDTO.Response createRoutine(@RequestBody RoutineDTO.Request newRoutine) throws BindException {
+    public ResponseRoutineDto createRoutine(@RequestBody RequestRoutineDto newRoutine) throws BindException {
         return routineService.createRoutine(newRoutine);
     }
 }
