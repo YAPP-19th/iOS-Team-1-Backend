@@ -55,4 +55,10 @@ public class AuthController {
     public ResponseEntity<TokenDto> reissue(@RequestBody TokenRequestDto tokenRequestDto){
         return ResponseEntity.ok(authService.reissue(tokenRequestDto));
     }
+
+    @ApiOperation(value = "닉네임 중복 확인", tags = "auth-controller")
+    @GetMapping("/check/{name}")
+    public ResponseEntity<Message> existByNickname(@PathVariable("name") String nickname ){
+        return ResponseEntity.ok(authService.existByNickname(nickname));
+    }
 }
