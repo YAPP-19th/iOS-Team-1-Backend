@@ -1,7 +1,6 @@
 package com.yapp.project.mission.domain;
 
 import com.yapp.project.account.domain.Account;
-import com.yapp.project.base.Cron;
 import com.yapp.project.organization.domain.Organization;
 import lombok.Builder;
 import lombok.Getter;

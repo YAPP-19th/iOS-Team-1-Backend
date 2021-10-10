@@ -1,7 +1,6 @@
 package com.yapp.project.routine.domain;
 
 import com.yapp.project.account.domain.Account;
-import com.yapp.project.base.Cron;
 import com.yapp.project.retrospect.domain.Retrospect;
 import com.yapp.project.routine.domain.dto.RequestRoutineDto;
 import lombok.AllArgsConstructor;
@@ -46,7 +45,7 @@ public class Routine {
     private String category;
 
     @OneToMany(mappedBy = "routine", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<Cron> crons = new ArrayList<>();
+    private List<RoutineDay> days = new ArrayList<>();
 
     @OneToMany(mappedBy = "routine")
     private List<Retrospect> retrospects = new ArrayList<>();
@@ -62,8 +61,8 @@ public class Routine {
         this.createdAt = LocalDateTime.now();
     }
 
-    public void addCrons(Cron cron) {
-        this.crons.add(cron);
-        cron.setRoutine(this);
+    public void addDays(RoutineDay day) {
+        this.days.add(day);
+        day.setRoutine(this);
     }
 }

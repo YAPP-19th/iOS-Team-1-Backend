@@ -35,7 +35,7 @@ public class ResponseRoutineDto {
         this.title = routine.getTitle();
         this.goal = routine.getGoal();
         this.startTime = routine.getStartTime().toString();
-        this.days = routine.getCrons().stream().map(cron -> cron.getWeek()).collect(Collectors.toList());
+        this.days = routine.getDays().stream().map(day -> day.getDay()).collect(Collectors.toList());
         this.category = routine.getCategory();
     }
 }

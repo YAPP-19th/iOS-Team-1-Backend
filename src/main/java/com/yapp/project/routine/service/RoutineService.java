@@ -2,8 +2,8 @@ package com.yapp.project.routine.service;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.repository.AccountRepository;
-import com.yapp.project.base.Cron;
 import com.yapp.project.routine.domain.Routine;
+import com.yapp.project.routine.domain.RoutineDay;
 import com.yapp.project.routine.domain.RoutineRepository;
 import com.yapp.project.routine.domain.Week;
 import com.yapp.project.routine.domain.dto.RequestRoutineDto;
@@ -27,7 +27,7 @@ public class RoutineService {
         Routine routine = Routine.builder()
                 .account(getAccount())
                 .newRoutine(newRoutine).build();
-        setCron(newRoutine.getDays(), routine);
+        setDays(newRoutine.getDays(), routine);
 
         return ResponseRoutineDto.builder()
                 .routine(routineRepository.save(routine)).build();
@@ -41,9 +41,9 @@ public class RoutineService {
         return true;
     }
 
-    private void setCron(List<Week> days, Routine routine) {
-        List<Cron> crons = days.stream().map(cron -> Cron.builder().week(cron).build()).collect(Collectors.toList());
-        crons.stream().forEach(cron -> routine.addCrons(cron));
+    private void setDays(List<Week> days, Routine routine) {
+        List<RoutineDay> newDays = days.stream().map(day -> RoutineDay.builder().day(day).sequence(0L).build()).collect(Collectors.toList());
+        newDays.stream().forEach(day -> routine.addDays(day));
     }
 
     // Todo - id Security Context에서 얻는 작업 마무리 되면 수정 예정
