@@ -1,11 +1,8 @@
 package com.yapp.project.routine.service;
 
-import com.yapp.project.account.domain.Account;
-import com.yapp.project.account.domain.repository.AccountRepository;
-import com.yapp.project.config.security.PrincipalDetails;
+import com.yapp.project.aux.common.AccountUtil;
 import com.yapp.project.routine.domain.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindException;
 import java.util.List;
@@ -20,7 +17,7 @@ public class RoutineService {
     public RoutineDTO.ResponseRoutineDto createRoutine(RoutineDTO.RequestRoutineDto newRoutine) throws BindException {
         checkDataIsNull(newRoutine);
         Routine routine = Routine.builder()
-                .account(getAccount())
+                .account(AccountUtil.getAccount())
                 .newRoutine(newRoutine).build();
         setDays(newRoutine.getDays(), routine);
 
@@ -39,10 +36,5 @@ public class RoutineService {
     private void setDays(List<Week> days, Routine routine) {
         List<RoutineDay> newDays = days.stream().map(day -> RoutineDay.builder().day(day).sequence(0L).build()).collect(Collectors.toList());
         newDays.stream().forEach(day -> routine.addDays(day));
-    }
-
-    private Account getAccount() {
-        PrincipalDetails principal = (PrincipalDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principal.getAccount();
     }
 }
