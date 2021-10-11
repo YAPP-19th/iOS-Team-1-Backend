@@ -20,4 +20,9 @@ public class RoutineController {
     public RoutineDTO.ResponseRoutineDto createRoutine(@RequestBody RoutineDTO.RequestRoutineDto newRoutine) throws BindException {
         return routineService.createRoutine(newRoutine, AccountUtil.getAccount());
     }
+
+    @GetMapping("/{routineId}")
+    public RoutineDTO.ResponseRoutineDto getRoutine(@PathVariable Long routineId) throws BindException {
+        return routineService.getRoutine(routineId, AccountUtil.getAccount());
+    }
 }

@@ -14,6 +14,13 @@ public class RoutineService {
 
     private final RoutineRepository routineRepository;
 
+    public RoutineDTO.ResponseRoutineDto getRoutine(Long routineId, Account account) throws BindException {
+        Routine routine = findIsExist(routineId);
+        checkIsMine(account, routine);
+        return RoutineDTO.ResponseRoutineDto.builder()
+                .routine(routine).build();
+    }
+
     public RoutineDTO.ResponseRoutineDto createRoutine(RoutineDTO.RequestRoutineDto newRoutine, Account account) throws BindException {
         checkDataIsNull(newRoutine);
         Routine routine = Routine.builder()
@@ -36,5 +43,13 @@ public class RoutineService {
     private void setDays(List<Week> days, Routine routine) {
         List<RoutineDay> newDays = days.stream().map(day -> RoutineDay.builder().day(day).sequence(0L).build()).collect(Collectors.toList());
         newDays.stream().forEach(day -> routine.addDays(day));
+    }
+
+    private void checkIsMine(Account account, Routine routine) throws BindException {
+        if(!account.getId().equals(routine.getAccount().getId())) throw new BindException(" ","Routine");
+    }
+
+    private Routine findIsExist(Long routineId) throws BindException {
+        return routineRepository.findById(routineId).orElseThrow(() -> new BindException(" ","Routine"));
     }
 }
