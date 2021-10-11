@@ -1,5 +1,6 @@
 package com.yapp.project.organization.domain.repository;
 
+import static com.yapp.project.aux.test.organization.OrganizationTemplate.*;
 import com.yapp.project.organization.domain.Organization;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,9 @@ class OrganizationRepositoryTest {
     @Test
     @Transactional
     void test_카테고리로_그룹_조회(){
-        List<Organization> organizations = organizationRepository.findByCategoryAndMore("건강");
-        assertThat(organizations.size()).isEqualTo(5);
-        assertThat(organizations.get(0).getCategory()).isEqualTo("건강");
-        assertThat(organizations.get(0).getTitle()).isIn("요가","산책하기","스트레칭","러닝");
+        Organization organization = makeTestOrganization();
+        organizationRepository.save(organization);
+        List<Organization> organizations = organizationRepository.findByCategoryAndMore(CATEGORY);
+        assertThat(organizations.get(0).getCategory()).isEqualTo(CATEGORY);
     }
 }
