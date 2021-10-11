@@ -1,5 +1,6 @@
 package com.yapp.project.routine.controller;
 
+import com.yapp.project.aux.common.AccountUtil;
 import com.yapp.project.routine.domain.RoutineDTO;
 import com.yapp.project.routine.service.RoutineService;
 import io.swagger.annotations.*;
@@ -17,6 +18,6 @@ public class RoutineController {
     @ApiOperation(value = "루틴 추가", notes = "새로운 루틴 추가하기")
     @PostMapping("/")
     public RoutineDTO.ResponseRoutineDto createRoutine(@RequestBody RoutineDTO.RequestRoutineDto newRoutine) throws BindException {
-        return routineService.createRoutine(newRoutine);
+        return routineService.createRoutine(newRoutine, AccountUtil.getAccount());
     }
 }

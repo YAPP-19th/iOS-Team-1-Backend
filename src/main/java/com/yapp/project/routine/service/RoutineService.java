@@ -1,6 +1,6 @@
 package com.yapp.project.routine.service;
 
-import com.yapp.project.aux.common.AccountUtil;
+import com.yapp.project.account.domain.Account;
 import com.yapp.project.routine.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,10 +14,10 @@ public class RoutineService {
 
     private final RoutineRepository routineRepository;
 
-    public RoutineDTO.ResponseRoutineDto createRoutine(RoutineDTO.RequestRoutineDto newRoutine) throws BindException {
+    public RoutineDTO.ResponseRoutineDto createRoutine(RoutineDTO.RequestRoutineDto newRoutine, Account account) throws BindException {
         checkDataIsNull(newRoutine);
         Routine routine = Routine.builder()
-                .account(AccountUtil.getAccount())
+                .account(account)
                 .newRoutine(newRoutine).build();
         setDays(newRoutine.getDays(), routine);
 
