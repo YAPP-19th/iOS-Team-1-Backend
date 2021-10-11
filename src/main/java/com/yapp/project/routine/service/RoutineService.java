@@ -3,6 +3,7 @@ package com.yapp.project.routine.service;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.routine.domain.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindException;
 import java.util.List;
@@ -13,6 +14,13 @@ import java.util.stream.Collectors;
 public class RoutineService {
 
     private final RoutineRepository routineRepository;
+
+    public List<RoutineDTO.ResponseRoutineDto> getRoutineList(Week day, Account account) {
+        List<Routine> routineList = routineRepository // Sort.by("days").descending(): sequence가 0인 루틴은 최신 등록순
+                .findAllByAccountAndDaysDayOrderByDaysSequence(account, day, Sort.by("days").descending());
+        return routineList.stream().map(routine -> RoutineDTO.ResponseRoutineDto.builder()
+                .routine(routine).build()).collect(Collectors.toList());
+    }
 
     public RoutineDTO.ResponseRoutineDto getRoutine(Long routineId, Account account) throws BindException {
         Routine routine = findIsExist(routineId);
