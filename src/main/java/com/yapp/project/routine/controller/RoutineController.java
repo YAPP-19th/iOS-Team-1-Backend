@@ -20,12 +20,12 @@ public class RoutineController {
 
     @ApiOperation(value = "루틴 추가", notes = "새로운 루틴 추가하기")
     @PostMapping("/")
-    public RoutineDTO.ResponseRoutineDto createRoutine(@RequestBody RoutineDTO.RequestRoutineDto newRoutine) throws BindException {
+    public RoutineDTO.ResponseRoutineDto createRoutine(@RequestBody RoutineDTO.RequestRoutineDto newRoutine) {
         return routineService.createRoutine(newRoutine, AccountUtil.getAccount());
     }
 
     @GetMapping("/{routineId}")
-    public RoutineDTO.ResponseRoutineDto getRoutine(@PathVariable Long routineId) throws BindException {
+    public RoutineDTO.ResponseRoutineDto getRoutine(@PathVariable Long routineId) {
         return routineService.getRoutine(routineId, AccountUtil.getAccount());
     }
 
