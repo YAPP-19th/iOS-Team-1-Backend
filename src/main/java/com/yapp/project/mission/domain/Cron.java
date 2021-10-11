@@ -1,7 +1,9 @@
 package com.yapp.project.mission.domain;
 
+import com.yapp.project.routine.domain.Routine;
 import com.yapp.project.routine.domain.Week;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
@@ -21,8 +23,23 @@ public class Cron {
     private Week week;
 
     @ManyToOne
+    @JoinColumn(name = "routine_id")
+    private Routine routine;
+
+    @ManyToOne
     @JoinColumn(name = "mission_id")
     private Mission mission;
 
     private LocalDateTime createdAt;
+
+    @Builder
+    public Cron(Week week, Routine routine) {
+        this.week = week;
+        this.routine = routine;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public void setRoutine(Routine routine) {
+        this.routine = routine;
+    }
 }
