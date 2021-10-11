@@ -1,7 +1,7 @@
 package com.yapp.project.routine.domain;
 
 import com.yapp.project.account.domain.Account;
-import com.yapp.project.base.Cron;
+import com.yapp.project.mission.domain.Cron;
 import com.yapp.project.retrospect.domain.Retrospect;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,7 +38,7 @@ public class Routine {
     private String category;
 
     @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL)
-    private List<Cron> crons = new ArrayList<>();
+    private List<RoutineDay> days = new ArrayList<>();
 
     @OneToMany(mappedBy = "routine")
     private List<Retrospect> retrospects = new ArrayList<>();

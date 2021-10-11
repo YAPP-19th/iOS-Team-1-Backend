@@ -1,7 +1,5 @@
-package com.yapp.project.base;
+package com.yapp.project.mission.domain;
 
-import com.yapp.project.mission.domain.Mission;
-import com.yapp.project.routine.domain.Routine;
 import com.yapp.project.routine.domain.Week;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,16 +21,8 @@ public class Cron {
     private Week week;
 
     @ManyToOne
-    @JoinColumn(name = "routine_id")
-    private Routine routine;
-
-    @ManyToOne
     @JoinColumn(name = "mission_id")
     private Mission mission;
-
-
-
-
 
     private LocalDateTime createdAt;
 }
