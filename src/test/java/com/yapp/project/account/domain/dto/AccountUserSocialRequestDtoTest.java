@@ -7,10 +7,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import static org.assertj.core.api.Assertions.*;
 
-class AccountRequestDtoTest {
+class AccountUserSocialRequestDtoTest {
 
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    AccountDto.Request accountRequestDto = new AccountDto.Request("test@example.com","test","test1234");
+    AccountDto.UserRequest accountRequestDto = new AccountDto.UserRequest("test@example.com","test","test1234");
 
     @Test
     void toAccount() {

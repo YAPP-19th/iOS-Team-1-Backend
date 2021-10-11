@@ -50,7 +50,7 @@ class AuthControllerTest {
     @Test
     @Transactional
     void test_회원가입_성공() {
-        AccountDto.Request accountRequestDto = AccountTemplate.makeAccountRequestDto();
+        AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
         ResponseEntity<Message> response = authController.signup(accountRequestDto);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(Objects.requireNonNull(response.getBody()).getMsg()).isEqualTo("회원가입 축하드립니다.");
@@ -61,7 +61,7 @@ class AuthControllerTest {
     void test_회원가입_실패(){
         Account account = AccountTemplate.makeTestAccount();
         accountRepository.save(account);
-        AccountDto.Request accountRequestDto = AccountTemplate.makeAccountRequestDto();
+        AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
         assertThatThrownBy(() ->authController.signup(accountRequestDto)).isInstanceOf(DuplicateException.class)
                 .hasMessage(Content.EMAIL_DUPLICATE);
     }
@@ -71,7 +71,7 @@ class AuthControllerTest {
     void test_로그인_성공() {
         Account account = AccountTemplate.makeTestAccount();
         accountRepository.save(account);
-        AccountDto.Request accountRequestDto = AccountTemplate.makeAccountRequestDto();
+        AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
         ResponseEntity<TokenDto> response = authController.login(accountRequestDto);
         assertThat(response).isNotNull();
         assertThat(tokenProvider.validateToken(Objects.requireNonNull(response.getBody()).getAccessToken())).isTrue();
@@ -82,7 +82,7 @@ class AuthControllerTest {
     void test_로그인_실페() {
         Account account = AccountTemplate.makeTestAccount("meaning","meaning@example.com");
         accountRepository.save(account);
-        AccountDto.Request accountRequestDto = AccountTemplate.makeAccountRequestDto();
+        AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
         assertThatThrownBy(() -> authController.login(accountRequestDto)).isInstanceOf(NotFoundUserInformationException.class)
                 .hasMessage(Content.NOT_FOUND_USER_INFORMATION);
     }
@@ -111,7 +111,7 @@ class AuthControllerTest {
         Account account = AccountTemplate.makeTestAccount();
         accountRepository.save(account);
 
-        AccountDto.Request accountRequestDto = AccountTemplate.makeAccountRequestDto();
+        AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
         ResponseEntity<TokenDto> response = authController.login(accountRequestDto);
         assertThat(response).isNotNull();
         assertThat(tokenProvider.validateToken(Objects.requireNonNull(response.getBody()).getAccessToken())).isTrue();
@@ -142,7 +142,7 @@ class AuthControllerTest {
         Account account = AccountTemplate.makeTestAccount();
         accountRepository.save(account);
 
-        AccountDto.Request accountRequestDto = AccountTemplate.makeAccountRequestDto();
+        AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
         ResponseEntity<TokenDto> response = authController.login(accountRequestDto);
         assertThat(response).isNotNull();
         assertThat(tokenProvider.validateToken(Objects.requireNonNull(response.getBody()).getAccessToken())).isTrue();
@@ -160,7 +160,7 @@ class AuthControllerTest {
         Account account = AccountTemplate.makeTestAccount();
         accountRepository.save(account);
 
-        AccountDto.Request accountRequestDto = AccountTemplate.makeAccountRequestDto();
+        AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
         ResponseEntity<TokenDto> response = authController.login(accountRequestDto);
         assertThat(response).isNotNull();
         assertThat(tokenProvider.validateToken(Objects.requireNonNull(response.getBody()).getAccessToken())).isTrue();

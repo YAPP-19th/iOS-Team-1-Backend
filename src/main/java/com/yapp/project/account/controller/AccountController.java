@@ -15,7 +15,7 @@ public class AccountController {
 
     @ApiOperation(value = "회원정보", tags = "account-controller")
     @GetMapping("/me")
-    public ResponseEntity<AccountDto.Response> getMyAccountInfo() {
+    public ResponseEntity<AccountDto.UserResponse> getMyAccountInfo() {
         return ResponseEntity.ok(accountService.getUserInfo());
     }
 }

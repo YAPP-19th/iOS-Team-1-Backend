@@ -1,6 +1,6 @@
 package com.yapp.project.account.domain;
 
-import com.yapp.project.account.domain.dto.AccountDto;
+import com.yapp.project.account.domain.dto.AccountDto.*;
 import lombok.*;
 
 import javax.persistence.*;
@@ -50,8 +50,8 @@ public class Account {
         this.lastLogin = LocalDateTime.now();
     }
 
-    public AccountDto.Request toAccountRequestDto(String suffix){
-        return new AccountDto.Request(email,nickname,email+suffix);
+    public UserRequest toAccountRequestDto(String suffix){
+        return new UserRequest(email,nickname,email+suffix);
     }
 
 }

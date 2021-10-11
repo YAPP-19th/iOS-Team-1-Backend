@@ -15,9 +15,9 @@ public class AccountService {
     private final AccountRepository accountRepository;
 
     @Transactional(readOnly = true)
-    public AccountDto.Response getUserInfo() {
+    public AccountDto.UserResponse getUserInfo() {
         return accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
-                .map(AccountDto.Response::of)
+                .map(AccountDto.UserResponse::of)
                 .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
     }
 
