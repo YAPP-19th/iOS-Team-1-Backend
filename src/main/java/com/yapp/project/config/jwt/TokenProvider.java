@@ -1,17 +1,18 @@
 package com.yapp.project.config.jwt;
 
 import com.yapp.project.account.domain.dto.TokenDto;
+import com.yapp.project.config.security.PrincipalDetailService;
+import com.yapp.project.config.security.PrincipalDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -23,6 +24,9 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class TokenProvider {
+
+    @Autowired
+    private PrincipalDetailService principalDetailService;
 
     private final Key key;
 
@@ -69,8 +73,8 @@ public class TokenProvider {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-        UserDetails principal = new User(claims.getSubject(),"",authorities);
-        return new UsernamePasswordAuthenticationToken(principal,"",authorities);
+        PrincipalDetails principalDetails = (PrincipalDetails)principalDetailService.loadUserByUsername(claims.getSubject());
+        return new UsernamePasswordAuthenticationToken(principalDetails,"",authorities);
     }
 
     public boolean validateToken(String token){
