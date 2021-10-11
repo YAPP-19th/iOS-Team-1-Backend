@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface OrganizationRepository extends JpaRepository<Organization,Long> {
-
-    @Query(value = "SELECT title,image,achievementRate FROM Organization WHERE theme=?1  ORDER BY id DESC OFFSET ?2 LIMIT ?3",nativeQuery = true)
-    List<Organization> findByThemeAndMore(String theme,int limit, int offset);
+    @Query(value = "SELECT * FROM Organization WHERE category=?1",nativeQuery = true)
+    List<Organization> findByCategoryAndMore(String category);
 }
