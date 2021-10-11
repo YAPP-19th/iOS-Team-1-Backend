@@ -19,29 +19,29 @@ public class AuthController {
 
     @ApiOperation(value = "회원가입", tags = "auth-controller")
     @PostMapping("/signup")
-    public ResponseEntity<Message> signup(@RequestBody AccountDto.Request request){
+    public ResponseEntity<Message> signup(@RequestBody AccountDto.UserRequest request){
         return new ResponseEntity<>(
                 Message.builder().status(StatusEnum.OK).msg("회원가입 축하드립니다.")
-                        .data(authService.signup(request)).build(),
+                        .data(authService.normalSignup(request)).build(),
                 HttpStatus.OK);
     }
 
     @ApiOperation(value = "소셜 로그인 접근", tags = "auth-controller", notes = AccountNotes.SOCIAL_NOTES)
     @PostMapping("/social")
-    public ResponseEntity<Message> socialAccess(@RequestBody SocialDto.Request requestDto){
-        return new ResponseEntity<>(authService.socialAccess(requestDto),HttpStatus.OK);
+    public ResponseEntity<Message> socialAccess(@RequestBody SocialDto.SocialRequest socialRequestDto){
+        return new ResponseEntity<>(authService.socialAccess(socialRequestDto),HttpStatus.OK);
     }
 
     @ApiOperation(value = "소셜 회원가입 및 로그인", tags = "auth-controller", notes = AccountNotes.SOCIAL_SIGNUP_NOTES)
     @PostMapping("/social/signup")
-    public ResponseEntity<Message> socialSignUp(@RequestBody SocialDto.SignUpRequest requestDto){
+    public ResponseEntity<Message> socialSignUp(@RequestBody SocialDto.SocialSignUpRequest requestDto){
         return new ResponseEntity<>(authService.socialSignUp(requestDto),HttpStatus.OK);
     }
 
     @ApiOperation(value = "로그인", tags = "auth-controller")
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody AccountDto.Request request){
-        return ResponseEntity.ok(authService.login(request));
+    public ResponseEntity<TokenDto> login(@RequestBody AccountDto.UserRequest request){
+        return ResponseEntity.ok(authService.normalLogin(request));
     }
 
     @ApiOperation(value = "로그아웃", tags = "auth-controller")

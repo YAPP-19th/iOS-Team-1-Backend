@@ -26,7 +26,7 @@ class AccountServiceTest {
     @Transactional
     void getUserInfo() {
         accountRepository.save(AccountTemplate.makeTestAccount());
-        AccountDto.Response accountResponseDto = accountService.getUserInfo();
-        assertThat(accountResponseDto.getEmail()).isEqualTo(AccountTemplate.EMAIL);
+        AccountDto.UserResponse accountUserResponseDto = accountService.getUserInfo();
+        assertThat(accountUserResponseDto.getEmail()).isEqualTo(AccountTemplate.EMAIL);
     }
 }

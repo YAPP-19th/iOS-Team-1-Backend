@@ -16,7 +16,7 @@ public class SocialDto {
     @Getter
     @AllArgsConstructor
     @Builder
-    public static class Request{
+    public static class SocialRequest {
         private String socialType;
         private String id;
     }
@@ -24,7 +24,7 @@ public class SocialDto {
     @Getter
     @AllArgsConstructor
     @Builder
-    public static class Response{
+    public static class SocialResponse {
         private String processes;
         private Object data;
     }
@@ -32,7 +32,7 @@ public class SocialDto {
     @Getter
     @AllArgsConstructor
     @Builder
-    public static class SignUpRequest{
+    public static class SocialSignUpRequest {
         private String socialType;
         private String email;
         private String nickname;

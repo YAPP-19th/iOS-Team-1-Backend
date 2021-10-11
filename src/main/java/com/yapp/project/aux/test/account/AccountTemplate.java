@@ -2,7 +2,7 @@ package com.yapp.project.aux.test.account;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.Authority;
-import com.yapp.project.account.domain.dto.AccountDto;
+import com.yapp.project.account.domain.dto.AccountDto.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -44,16 +44,16 @@ public class AccountTemplate {
                 .authority(authority).build();
     }
 
-    public static AccountDto.Request makeAccountRequestDto(){
-        return new AccountDto.Request(EMAIL,USERNAME,PASSWORD);
+    public static UserRequest makeAccountRequestDto(){
+        return new UserRequest(EMAIL,USERNAME,PASSWORD);
     }
 
-    public static AccountDto.Request makeAccountRequestDto(String email){
-        return new AccountDto.Request(email,USERNAME,PASSWORD);
+    public static UserRequest makeAccountRequestDto(String email){
+        return new UserRequest(email,USERNAME,PASSWORD);
     }
 
-    public static AccountDto.Request makeAccountRequestDto(String email,String username){
-        return new AccountDto.Request(email,username,PASSWORD);
+    public static UserRequest makeAccountRequestDto(String email, String username){
+        return new UserRequest(email,username,PASSWORD);
     }
 
 }

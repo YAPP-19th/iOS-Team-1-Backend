@@ -17,7 +17,7 @@ public class AccountDto {
     @Getter
     @AllArgsConstructor
     @Builder
-    public static class Request{
+    public static class UserRequest {
         private String email;
         private String nickname;
         private String password;
@@ -39,13 +39,13 @@ public class AccountDto {
     @Getter
     @AllArgsConstructor
     @Builder
-    public static class Response{
+    public static class UserResponse {
         private String email;
         private String nickname;
         private String profile;
 
-        public static AccountDto.Response of(Account account) {
-            return new AccountDto.Response(account.getEmail(), account.getNickname(), account.getProfile());
+        public static UserResponse of(Account account) {
+            return new UserResponse(account.getEmail(), account.getNickname(), account.getProfile());
         }
     }
 

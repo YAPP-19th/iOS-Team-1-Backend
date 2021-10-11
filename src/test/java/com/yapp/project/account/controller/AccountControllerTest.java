@@ -29,8 +29,8 @@ class AccountControllerTest {
     @Test
     void getMyAccountInfo() {
         Account account = AccountTemplate.makeTestAccount();
-        given(accountService.getUserInfo()).willReturn(AccountDto.Response.of(account));
-        ResponseEntity<AccountDto.Response> response = accountController.getMyAccountInfo();
+        given(accountService.getUserInfo()).willReturn(AccountDto.UserResponse.of(account));
+        ResponseEntity<AccountDto.UserResponse> response = accountController.getMyAccountInfo();
         assertThat(response).isNotNull();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
