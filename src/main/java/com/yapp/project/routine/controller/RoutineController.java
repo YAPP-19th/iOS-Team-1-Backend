@@ -1,6 +1,7 @@
 package com.yapp.project.routine.controller;
 
 import com.yapp.project.account.domain.Account;
+import com.yapp.project.aux.Message;
 import com.yapp.project.aux.common.AccountUtil;
 import com.yapp.project.routine.domain.RoutineDTO;
 import com.yapp.project.routine.domain.Week;
@@ -38,11 +39,13 @@ public class RoutineController {
         return routineService.getRoutineList(day, AccountUtil.getAccount());
     }
 
+    @ApiOperation(value = "루틴 수정", notes = "루틴 수정하기")
     @PatchMapping("/{routineId}")
     public RoutineDTO.ResponseRoutineDto updateRoutine(@PathVariable Long routineId, @RequestBody RoutineDTO.RequestRoutineDto updateRoutine) {
         return routineService.updateRoutine(routineId, updateRoutine, AccountUtil.getAccount());
     }
 
+    @ApiOperation(value = "루틴 삭제", notes = "루틴 삭제하기")
     @DeleteMapping("/{routineId}")
     public ResponseEntity deleteRoutine(@PathVariable Long routineId) {
         return routineService.deleteRoutine(routineId, AccountUtil.getAccount());
