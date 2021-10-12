@@ -63,4 +63,12 @@ public class Routine {
     public void addDays(List<RoutineDay> days) {
         this.days.addAll(days);
     }
+
+    public void updateData(RoutineDTO.RequestRoutineDto updateRoutine) {
+        this.title = updateRoutine.getTitle();
+        this.goal = updateRoutine.getGoal();
+        this.startTime = LocalTime.parse(updateRoutine.getStartTime());
+        this.isDelete = false;
+        this.category = updateRoutine.getCategory();
+    }
 }
