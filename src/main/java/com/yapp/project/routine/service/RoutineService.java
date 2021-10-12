@@ -2,9 +2,10 @@ package com.yapp.project.routine.service;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.config.exception.Content;
 import com.yapp.project.routine.domain.*;
-import com.yapp.project.routine.exception.BadRequestException;
-import com.yapp.project.routine.exception.NotFoundRoutineException;
+import com.yapp.project.config.exception.routine.BadRequestException;
+import com.yapp.project.config.exception.routine.NotFoundRoutineException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,7 @@ public class RoutineService {
         if( newRoutine.getTitle().isBlank() ||
                 newRoutine.getGoal().isBlank() ||
                 newRoutine.getDays().isEmpty() ||
-                newRoutine.getStartTime().isBlank()) throw new BadRequestException("요청 데이터를 확인하세요.", StatusEnum.BAD_REQUEST);
+                newRoutine.getStartTime().isBlank()) throw new BadRequestException(Content.BAD_REQUEST_CREATE_ROUTINE_DATA, StatusEnum.BAD_REQUEST);
         return true;
     }
 
@@ -56,10 +57,10 @@ public class RoutineService {
     }
 
     private void checkIsMine(Account account, Routine routine) {
-        if(!account.getId().equals(routine.getAccount().getId())) throw new BadRequestException("루틴ID를 확인하세요.", StatusEnum.BAD_REQUEST);
+        if(!account.getId().equals(routine.getAccount().getId())) throw new BadRequestException(Content.BAD_REQUEST_GET_ROUTINE_ID, StatusEnum.BAD_REQUEST);
     }
 
     private Routine findIsExist(Long routineId) {
-        return routineRepository.findById(routineId).orElseThrow(() -> new NotFoundRoutineException("루틴이 존재하지 않습니다.", StatusEnum.NOT_FOUND));
+        return routineRepository.findById(routineId).orElseThrow(() -> new NotFoundRoutineException(Content.NOT_FOUND_ROUTINE, StatusEnum.NOT_FOUND));
     }
 }

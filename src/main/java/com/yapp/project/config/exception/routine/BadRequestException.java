@@ -1,4 +1,4 @@
-package com.yapp.project.routine.exception;
+package com.yapp.project.config.exception.routine;
 
 import com.yapp.project.aux.StatusEnum;
 import lombok.Getter;

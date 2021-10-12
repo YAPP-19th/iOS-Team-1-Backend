@@ -1,6 +1,8 @@
-package com.yapp.project.routine.exception;
+package com.yapp.project.config.exception.routine;
 
 import com.yapp.project.aux.Message;
+import com.yapp.project.config.exception.routine.BadRequestException;
+import com.yapp.project.config.exception.routine.NotFoundRoutineException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
