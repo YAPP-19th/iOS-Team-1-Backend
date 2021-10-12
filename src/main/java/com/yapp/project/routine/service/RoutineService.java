@@ -8,6 +8,7 @@ import com.yapp.project.config.exception.routine.BadRequestException;
 import com.yapp.project.config.exception.routine.NotFoundRoutineException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,13 @@ import java.util.stream.Collectors;
 public class RoutineService {
 
     private final RoutineRepository routineRepository;
+
+    public ResponseEntity deleteRoutine(Long routineId, Account account) {
+        Routine routine = findIsExist(routineId);
+        checkIsMine(account, routine);
+        routineRepository.delete(routine);
+        return ResponseEntity.ok().build();
+    }
 
     public RoutineDTO.ResponseRoutineDto updateRoutine(Long routineId, RoutineDTO.RequestRoutineDto updateRoutine, Account account) {
         checkDataIsNull(updateRoutine);

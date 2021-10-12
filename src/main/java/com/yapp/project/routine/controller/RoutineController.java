@@ -1,11 +1,13 @@
 package com.yapp.project.routine.controller;
 
+import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.common.AccountUtil;
 import com.yapp.project.routine.domain.RoutineDTO;
 import com.yapp.project.routine.domain.Week;
 import com.yapp.project.routine.service.RoutineService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,5 +41,10 @@ public class RoutineController {
     @PatchMapping("/{routineId}")
     public RoutineDTO.ResponseRoutineDto updateRoutine(@PathVariable Long routineId, @RequestBody RoutineDTO.RequestRoutineDto updateRoutine) {
         return routineService.updateRoutine(routineId, updateRoutine, AccountUtil.getAccount());
+    }
+
+    @DeleteMapping("/{routineId}")
+    public ResponseEntity deleteRoutine(@PathVariable Long routineId) {
+        return routineService.deleteRoutine(routineId, AccountUtil.getAccount());
     }
 }
