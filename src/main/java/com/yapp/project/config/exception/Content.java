@@ -11,4 +11,9 @@ public class Content {
     public static final String REFRESH_TOKEN_INVALID = "Refresh Token이 유효하지 않습니다.";
     public static final String TOKEN_NOT_EQUAL_USER_INFORMATION = "토큰의 유저 정보가 일치하지 않습니다. ";
 
+    // Routine Error Message
+    public static final String BAD_REQUEST_CREATE_ROUTINE_DATA = "요청 데이터를 확인하세요.";
+    public static final String BAD_REQUEST_GET_ROUTINE_ID = "루틴 ID를 확인하세요.";
+    public static final String NOT_FOUND_ROUTINE = "루틴이 존재하지 않습니다.";
+
 }
