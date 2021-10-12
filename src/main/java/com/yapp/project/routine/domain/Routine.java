@@ -43,7 +43,7 @@ public class Routine {
     @Column(nullable = false)
     private String category;
 
-    @OneToMany(mappedBy = "routine", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoutineDay> days = new ArrayList<>();
 
     @OneToMany(mappedBy = "routine")
@@ -60,8 +60,7 @@ public class Routine {
         this.createdAt = LocalDateTime.now();
     }
 
-    public void addDays(RoutineDay day) {
-        this.days.add(day);
-        day.setRoutine(this);
+    public void addDays(List<RoutineDay> days) {
+        this.days.addAll(days);
     }
 }

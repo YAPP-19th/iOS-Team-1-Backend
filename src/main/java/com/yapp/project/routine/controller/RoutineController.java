@@ -35,4 +35,9 @@ public class RoutineController {
     public List<RoutineDTO.ResponseRoutineDto> getRoutineList(@PathVariable Week day) {
         return routineService.getRoutineList(day, AccountUtil.getAccount());
     }
+
+    @PatchMapping("/{routineId}")
+    public RoutineDTO.ResponseRoutineDto updateRoutine(@PathVariable Long routineId, @RequestBody RoutineDTO.RequestRoutineDto updateRoutine) {
+        return routineService.updateRoutine(routineId, updateRoutine, AccountUtil.getAccount());
+    }
 }

@@ -9,6 +9,7 @@ import com.yapp.project.config.exception.routine.NotFoundRoutineException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,34 @@ import java.util.stream.Collectors;
 public class RoutineService {
 
     private final RoutineRepository routineRepository;
+
+    public RoutineDTO.ResponseRoutineDto updateRoutine(Long routineId, RoutineDTO.RequestRoutineDto updateRoutine, Account account) {
+        checkDataIsNull(updateRoutine);
+        Routine routine = findIsExist(routineId);
+        checkIsMine(account, routine);
+        // ToDo 루틴 수정
+
+        // 날짜 수정
+        setUpdateDay(updateRoutine, routine);
+
+        RoutineDTO.ResponseRoutineDto.builder()
+                .routine(routineRepository.save(routine)).build();
+        return null;
+    }
+
+
+    private void setUpdateDay(RoutineDTO.RequestRoutineDto updateRoutine, Routine routine) {
+        List<RoutineDay> deleteDay = new ArrayList<>();
+        routine.getDays().stream().forEach(x -> {
+            if (!updateRoutine.getDays().contains(x.getDay())) // 삭제요일 제거
+                deleteDay.add(x);
+            else {
+                updateRoutine.getDays().remove(x.getDay()); // 추가해야 하는 요일만 남기기
+            }
+        });
+        routine.getDays().removeAll(deleteDay);
+        setDays(updateRoutine.getDays(), routine);
+    }
 
     public List<RoutineDTO.ResponseRoutineDto> getRoutineList(Week day, Account account) {
         List<Routine> routineList = routineRepository // Sort.by("days").descending(): sequence가 0인 루틴은 최신 등록순
@@ -52,8 +81,8 @@ public class RoutineService {
     }
 
     private void setDays(List<Week> days, Routine routine) {
-        List<RoutineDay> newDays = days.stream().map(day -> RoutineDay.builder().day(day).sequence(0L).build()).collect(Collectors.toList());
-        newDays.stream().forEach(day -> routine.addDays(day));
+        List<RoutineDay> newDays = days.stream().map(day -> RoutineDay.builder().day(day).sequence(0L).routine(routine).build()).collect(Collectors.toList());
+        routine.addDays(newDays);
     }
 
     private void checkIsMine(Account account, Routine routine) {
