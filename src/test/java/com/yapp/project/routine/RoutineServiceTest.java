@@ -142,4 +142,25 @@ public class RoutineServiceTest {
         assertThat(routineList.size()).isEqualTo(routines.size());
     }
 
+    @Test
+    void Test_Update_Routine_Success() {
+        //given
+        Account account = AccountTemplate.makeTestAccount();
+        List<Week> days = new ArrayList<>();
+        List<Week> newDays = new ArrayList<>();
+        days.add(Week.MON); newDays.add(Week.SAT); newDays.add(Week.SUN);
+        RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목표", days, "07:35", "생활");
+        RoutineDTO.RequestRoutineDto mockRoutine = new RoutineDTO.RequestRoutineDto("타이틀 수정", "수정", newDays, "07:35", "생활");
+        Routine fakeRoutine = Routine.builder().account(account).newRoutine(newRoutine).build();
+        // mocking
+        given(routineRepository.findById(1L)).willReturn(Optional.of(fakeRoutine));
+        given(routineRepository.save(any())).willReturn(fakeRoutine);
+
+        // when
+        RoutineDTO.ResponseRoutineDto routine = routineService.updateRoutine(1L, mockRoutine, account);
+
+        // then
+        assertThat(routine.getTitle()).isEqualTo(mockRoutine.getTitle());
+    }
+
 }
