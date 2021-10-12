@@ -24,11 +24,13 @@ public class RoutineController {
         return routineService.createRoutine(newRoutine, AccountUtil.getAccount());
     }
 
+    @ApiOperation(value = "루틴 단일 조회", notes = "루틴ID로 루틴 조회하기")
     @GetMapping("/{routineId}")
     public RoutineDTO.ResponseRoutineDto getRoutine(@PathVariable Long routineId) {
         return routineService.getRoutine(routineId, AccountUtil.getAccount());
     }
 
+    @ApiOperation(value = "루틴 요일별 전체 조회", notes = "요일별 루틴 전체 조회하기")
     @GetMapping("/day/{day}")
     public List<RoutineDTO.ResponseRoutineDto> getRoutineList(@PathVariable Week day) {
         return routineService.getRoutineList(day, AccountUtil.getAccount());
