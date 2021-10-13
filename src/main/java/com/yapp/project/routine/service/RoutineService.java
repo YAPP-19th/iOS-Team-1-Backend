@@ -31,7 +31,7 @@ public class RoutineService {
         checkDataIsNull(updateRoutine);
         Routine routine = findIsExist(routineId);
         checkIsMine(account, routine);
-        routine.updateData(updateRoutine);
+        routine.updateRoutine(updateRoutine);
         updateDayList(updateRoutine, routine);
         return RoutineDTO.ResponseRoutineDto.builder()
                 .routine(routineRepository.save(routine)).build();

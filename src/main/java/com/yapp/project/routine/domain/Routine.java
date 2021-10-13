@@ -64,7 +64,7 @@ public class Routine {
         this.days.addAll(days);
     }
 
-    public void updateData(RoutineDTO.RequestRoutineDto updateRoutine) {
+    public void updateRoutine(RoutineDTO.RequestRoutineDto updateRoutine) {
         this.title = updateRoutine.getTitle();
         this.goal = updateRoutine.getGoal();
         this.startTime = LocalTime.parse(updateRoutine.getStartTime());
