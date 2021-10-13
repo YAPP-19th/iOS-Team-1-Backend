@@ -21,3 +21,7 @@ INSERT INTO ORGANIZATION (title,category,summary) VALUES ('30분 자기개발','
 INSERT INTO ORGANIZATION (title,category,summary) VALUES ('단어 외우기','자기개발','티끌 모아 태산! 오늘부터 시작해보는건 어때요?');
 INSERT INTO ORGANIZATION (title,category,summary) VALUES ('블로그 글 쓰기','자기개발','나의 깊이를 쌓고 싶다면, 아침 시간을 활용해 보세요');
 INSERT INTO ORGANIZATION (title,category,summary) VALUES ('뉴스 읽기','자기개발','더 넓은 세상으로 나아갈 나를 위하여 🌏');
+INSERT INTO SAYING (content) VALUES ('새로운 일을 시작하는 용기속에 당신의 천재성, 능력과 기적이 모두 숨어 있다.');
+INSERT INTO SAYING (content) VALUES ('일찍 일어나는 새가 벌레를 잡아 먹는다.');
+INSERT INTO SAYING (content) VALUES ('아침에 눈을 뜨자.');
+INSERT INTO SAYING (content) VALUES ('이불을 개라.');
