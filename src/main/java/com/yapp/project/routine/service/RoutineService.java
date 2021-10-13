@@ -29,7 +29,7 @@ public class RoutineService {
     }
 
     public ResponseEntity deleteRoutine(Long routineId, Account account) {
-        Routine routine = findIsExist(routineId);
+        Routine routine = findIsExistById(routineId);
         checkIsMine(account, routine);
         routineRepository.delete(routine);
         return ResponseEntity.ok().build();
@@ -37,7 +37,7 @@ public class RoutineService {
 
     public RoutineDTO.ResponseRoutineDto updateRoutine(Long routineId, RoutineDTO.RequestRoutineDto updateRoutine, Account account) {
         checkDataIsNull(updateRoutine);
-        Routine routine = findIsExist(routineId);
+        Routine routine = findIsExistById(routineId);
         checkIsMine(account, routine);
         routine.updateRoutine(updateRoutine);
         updateDayList(updateRoutine, routine);
@@ -53,7 +53,7 @@ public class RoutineService {
     }
 
     public RoutineDTO.ResponseRoutineDto getRoutine(Long routineId, Account account) {
-        Routine routine = findIsExist(routineId);
+        Routine routine = findIsExistById(routineId);
         checkIsMine(account, routine);
         return RoutineDTO.ResponseRoutineDto.builder()
                 .routine(routine).build();
@@ -87,7 +87,7 @@ public class RoutineService {
         if(!account.getId().equals(routine.getAccount().getId())) throw new BadRequestException(Content.BAD_REQUEST_GET_ROUTINE_ID, StatusEnum.BAD_REQUEST);
     }
 
-    private Routine findIsExist(Long routineId) {
+    private Routine findIsExistById(Long routineId) {
         return routineRepository.findById(routineId).orElseThrow(() -> new NotFoundRoutineException(Content.NOT_FOUND_ROUTINE, StatusEnum.NOT_FOUND));
     }
 
