@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -49,5 +50,13 @@ public class RoutineController {
     @DeleteMapping("/{routineId}")
     public ResponseEntity deleteRoutine(@PathVariable Long routineId) {
         return routineService.deleteRoutine(routineId, AccountUtil.getAccount());
+    }
+
+    @PatchMapping("/sequence/{day}")
+    public List<RoutineDTO.ResponseRoutineDto> updateRoutineSequence(
+            @PathVariable Week day, @RequestBody ArrayList<Long> sequence) {
+//        System.out.println("day: " + day + ", sequence: " + sequence);
+
+        return routineService.updateRoutineSequence(day, sequence, AccountUtil.getAccount());
     }
 }

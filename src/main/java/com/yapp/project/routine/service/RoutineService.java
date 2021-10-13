@@ -20,6 +20,14 @@ public class RoutineService {
 
     private final RoutineRepository routineRepository;
 
+    public List<RoutineDTO.ResponseRoutineDto> updateRoutineSequence(Week day, ArrayList<Long> sequence, Account account) {
+        List<Routine> routineList = findAllIsExistByID(sequence);
+        routineList.stream().forEach(x -> checkIsMine(account, x));
+        updateRoutineDaysSequence(day, sequence, routineList);
+        routineRepository.saveAll(routineList);
+        return getRoutineList(day, account);
+    }
+
     public ResponseEntity deleteRoutine(Long routineId, Account account) {
         Routine routine = findIsExist(routineId);
         checkIsMine(account, routine);
@@ -95,4 +103,18 @@ public class RoutineService {
         routine.getDays().removeAll(deleteDay);
         setDays(updateRoutine.getDays(), routine);
     }
+
+    private List<Routine> findAllIsExistByID(ArrayList<Long> sequence) {
+        return routineRepository.findAllById(sequence);
+    }
+
+    private void updateRoutineDaysSequence(Week day, ArrayList<Long> sequence, List<Routine> routineList) {
+        routineList.stream().forEach(x -> {
+            x.getDays().stream().forEach(y -> {
+                if(y.getDay().equals(day)) {
+                    y.updateSequence((long)(sequence.indexOf(x.getId()) + 1));
+                }});
+        });
+    }
+
 }

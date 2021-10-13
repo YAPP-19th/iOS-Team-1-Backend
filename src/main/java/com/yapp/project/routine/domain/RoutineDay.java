@@ -39,6 +39,10 @@ public class RoutineDay {
         this.createdAt = LocalDateTime.now();
     }
 
+    public void updateSequence(Long sequence) {
+        this.sequence = sequence;
+    }
+
     public void setRoutine(Routine routine) {
         this.routine = routine;
     }
