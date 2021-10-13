@@ -8,7 +8,9 @@ import com.yapp.project.config.exception.routine.BadRequestException;
 import com.yapp.project.config.exception.routine.NotFoundRoutineException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +19,23 @@ import java.util.stream.Collectors;
 public class RoutineService {
 
     private final RoutineRepository routineRepository;
+
+    public ResponseEntity deleteRoutine(Long routineId, Account account) {
+        Routine routine = findIsExist(routineId);
+        checkIsMine(account, routine);
+        routineRepository.delete(routine);
+        return ResponseEntity.ok().build();
+    }
+
+    public RoutineDTO.ResponseRoutineDto updateRoutine(Long routineId, RoutineDTO.RequestRoutineDto updateRoutine, Account account) {
+        checkDataIsNull(updateRoutine);
+        Routine routine = findIsExist(routineId);
+        checkIsMine(account, routine);
+        routine.updateRoutine(updateRoutine);
+        updateDayList(updateRoutine, routine);
+        return RoutineDTO.ResponseRoutineDto.builder()
+                .routine(routineRepository.save(routine)).build();
+    }
 
     public List<RoutineDTO.ResponseRoutineDto> getRoutineList(Week day, Account account) {
         List<Routine> routineList = routineRepository // Sort.by("days").descending(): sequence가 0인 루틴은 최신 등록순
@@ -52,8 +71,8 @@ public class RoutineService {
     }
 
     private void setDays(List<Week> days, Routine routine) {
-        List<RoutineDay> newDays = days.stream().map(day -> RoutineDay.builder().day(day).sequence(0L).build()).collect(Collectors.toList());
-        newDays.stream().forEach(day -> routine.addDays(day));
+        List<RoutineDay> newDays = days.stream().map(day -> RoutineDay.builder().day(day).sequence(0L).routine(routine).build()).collect(Collectors.toList());
+        routine.addDays(newDays);
     }
 
     private void checkIsMine(Account account, Routine routine) {
@@ -62,5 +81,18 @@ public class RoutineService {
 
     private Routine findIsExist(Long routineId) {
         return routineRepository.findById(routineId).orElseThrow(() -> new NotFoundRoutineException(Content.NOT_FOUND_ROUTINE, StatusEnum.NOT_FOUND));
+    }
+
+    private void updateDayList(RoutineDTO.RequestRoutineDto updateRoutine, Routine routine) {
+        List<RoutineDay> deleteDay = new ArrayList<>();
+        routine.getDays().stream().forEach(x -> {
+            if (!updateRoutine.getDays().contains(x.getDay()))
+                deleteDay.add(x);
+            else {
+                updateRoutine.getDays().remove(x.getDay());
+            }
+        });
+        routine.getDays().removeAll(deleteDay);
+        setDays(updateRoutine.getDays(), routine);
     }
 }
