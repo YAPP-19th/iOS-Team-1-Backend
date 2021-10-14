@@ -21,7 +21,7 @@ public class RoutineService {
     private final RoutineRepository routineRepository;
 
     public List<RoutineDTO.ResponseRoutineDto> updateRoutineSequence(Week day, ArrayList<Long> sequence, Account account) {
-        List<Routine> routineList = findAllIsExistByID(sequence);
+        List<Routine> routineList = findAllIsExistById(sequence);
         routineList.stream().forEach(x -> checkIsMine(account, x));
         updateRoutineDaysSequence(day, sequence, routineList);
         routineRepository.saveAll(routineList);
@@ -104,17 +104,28 @@ public class RoutineService {
         setDays(updateRoutine.getDays(), routine);
     }
 
-    private List<Routine> findAllIsExistByID(ArrayList<Long> sequence) {
+    private List<Routine> findAllIsExistById(ArrayList<Long> sequence) {
         return routineRepository.findAllById(sequence);
     }
 
     private void updateRoutineDaysSequence(Week day, ArrayList<Long> sequence, List<Routine> routineList) {
-        routineList.stream().forEach(x -> {
-            x.getDays().stream().forEach(y -> {
-                if(y.getDay().equals(day)) {
-                    y.updateSequence((long)(sequence.indexOf(x.getId()) + 1));
-                }});
-        });
+        Long indexSequence = 1L;
+        for(Integer x: getRoutineIndex(sequence, routineList)) {
+            for(RoutineDay y: routineList.get(x).getDays())
+                if(y.getDay().equals(day)) y.updateSequence(indexSequence++);
+        }
     }
 
+    private List<Integer> getRoutineIndex(ArrayList<Long> sequence, List<Routine> routineList) {
+        List<Integer> routineIndex = new ArrayList<>();
+        Integer seq = 0;
+        for (Long x : sequence) {
+            for (Routine y : routineList) {
+                if (y.getId().equals(x)) routineIndex.add(seq);
+                seq++;
+            }
+            seq = 0;
+        }
+        return routineIndex;
+    }
 }
