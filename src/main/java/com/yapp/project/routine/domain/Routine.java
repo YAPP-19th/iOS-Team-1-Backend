@@ -50,7 +50,7 @@ public class Routine {
     private List<Retrospect> retrospects = new ArrayList<>();
 
     @Builder
-    public Routine(Account account, RoutineDTO.RequestRoutineDto newRoutine){
+    public Routine(Account account, RoutineDTO.RequestRoutineDto newRoutine, Long id){
         this.account = account;
         this.title = newRoutine.getTitle();
         this.goal = newRoutine.getGoal();
@@ -58,6 +58,7 @@ public class Routine {
         this.isDelete = false;
         this.category = newRoutine.getCategory();
         this.createdAt = LocalDateTime.now();
+        this.id = id;
     }
 
     public void addDays(List<RoutineDay> days) {

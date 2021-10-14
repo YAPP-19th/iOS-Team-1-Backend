@@ -163,4 +163,31 @@ public class RoutineServiceTest {
         assertThat(routine.getTitle()).isEqualTo(mockRoutine.getTitle());
     }
 
+    @Test
+    void Test_Update_Routine_Sequence_Success() {
+        //given
+        Account account = AccountTemplate.makeTestAccount();
+        List<Routine> routines = new ArrayList<>();
+        List<Week> newDays1 = new ArrayList<>();
+        List<Week> newDays2 = new ArrayList<>();
+        ArrayList<Long> sequence = new ArrayList<>();
+        sequence.add(2L); sequence.add(1L);
+        newDays1.add(Week.MON); newDays2.add(Week.MON); newDays2.add(Week.SUN);
+        RoutineDTO.RequestRoutineDto newRoutine1 = new RoutineDTO.RequestRoutineDto("타이틀", "목표", newDays1, "07:35", "생활"); // 1번
+        RoutineDTO.RequestRoutineDto newRoutine2 = new RoutineDTO.RequestRoutineDto("타이틀2", "목표2", newDays2, "07:35", "생활"); // 2번
+        routines.add(Routine.builder().account(account).newRoutine(newRoutine2).id(0L).build()); // 2번 -> 1번
+        routines.add(Routine.builder().account(account).newRoutine(newRoutine1).id(1L).build()); // 1번 -> 2번
+
+        // mocking
+        given(routineRepository.findAllById(sequence)).willReturn(routines);
+        given(routineRepository
+                .findAllByAccountAndDaysDayOrderByDaysSequence(account, Week.MON, Sort.by("days").descending())).willReturn(routines);
+
+        // when
+        List<RoutineDTO.ResponseRoutineDto> responseRoutineDtos = routineService.updateRoutineSequence(Week.MON, sequence, account);
+
+        // then
+        assertThat(responseRoutineDtos.get(0).getTitle()).isEqualTo(newRoutine2.getTitle());
+    }
+
 }
