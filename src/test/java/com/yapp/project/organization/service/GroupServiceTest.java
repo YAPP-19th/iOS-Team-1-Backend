@@ -3,7 +3,7 @@ package com.yapp.project.organization.service;
 import static com.yapp.project.aux.test.organization.OrganizationTemplate.*;
 import static org.mockito.BDDMockito.given;
 import com.yapp.project.organization.domain.Organization;
-import com.yapp.project.organization.domain.dto.OrganizationDto.*;
+import com.yapp.project.organization.domain.dto.OrgDto;
 import com.yapp.project.organization.domain.repository.OrganizationRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +33,7 @@ class GroupServiceTest {
 
         given(organizationRepository.findAll()).willReturn(organizations);
 
-        List<OrgResponse> res = groupService.findAll();
+        List<OrgDto.OrgResponse> res = groupService.findAll();
         assertThat(res.get(0).getTitle()).isEqualTo(organization.getTitle());
     }
 
@@ -41,7 +41,7 @@ class GroupServiceTest {
     void test_디테일_페이지(){
         Organization organization = makeTestOrganization();
         given(organizationRepository.findById(1L)).willReturn(Optional.ofNullable(organization));
-        OrgDetailResponse response = groupService.detailGroup(1L);
+        OrgDto.OrgDetailResponse response = groupService.detailGroup(1L);
         assert organization != null;
         assertThat(response.getTitle()).isEqualTo(organization.getTitle());
         assertThat(response.getSummary()).isEqualTo(organization.getSummary());
@@ -53,8 +53,8 @@ class GroupServiceTest {
         List<Organization> organizations = new ArrayList<>();
         organizations.add(organization);
         given(organizationRepository.findByCategoryAndMore(CATEGORY)).willReturn(organizations);
-        List<OrgResponse> res = groupService.findByCategory(CATEGORY);
-        OrgResponse orgResponse = res.get(0);
+        List<OrgDto.OrgResponse> res = groupService.findByCategory(CATEGORY);
+        OrgDto.OrgResponse orgResponse = res.get(0);
         assertThat(organization.getTitle()).isEqualTo(orgResponse.getTitle());
         assertThat(organization.getId()).isEqualTo(orgResponse.getId());
     }

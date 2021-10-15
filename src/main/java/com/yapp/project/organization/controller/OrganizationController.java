@@ -2,6 +2,7 @@ package com.yapp.project.organization.controller;
 
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
+import static com.yapp.project.organization.domain.dto.OrgDto.*;
 import com.yapp.project.organization.service.GroupService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -20,23 +21,29 @@ public class OrganizationController {
 
     @ApiOperation(value = "그룹 전체 리스트", tags = "organization-controller")
     @GetMapping
-    public ResponseEntity<Message> findAll(){
-        return new ResponseEntity<>(Message.builder().data(groupService.findAll()).status(StatusEnum.OK).build()
-                , HttpStatus.OK);
+    public ResponseEntity<OrgListResponseMessage> findAll(){
+        return new ResponseEntity<>(OrgListResponseMessage.builder()
+                .data(groupService.findAll())
+                .message(Message.builder().status(StatusEnum.OK).msg("조회 성공").build())
+                .build(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "그룹 카테고리 리스트", tags = "organization-controller")
     @GetMapping("/category/{category}")
-    public ResponseEntity<Message> findByCategory(@PathVariable("category") String category){
-        return new ResponseEntity<>(Message.builder().data(groupService.findByCategory(category)).status(StatusEnum.OK).build()
-                , HttpStatus.OK);
+    public ResponseEntity<OrgListResponseMessage> findByCategory(@PathVariable("category") String category){
+        return new ResponseEntity<>(OrgListResponseMessage.builder()
+                .data(groupService.findByCategory(category))
+                .message(Message.builder().status(StatusEnum.OK).msg("조회 성공").build())
+                .build(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "그룹 디테일 페이지",tags = "organization-controller")
     @GetMapping("/detail/{id}")
-    public ResponseEntity<Message> detailGroup(@PathVariable("id") Long id){
-        return new ResponseEntity<>(Message.builder().data(groupService.detailGroup(id)).status(StatusEnum.OK).build()
-                ,HttpStatus.OK);
+    public ResponseEntity<OrgDetailMessage> detailGroup(@PathVariable("id") Long id){
+        return new ResponseEntity<>(OrgDetailMessage.builder()
+                .data(groupService.detailGroup(id))
+                .message(Message.builder().status(StatusEnum.OK).msg("디테일 페이지 접근 성공").build())
+                .build(),HttpStatus.OK);
     }
 
 
