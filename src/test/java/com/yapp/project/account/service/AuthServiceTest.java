@@ -75,8 +75,8 @@ class AuthServiceTest {
         TokenDto tokenDto = authService.login(accountRequestDto);
         TokenRequestDto tokenRequestDto = new TokenRequestDto(tokenDto.getRefreshToken());
         TimeUnit.MICROSECONDS.sleep(1);
-        TokenDto reissueToken = authService.reissue(tokenRequestDto);
-        assertThat(tokenDto.getAccessTokenExpiresIn()-reissueToken.getAccessTokenExpiresIn()).isNegative();
+        SocialDto.TokenMessage reissueToken = authService.reissue(tokenRequestDto);
+        assertThat(tokenDto.getAccessTokenExpiresIn()-reissueToken.getData().getAccessTokenExpiresIn()).isNegative();
     }
 
     @Test

@@ -2,6 +2,7 @@ package com.yapp.project.account.domain.dto;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.Authority;
+import com.yapp.project.aux.Message;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -48,6 +49,15 @@ public class AccountDto {
             return new UserResponse(account.getEmail(), account.getNickname(), account.getProfile());
         }
     }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class UserResponseMessage{
+        private Message message;
+        private UserResponse data;
+    }
+
 
     @Getter
     @AllArgsConstructor
