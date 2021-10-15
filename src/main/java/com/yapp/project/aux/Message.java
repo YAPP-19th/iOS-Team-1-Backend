@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 public class Message {
     private StatusEnum status;
     private String msg;
-    private Object data;
 
     public static Message of(StatusEnum status, String message){
         return Message.builder().status(status)
@@ -20,13 +19,7 @@ public class Message {
                                 .build();
     }
 
-    public static Message of(String msg,Object data){
-        return Message.builder().status(StatusEnum.OK)
-                .msg(msg).data(data).build();
-    }
-
     public static Message of(String msg){
-        return Message.of(msg,null);
+        return Message.of(StatusEnum.BAD_REQUEST,msg);
     }
-
 }

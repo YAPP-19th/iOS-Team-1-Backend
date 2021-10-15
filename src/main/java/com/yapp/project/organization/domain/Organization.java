@@ -1,7 +1,7 @@
 package com.yapp.project.organization.domain;
 
 import com.yapp.project.mission.domain.Mission;
-import com.yapp.project.organization.domain.dto.OrganizationDto.*;
+import com.yapp.project.organization.domain.dto.OrgDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,11 +16,15 @@ import java.util.List;
 public class Organization {
 
     @Builder
-    public Organization(Long id, String title ,String category,String summary){
+    public Organization(Long id, String title , Double rate, String category, Clause clause){
         this.id = id;
         this.title = title;
+        this.rate = rate;
         this.category = category;
-        this.summary = summary;
+        this.recommend = clause.getRecommend();
+        this.shoot = clause.getShoot();
+        this.promise = clause.getPromise();
+        this.summary = clause.getSummary();
     }
 
     @Id
@@ -37,26 +41,26 @@ public class Organization {
 
     private String image;
 
+    private String category;
+
     private String recommend;
 
     private String shoot;
 
     private String promise;
 
-    private String category;
-
     private String summary;
 
     private Long count;
 
-    public OrgResponse toResponseDto(){
-        return OrgResponse.builder().id(id)
+    public OrgDto.OrgResponse toResponseDto(){
+        return OrgDto.OrgResponse.builder().id(id)
                 .title(title).rate(rate)
                 .image(image).participant(missions.size()).build();
     }
 
-    public OrgDetailResponse toDetailResponseDto(){
-        return OrgDetailResponse.builder().id(id)
+    public OrgDto.OrgDetailResponse toDetailResponseDto(){
+        return OrgDto.OrgDetailResponse.builder().id(id)
                 .shoot(shoot).participant(missions.size()).rate(rate).title(title)
                 .recommend(recommend).promise(promise).category(category)
                 .summary(summary).build();

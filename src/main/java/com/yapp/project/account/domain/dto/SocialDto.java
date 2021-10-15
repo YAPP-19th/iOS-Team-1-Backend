@@ -3,9 +3,8 @@ package com.yapp.project.account.domain.dto;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.Authority;
 import com.yapp.project.account.domain.SocialType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import com.yapp.project.aux.Message;
+import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -29,6 +28,14 @@ public class SocialDto {
         private Object data;
     }
 
+    @Data
+    @AllArgsConstructor
+    @Builder
+    public static class SocialResponseMessage{
+        private Message message;
+        private SocialResponse data;
+    }
+
     @Getter
     @AllArgsConstructor
     @Builder
@@ -50,5 +57,13 @@ public class SocialDto {
                     .password(passwordEncoder.encode(email+suffix))
                     .build();
         }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class TokenMessage {
+        private Message message;
+        private TokenDto data;
     }
 }
