@@ -55,8 +55,6 @@ public class RoutineController {
     @PatchMapping("/sequence/{day}")
     public List<RoutineDTO.ResponseRoutineDto> updateRoutineSequence(
             @PathVariable Week day, @RequestBody ArrayList<Long> sequence) {
-//        System.out.println("day: " + day + ", sequence: " + sequence);
-
         return routineService.updateRoutineSequence(day, sequence, AccountUtil.getAccount());
     }
 }

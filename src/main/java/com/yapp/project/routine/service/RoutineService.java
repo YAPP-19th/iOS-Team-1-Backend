@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -109,23 +110,16 @@ public class RoutineService {
     }
 
     private void updateRoutineDaysSequence(Week day, ArrayList<Long> sequence, List<Routine> routineList) {
-        Long indexSequence = 1L;
-        for(Integer x: getRoutineIndex(sequence, routineList)) {
-            for(RoutineDay y: routineList.get(x).getDays())
-                if(y.getDay().equals(day)) y.updateSequence(indexSequence++);
+        HashMap<Long, Long> routineListSequence = new HashMap<>();
+        Long routineSequence = 1L;
+        for (Long seq : sequence) {
+            routineListSequence.put(seq, routineSequence++);
         }
-    }
-
-    private List<Integer> getRoutineIndex(ArrayList<Long> sequence, List<Routine> routineList) {
-        List<Integer> routineIndex = new ArrayList<>();
-        Integer seq = 0;
-        for (Long x : sequence) {
-            for (Routine y : routineList) {
-                if (y.getId().equals(x)) routineIndex.add(seq);
-                seq++;
-            }
-            seq = 0;
-        }
-        return routineIndex;
+        routineList.forEach(x -> {
+            x.getDays().forEach(y -> {
+                if(y.getDay().equals(day))
+                    y.updateSequence(routineListSequence.get(x.getId()));
+            });
+        });
     }
 }
