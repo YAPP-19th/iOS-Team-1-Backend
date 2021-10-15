@@ -39,7 +39,7 @@ public class AuthService {
     private String suffix;
 
     @Transactional
-    public Message socialAccess(SocialRequest socialRequestDto){
+    public SocialResponseMessage socialAccess(SocialRequest socialRequestDto){
         String emailSuffix = "";
         SocialType socialType = null;
         if (socialRequestDto.getSocialType().equalsIgnoreCase(SocialType.KAKAO.toString())){
@@ -54,17 +54,28 @@ public class AuthService {
             assert  account!=null;
             TokenDto tokenDto = login(account.toAccountRequestDto(suffix));
             SocialResponse socialResponseDto = new SocialResponse("LOGIN",tokenDto);
-            return Message.builder().status(StatusEnum.OK).msg("소셜 로그인 성공").data(socialResponseDto).build();
+            return SocialResponseMessage.builder()
+                    .message(
+                            Message.builder()
+                                    .status(StatusEnum.OK)
+                                    .msg("소셜 로그인 성공")
+                                    .build()
+                    ).data(socialResponseDto).build();
         }else {
             Account account = Account.builder().email(socialRequestDto.getId()+emailSuffix).socialType(socialType)
                     .build();
             SocialResponse socialResponseDto = new SocialResponse("SIGNUP",account);
-            return Message.builder().status(StatusEnum.OK).msg("소셜 회원가입 진행중").data(socialResponseDto).build();
+            return SocialResponseMessage.builder().message(
+                    Message.builder()
+                            .status(StatusEnum.OK)
+                            .msg("소셜 회원가입 진행중")
+                            .build()
+            ).data(socialResponseDto).build();
         }
     }
 
     @Transactional
-    public Message socialSignUp(SocialSignUpRequest requestDto){
+    public TokenMessage socialSignUp(SocialSignUpRequest requestDto){
         if (accountRepository.existsByEmail(requestDto.getEmail())){
             throw new DuplicateException(Content.EMAIL_DUPLICATE, StatusEnum.BAD_REQUEST);
         }
@@ -74,17 +85,38 @@ public class AuthService {
         Account account = requestDto.toAccount(passwordEncoder,suffix);
         accountRepository.save(account);
         TokenDto tokenDto = login(account.toAccountRequestDto(suffix));
-        return Message.builder().msg("소셜 회원가입").status(StatusEnum.OK).data(tokenDto).build();
+        return TokenMessage.builder()
+                .message(
+                        Message.builder().
+                                msg("소셜 회원가입")
+                                .status(StatusEnum.OK)
+                                .build()
+                )
+                .data(tokenDto).build();
     }
 
     @Transactional
-    public TokenDto normalLogin(UserRequest accountRequestDto){
-        return login(accountRequestDto);
+    public TokenMessage normalLogin(UserRequest accountRequestDto){
+        return TokenMessage.builder()
+                .message(
+                        Message.builder().
+                                msg("기본 로그인")
+                                .status(StatusEnum.OK)
+                                .build()
+                )
+                .data(login(accountRequestDto)).build();
     }
 
     @Transactional
-    public UserResponse normalSignup(UserRequest accountRequestDto){
-        return signup(accountRequestDto);
+    public UserResponseMessage normalSignup(UserRequest accountRequestDto){
+        return UserResponseMessage.builder()
+                .message(
+                        Message.builder().
+                                msg("회원가입 축하드립니다")
+                                .status(StatusEnum.OK)
+                                .build()
+                )
+                .data(signup(accountRequestDto)).build();
     }
 
 
@@ -97,7 +129,7 @@ public class AuthService {
         }else{
             throw new NotFoundUserInformationException(Content.NOT_FOUND_USER_INFORMATION,StatusEnum.BAD_REQUEST);
         }
-        return Message.of("로그아웃 되었습니다.");
+        return Message.of(StatusEnum.OK,"로그아웃 되었습니다.");
     }
 
     public UserResponse signup(UserRequest accountRequestDto){
@@ -128,7 +160,7 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenDto reissue(TokenRequestDto tokenRequestDto){
+    public TokenMessage reissue(TokenRequestDto tokenRequestDto){
         ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
         if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())){
             throw new TokenInvalidException(Content.REFRESH_TOKEN_INVALID, StatusEnum.BAD_REQUEST);
@@ -147,7 +179,14 @@ public class AuthService {
         // redis refreshToken update
         String key = PrefixType.PREFIX_REFRESH_TOKEN + authentication.getName();
         valueOperations.set(key, tokenDto.getRefreshToken());
-        return tokenDto;
+        return TokenMessage.builder()
+                .message(
+                        Message.builder().
+                                msg("토큰 재발급")
+                                .status(StatusEnum.OK)
+                                .build()
+                )
+                .data(tokenDto).build();
     }
 
     @Transactional(readOnly = true)

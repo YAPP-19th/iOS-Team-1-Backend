@@ -2,6 +2,7 @@ package com.yapp.project.account.controller;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.dto.AccountDto;
+import com.yapp.project.account.domain.dto.SocialDto;
 import com.yapp.project.account.domain.dto.TokenDto;
 import com.yapp.project.account.domain.dto.TokenRequestDto;
 import com.yapp.project.account.domain.repository.AccountRepository;
@@ -51,9 +52,9 @@ class AuthControllerTest {
     @Transactional
     void test_회원가입_성공() {
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
-        ResponseEntity<Message> response = authController.signup(accountRequestDto);
+        ResponseEntity<AccountDto.UserResponseMessage> response = authController.signup(accountRequestDto);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(Objects.requireNonNull(response.getBody()).getMsg()).isEqualTo("회원가입 축하드립니다.");
+        assertThat(Objects.requireNonNull(response.getBody()).getMessage().getMsg()).isEqualTo("회원가입 축하드립니다");
     }
 
     @Test
@@ -72,9 +73,9 @@ class AuthControllerTest {
         Account account = AccountTemplate.makeTestAccount();
         accountRepository.save(account);
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
-        ResponseEntity<TokenDto> response = authController.login(accountRequestDto);
+        ResponseEntity<SocialDto.TokenMessage> response = authController.login(accountRequestDto);
         assertThat(response).isNotNull();
-        assertThat(tokenProvider.validateToken(Objects.requireNonNull(response.getBody()).getAccessToken())).isTrue();
+        assertThat(tokenProvider.validateToken(Objects.requireNonNull(response.getBody()).getData().getAccessToken())).isTrue();
     }
 
     @Test
@@ -112,16 +113,22 @@ class AuthControllerTest {
         accountRepository.save(account);
 
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
-        ResponseEntity<TokenDto> response = authController.login(accountRequestDto);
+        ResponseEntity<SocialDto.TokenMessage> response = authController.login(accountRequestDto);
         assertThat(response).isNotNull();
-        assertThat(tokenProvider.validateToken(Objects.requireNonNull(response.getBody()).getAccessToken())).isTrue();
+        assertThat(tokenProvider.validateToken(Objects.requireNonNull(response.getBody()).getData().getAccessToken())).isTrue();
 
-        TokenRequestDto tokenRequestDto = new TokenRequestDto(response.getBody().getRefreshToken());
-        ResponseEntity<TokenDto> reissueResponse = authController.reissue(tokenRequestDto);
+        TokenRequestDto tokenRequestDto = new TokenRequestDto(response.getBody().getData().getRefreshToken());
+        ResponseEntity<SocialDto.TokenMessage> reissueResponse = authController.reissue(tokenRequestDto);
+
         assertThat(reissueResponse).isNotNull();
         assertThat(reissueResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(tokenProvider.validateToken(Objects.requireNonNull(reissueResponse.getBody()).getAccessToken())).isTrue();
-        assertThat(tokenProvider.validateToken(Objects.requireNonNull(reissueResponse.getBody()).getRefreshToken())).isTrue();
+
+        assertThat(tokenProvider.validateToken(
+                Objects.requireNonNull(reissueResponse.getBody()).getData().getAccessToken())
+        ).isTrue();
+        assertThat(tokenProvider.validateToken(
+                Objects.requireNonNull(reissueResponse.getBody()).getData().getRefreshToken())
+        ).isTrue();
     }
 
     @Test
@@ -143,13 +150,13 @@ class AuthControllerTest {
         accountRepository.save(account);
 
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
-        ResponseEntity<TokenDto> response = authController.login(accountRequestDto);
+        ResponseEntity<SocialDto.TokenMessage> response = authController.login(accountRequestDto);
         assertThat(response).isNotNull();
-        assertThat(tokenProvider.validateToken(Objects.requireNonNull(response.getBody()).getAccessToken())).isTrue();
+        assertThat(tokenProvider.validateToken(Objects.requireNonNull(response.getBody()).getData().getAccessToken())).isTrue();
 
         redisTemplate.delete(PrefixType.PREFIX_REFRESH_TOKEN+AccountTemplate.EMAIL);
 
-        TokenRequestDto tokenRequestDto = new TokenRequestDto(response.getBody().getRefreshToken());
+        TokenRequestDto tokenRequestDto = new TokenRequestDto(response.getBody().getData().getRefreshToken());
         assertThatThrownBy(() ->authController.reissue(tokenRequestDto)).isInstanceOf(NotFoundUserInformationException.class)
                 .hasMessage(Content.LOGOUT_USER);
     }
@@ -161,16 +168,16 @@ class AuthControllerTest {
         accountRepository.save(account);
 
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
-        ResponseEntity<TokenDto> response = authController.login(accountRequestDto);
+        ResponseEntity<SocialDto.TokenMessage> response = authController.login(accountRequestDto);
         assertThat(response).isNotNull();
-        assertThat(tokenProvider.validateToken(Objects.requireNonNull(response.getBody()).getAccessToken())).isTrue();
+        assertThat(tokenProvider.validateToken(Objects.requireNonNull(response.getBody()).getData().getAccessToken())).isTrue();
 
         // Redis에 저장된 리플레시 토큰 값을 빈 값으로 변경
         ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
         String key = PrefixType.PREFIX_REFRESH_TOKEN + AccountTemplate.EMAIL;
         valueOperations.set(key, "");
 
-        TokenRequestDto tokenRequestDto = new TokenRequestDto(response.getBody().getRefreshToken());
+        TokenRequestDto tokenRequestDto = new TokenRequestDto(response.getBody().getData().getRefreshToken());
         assertThatThrownBy(() ->authController.reissue(tokenRequestDto)).isInstanceOf(TokenInvalidException.class)
                 .hasMessage(Content.TOKEN_NOT_EQUAL_USER_INFORMATION);
 
