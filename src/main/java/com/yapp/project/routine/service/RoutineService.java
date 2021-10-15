@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,8 +21,16 @@ public class RoutineService {
 
     private final RoutineRepository routineRepository;
 
+    public List<RoutineDTO.ResponseRoutineDto> updateRoutineSequence(Week day, ArrayList<Long> sequence, Account account) {
+        List<Routine> routineList = findAllIsExistById(sequence);
+        routineList.stream().forEach(x -> checkIsMine(account, x));
+        updateRoutineDaysSequence(day, sequence, routineList);
+        routineRepository.saveAll(routineList);
+        return getRoutineList(day, account);
+    }
+
     public ResponseEntity deleteRoutine(Long routineId, Account account) {
-        Routine routine = findIsExist(routineId);
+        Routine routine = findIsExistById(routineId);
         checkIsMine(account, routine);
         routineRepository.delete(routine);
         return ResponseEntity.ok().build();
@@ -29,7 +38,7 @@ public class RoutineService {
 
     public RoutineDTO.ResponseRoutineDto updateRoutine(Long routineId, RoutineDTO.RequestRoutineDto updateRoutine, Account account) {
         checkDataIsNull(updateRoutine);
-        Routine routine = findIsExist(routineId);
+        Routine routine = findIsExistById(routineId);
         checkIsMine(account, routine);
         routine.updateRoutine(updateRoutine);
         updateDayList(updateRoutine, routine);
@@ -45,7 +54,7 @@ public class RoutineService {
     }
 
     public RoutineDTO.ResponseRoutineDto getRoutine(Long routineId, Account account) {
-        Routine routine = findIsExist(routineId);
+        Routine routine = findIsExistById(routineId);
         checkIsMine(account, routine);
         return RoutineDTO.ResponseRoutineDto.builder()
                 .routine(routine).build();
@@ -79,7 +88,7 @@ public class RoutineService {
         if(!account.getId().equals(routine.getAccount().getId())) throw new BadRequestException(Content.BAD_REQUEST_GET_ROUTINE_ID, StatusEnum.BAD_REQUEST);
     }
 
-    private Routine findIsExist(Long routineId) {
+    private Routine findIsExistById(Long routineId) {
         return routineRepository.findById(routineId).orElseThrow(() -> new NotFoundRoutineException(Content.NOT_FOUND_ROUTINE, StatusEnum.NOT_FOUND));
     }
 
@@ -94,5 +103,23 @@ public class RoutineService {
         });
         routine.getDays().removeAll(deleteDay);
         setDays(updateRoutine.getDays(), routine);
+    }
+
+    private List<Routine> findAllIsExistById(ArrayList<Long> sequence) {
+        return routineRepository.findAllById(sequence);
+    }
+
+    private void updateRoutineDaysSequence(Week day, ArrayList<Long> sequence, List<Routine> routineList) {
+        HashMap<Long, Long> routineListSequence = new HashMap<>();
+        Long routineSequence = 1L;
+        for (Long seq : sequence) {
+            routineListSequence.put(seq, routineSequence++);
+        }
+        routineList.forEach(x -> {
+            x.getDays().forEach(y -> {
+                if(y.getDay().equals(day))
+                    y.updateSequence(routineListSequence.get(x.getId()));
+            });
+        });
     }
 }
