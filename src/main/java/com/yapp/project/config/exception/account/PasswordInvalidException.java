@@ -8,6 +8,6 @@ public class PasswordInvalidException extends IllegalArgumentException{
     private final StatusEnum status;
     public PasswordInvalidException(){
         super(AccountContent.NOT_VAILDATION_PASSWORD);
-        this.status = StatusEnum.BAD_REQUEST;
+        this.status = StatusEnum.PASSWORD_BAD_REQUEST;
     }
 }
