@@ -45,7 +45,7 @@ public class RoutineServiceTest {
         // mocking
         given(routineRepository.save(any())).willReturn(fakeRoutine);
         // when
-        RoutineDTO.ResponseRoutineDto routine = routineService.createRoutine(newRoutine, account);
+        RoutineDTO.ResponseRoutineDto routine = routineService.createRoutine(newRoutine, account).getData();
         // then
         assertThat(routine.getTitle()).isEqualTo(newRoutine.getTitle());
         assertThat(routine.getGoal()).isEqualTo(newRoutine.getGoal());
@@ -82,7 +82,7 @@ public class RoutineServiceTest {
         given(routineRepository.findById(1L)).willReturn(Optional.of(fakeRoutine));
 
         // when
-        RoutineDTO.ResponseRoutineDto routine = routineService.getRoutine(1L, account);
+        RoutineDTO.ResponseRoutineDto routine = routineService.getRoutine(1L, account).getData();
         // then
         assertThat(routine.getTitle()).isEqualTo(newRoutine.getTitle());
         assertThat(routine.getGoal()).isEqualTo(newRoutine.getGoal());
@@ -137,7 +137,7 @@ public class RoutineServiceTest {
         given(routineRepository
                 .findAllByAccountAndDaysDayOrderByDaysSequence(account, Week.MON, Sort.by("days").descending())).willReturn(routines);
         // when
-        List<RoutineDTO.ResponseRoutineDto> routineList = routineService.getRoutineList(Week.MON, account);
+        List<RoutineDTO.ResponseRoutineDto> routineList = routineService.getRoutineList(Week.MON, account).getData();
         // then
         assertThat(routineList.size()).isEqualTo(routines.size());
     }
@@ -157,7 +157,7 @@ public class RoutineServiceTest {
         given(routineRepository.save(any())).willReturn(fakeRoutine);
 
         // when
-        RoutineDTO.ResponseRoutineDto routine = routineService.updateRoutine(1L, mockRoutine, account);
+        RoutineDTO.ResponseRoutineDto routine = routineService.updateRoutine(1L, mockRoutine, account).getData();
 
         // then
         assertThat(routine.getTitle()).isEqualTo(mockRoutine.getTitle());
@@ -184,7 +184,7 @@ public class RoutineServiceTest {
                 .findAllByAccountAndDaysDayOrderByDaysSequence(account, Week.MON, Sort.by("days").descending())).willReturn(routines);
 
         // when
-        List<RoutineDTO.ResponseRoutineDto> responseRoutineDtos = routineService.updateRoutineSequence(Week.MON, sequence, account);
+        List<RoutineDTO.ResponseRoutineDto> responseRoutineDtos = routineService.updateRoutineSequence(Week.MON, sequence, account).getData();
 
         // then
         assertThat(responseRoutineDtos.get(0).getTitle()).isEqualTo(newRoutine2.getTitle());
