@@ -8,6 +8,6 @@ public class NicknameDuplicateException extends RuntimeException{
     private final StatusEnum status;
     public NicknameDuplicateException(){
         super(AccountContent.NICKNAME_DUPLICATE);
-        this.status = StatusEnum.BAD_REQUEST;
+        this.status = StatusEnum.NICKNAME_BAD_REQUEST;
     }
 }

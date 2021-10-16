@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(AlreadyLogoutException.class)
+    public ResponseEntity<Message> handle(AlreadyLogoutException e){
+        final Message message = Message.of(e.getStatus(), e.getMessage());
+        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(EmailDuplicateException.class)
     public ResponseEntity<Message> handle(EmailDuplicateException e){
         final Message message = Message.of(e.getStatus(), e.getMessage());
@@ -25,16 +31,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(AlreadyFoundException.class)
-    public ResponseEntity<Message> handle(AlreadyFoundException e){
-        final Message message = Message.of(e.getStatus() ,e.getMessage());
-        return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
-    }
 
     @ExceptionHandler(NotFoundUserInformationException.class)
     public ResponseEntity<Message> handle(NotFoundUserInformationException e){
         final Message message = Message.of(e.getStatus() ,e.getMessage());
-        return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(message,HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(PasswordInvalidException.class)
@@ -55,10 +56,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(AlreadyFoundException.class)
+    public ResponseEntity<Message> handle(AlreadyFoundException e){
+        final Message message = Message.of(e.getStatus() ,e.getMessage());
+        return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(OverFlowSayingIdException.class)
     public ResponseEntity<Message> handle(OverFlowSayingIdException e){
         final Message message = Message.of(e.getStatus() ,e.getMessage());
-        return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(message,HttpStatus.NOT_FOUND);
     }
 
 }

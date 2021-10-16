@@ -55,7 +55,7 @@ public class AuthService {
             return SocialResponseMessage.builder()
                     .message(
                             Message.builder()
-                                    .status(StatusEnum.OK)
+                                    .status(StatusEnum.SOCIAL_OK)
                                     .msg("소셜 로그인 성공")
                                     .build()
                     ).data(socialResponseDto).build();
@@ -65,7 +65,7 @@ public class AuthService {
             SocialResponse socialResponseDto = new SocialResponse("SIGNUP",account);
             return SocialResponseMessage.builder().message(
                     Message.builder()
-                            .status(StatusEnum.OK)
+                            .status(StatusEnum.SOCIAL_OK)
                             .msg("소셜 회원가입 진행중")
                             .build()
             ).data(socialResponseDto).build();
@@ -87,7 +87,7 @@ public class AuthService {
                 .message(
                         Message.builder().
                                 msg("소셜 회원가입")
-                                .status(StatusEnum.OK)
+                                .status(StatusEnum.SOCIAL_OK)
                                 .build()
                 )
                 .data(tokenDto).build();
@@ -99,7 +99,7 @@ public class AuthService {
                 .message(
                         Message.builder().
                                 msg("기본 로그인")
-                                .status(StatusEnum.OK)
+                                .status(StatusEnum.ACCOUNT_OK)
                                 .build()
                 )
                 .data(login(accountRequestDto)).build();
@@ -112,7 +112,7 @@ public class AuthService {
                 .message(
                         Message.builder().
                                 msg("회원가입 축하드립니다")
-                                .status(StatusEnum.OK)
+                                .status(StatusEnum.ACCOUNT_OK)
                                 .build()
                 )
                 .data(signup(accountRequestDto)).build();
@@ -128,7 +128,7 @@ public class AuthService {
         }else{
             throw new NotFoundUserInformationException();
         }
-        return Message.of(StatusEnum.OK,"로그아웃 되었습니다.");
+        return Message.of(StatusEnum.ACCOUNT_OK,"로그아웃 되었습니다.");
     }
 
     public UserResponse signup(UserRequest accountRequestDto){
@@ -185,7 +185,7 @@ public class AuthService {
                 .message(
                         Message.builder().
                                 msg("토큰 재발급")
-                                .status(StatusEnum.OK)
+                                .status(StatusEnum.TOKEN_OK)
                                 .build()
                 )
                 .data(tokenDto).build();

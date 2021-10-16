@@ -8,6 +8,6 @@ public class EmailDuplicateException extends RuntimeException{
     private final StatusEnum status;
     public EmailDuplicateException(){
         super(AccountContent.EMAIL_DUPLICATE);
-        this.status = StatusEnum.BAD_REQUEST;
+        this.status = StatusEnum.EMAIL_BAD_REQUEST;
     }
 }

@@ -2,9 +2,10 @@ package com.yapp.project.account.controller;
 
 import com.yapp.project.account.domain.dto.AccountDto;
 import com.yapp.project.account.service.AccountService;
+import com.yapp.project.aux.Message;
+import com.yapp.project.aux.StatusEnum;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,7 +16,8 @@ public class AccountController {
 
     @ApiOperation(value = "회원정보", tags = "account-controller")
     @GetMapping("/me")
-    public ResponseEntity<AccountDto.UserResponse> getMyAccountInfo() {
-        return ResponseEntity.ok(accountService.getUserInfo());
+    public AccountDto.UserResponseMessage getMyAccountInfo() {
+        return AccountDto.UserResponseMessage.builder().data(accountService.getUserInfo())
+                .message(Message.builder().msg("성공").status(StatusEnum.ACCOUNT_OK).build()).build();
     }
 }

@@ -8,6 +8,6 @@ public class RefreshTokenInvalidException extends RuntimeException{
     private final StatusEnum status;
     public RefreshTokenInvalidException(){
         super(AccountContent.REFRESH_TOKEN_INVALID);
-        this.status = StatusEnum.BAD_REQUEST;
+        this.status = StatusEnum.REFRESH_BAD_REQUEST;
     }
 }

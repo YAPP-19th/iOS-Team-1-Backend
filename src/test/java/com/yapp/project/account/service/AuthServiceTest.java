@@ -117,7 +117,7 @@ class AuthServiceTest {
         Account account = AccountTemplate.makeTestAccount();
         accountRepository.save(account);
         Message message = authService.logout();
-        assertThat(message.getStatus()).isEqualTo(StatusEnum.OK);
+        assertThat(message.getStatus()).isEqualTo(StatusEnum.ACCOUNT_OK);
     }
 
     @Test

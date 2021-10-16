@@ -8,6 +8,6 @@ public class OverFlowSayingIdException extends RuntimeException{
     private final StatusEnum status;
     public OverFlowSayingIdException(){
         super(SayingContent.OVER_SIZE_ID_NUMBER);
-        this.status = StatusEnum.BAD_REQUEST;
+        this.status = StatusEnum.SAYING_NOT_FOUND;
     }
 }

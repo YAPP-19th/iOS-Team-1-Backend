@@ -1,5 +1,7 @@
 package com.yapp.project.saying.domain.dto;
 
+import com.yapp.project.aux.Message;
+import com.yapp.project.saying.domain.Saying;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,5 +30,21 @@ public class SayingDto {
         private Long id;
         @ApiModelProperty(value = "명언 썼는지 확인",example = "True/False")
         private Boolean result;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class SayingAccessMessage{
+        private Message message;
+        private Saying data;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class SayingResponseMessage{
+        private Message message;
+        private SayingResponse data;
     }
 }

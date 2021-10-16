@@ -8,6 +8,6 @@ public class TokenInvalidException extends RuntimeException{
     private final StatusEnum status;
     public TokenInvalidException(){
         super(AccountContent.TOKEN_NOT_EQUAL_USER_INFORMATION);
-        this.status = StatusEnum.BAD_REQUEST;
+        this.status = StatusEnum.TOKEN_BAD_REQUEST;
     }
 }
