@@ -3,10 +3,8 @@ package com.yapp.project.saying.service;
 import static com.yapp.project.saying.domain.dto.SayingDto.*;
 
 import com.yapp.project.account.domain.Account;
-import com.yapp.project.aux.StatusEnum;
-import com.yapp.project.config.exception.Content;
 import com.yapp.project.config.exception.saying.AlreadyFoundException;
-import com.yapp.project.config.exception.saying.OverSizeException;
+import com.yapp.project.config.exception.saying.OverFlowSayingIdException;
 import com.yapp.project.saying.domain.Saying;
 import com.yapp.project.saying.domain.SayingRecord;
 import com.yapp.project.saying.domain.repository.SayingRecordRepository;
@@ -25,7 +23,7 @@ public class SayingService {
 
     public Saying randomSaying(Account account, int id){
         Saying saying =  sayingRepository.findById((long) id)
-                .orElseThrow(() ->new OverSizeException(Content.OVER_SIZE_ID_NUMBER, StatusEnum.BAD_REQUEST));
+                .orElseThrow(OverFlowSayingIdException::new);
 
         SayingRecord lastRecord = sayingRecordRepository.findTopByAccount_IdOrderByIdDesc(account.getId())
                 .orElse(null);
@@ -33,14 +31,14 @@ public class SayingService {
         if (lastRecord == null || lastRecord.getCreatedAt().toLocalDate().isBefore(LocalDateTime.now().toLocalDate())){
             return saying;
         }else{
-            throw new AlreadyFoundException(Content.ALREADY_FOUND_SAYING_RECORD, StatusEnum.BAD_REQUEST);
+            throw new AlreadyFoundException();
         }
     }
 
     @Transactional
     public SayingResponse checkResult(SayingAccess request, Account account){
         Saying saying = sayingRepository.findById(request.getId())
-                .orElseThrow(() ->new OverSizeException(Content.OVER_SIZE_ID_NUMBER, StatusEnum.BAD_REQUEST));
+                .orElseThrow(OverFlowSayingIdException::new);
         if (saying.getContent().equalsIgnoreCase(request.getContent())){
             SayingRecord sayingRecord = SayingRecord.builder().account(account).saying(saying).build();
             sayingRecordRepository.save(sayingRecord);
