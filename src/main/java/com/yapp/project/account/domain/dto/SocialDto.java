@@ -4,6 +4,7 @@ import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.Authority;
 import com.yapp.project.account.domain.SocialType;
 import com.yapp.project.aux.Message;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -16,7 +17,9 @@ public class SocialDto {
     @AllArgsConstructor
     @Builder
     public static class SocialRequest {
+        @ApiModelProperty(value = "소셜타입",example = "KAKAO/APPLE")
         private String socialType;
+        @ApiModelProperty(value = "소셜해당아이디",example = "142342124")
         private String id;
     }
 
@@ -24,6 +27,7 @@ public class SocialDto {
     @AllArgsConstructor
     @Builder
     public static class SocialResponse {
+        @ApiModelProperty(value = "진행여부",example = "LOGIN/SIGNUP")
         private String processes;
         private Object data;
     }
@@ -40,8 +44,11 @@ public class SocialDto {
     @AllArgsConstructor
     @Builder
     public static class SocialSignUpRequest {
+        @ApiModelProperty(value = "소셜타입",example = "KAKAO/APPLE")
         private String socialType;
+        @ApiModelProperty(value = "이메일",example = "minning@example.com")
         private String email;
+        @ApiModelProperty(value = "닉네임",example = "미닝")
         private String nickname;
 
 
