@@ -3,13 +3,12 @@ package com.yapp.project.routine.service;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
-import com.yapp.project.config.exception.Content;
+import com.yapp.project.config.exception.routine.RoutineContent;
 import com.yapp.project.routine.domain.*;
 import com.yapp.project.config.exception.routine.BadRequestException;
 import com.yapp.project.config.exception.routine.NotFoundRoutineException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +44,7 @@ public class RoutineService {
         updateDayList(updateRoutine, routine);
         return RoutineDTO.ResponseRoutineMessageDto.builder()
                 .message(Message.builder().msg("수정 성공").status(StatusEnum.OK).build())
-                .data(RoutineDTO.ResponseRoutineDto.builder().routine(routine).build())
+                .data(RoutineDTO.ResponseRoutineDto.builder().routine(routineRepository.save(routine)).build())
                 .build();
     }
 
@@ -84,7 +83,7 @@ public class RoutineService {
         if( newRoutine.getTitle().isBlank() ||
                 newRoutine.getGoal().isBlank() ||
                 newRoutine.getDays().isEmpty() ||
-                newRoutine.getStartTime().isBlank()) throw new BadRequestException(Content.BAD_REQUEST_CREATE_ROUTINE_DATA, StatusEnum.BAD_REQUEST);
+                newRoutine.getStartTime().isBlank()) throw new BadRequestException(RoutineContent.BAD_REQUEST_CREATE_ROUTINE_DATA, StatusEnum.BAD_REQUEST);
         return true;
     }
 
@@ -94,11 +93,11 @@ public class RoutineService {
     }
 
     private void checkIsMine(Account account, Routine routine) {
-        if(!account.getId().equals(routine.getAccount().getId())) throw new BadRequestException(Content.BAD_REQUEST_GET_ROUTINE_ID, StatusEnum.BAD_REQUEST);
+        if(!account.getId().equals(routine.getAccount().getId())) throw new BadRequestException(RoutineContent.BAD_REQUEST_GET_ROUTINE_ID, StatusEnum.BAD_REQUEST);
     }
 
     private Routine findIsExistById(Long routineId) {
-        return routineRepository.findById(routineId).orElseThrow(() -> new NotFoundRoutineException(Content.NOT_FOUND_ROUTINE, StatusEnum.NOT_FOUND));
+        return routineRepository.findById(routineId).orElseThrow(() -> new NotFoundRoutineException(RoutineContent.NOT_FOUND_ROUTINE, StatusEnum.NOT_FOUND));
     }
 
     private void updateDayList(RoutineDTO.RequestRoutineDto updateRoutine, Routine routine) {
