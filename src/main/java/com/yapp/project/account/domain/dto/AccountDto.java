@@ -4,6 +4,7 @@ import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.Authority;
 import com.yapp.project.account.domain.SocialType;
 import com.yapp.project.aux.Message;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,9 +21,13 @@ public class AccountDto {
     @AllArgsConstructor
     @Builder
     public static class UserRequest {
+        @ApiModelProperty(value = "이메일",example = "yapp@example.com")
         private String email;
+        @ApiModelProperty(value = "닉네임", example = "미닝")
         private String nickname;
+        @ApiModelProperty(value = "비밀번호", example = "비밀번호")
         private String password;
+        @ApiModelProperty(value = "소셜타입", example = "KAKAO/APPLE/NORMAL")
         private SocialType socialType;
         public Account toAccount(PasswordEncoder passwordEncoder){
             return Account.builder()
@@ -47,8 +52,11 @@ public class AccountDto {
     @AllArgsConstructor
     @Builder
     public static class UserResponse {
+        @ApiModelProperty(value = "이메일",example = "yapp@example.com")
         private String email;
+        @ApiModelProperty(value = "닉네임",example = "미닝")
         private String nickname;
+        @ApiModelProperty(value = "프로필",example = "s3/profile/미닝")
         private String profile;
 
         public static UserResponse of(Account account) {
@@ -68,6 +76,7 @@ public class AccountDto {
     @Getter
     @AllArgsConstructor
     public static class NicknameRequest{
+        @ApiModelProperty(value = "닉네임",example = "미닝")
         private String nickname;
     }
 }
