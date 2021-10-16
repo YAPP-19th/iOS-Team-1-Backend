@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -13,10 +14,13 @@ import javax.persistence.*;
 public class Capture {
 
     @Builder
-    public Capture(Mission mission, Snapshot snapshot, Long rank){
+    public Capture(Mission mission, Snapshot snapshot, Long rank, Achievement achievement,LocalDateTime createdAt){
         this.mission = mission;
         this.snapshot = snapshot;
         this.rank = rank;
+        this.myAchievementRate = achievement.getMyAchievementRate();
+        this.groupAchievementRate = achievement.getGroupAchievementRate();
+        this.createdAt = createdAt;
     }
 
     @Id
@@ -31,5 +35,11 @@ public class Capture {
     private Snapshot snapshot;
 
     private Long rank;
+
+    private Integer myAchievementRate;
+
+    private Integer groupAchievementRate;
+
+    private LocalDateTime createdAt;
 
 }

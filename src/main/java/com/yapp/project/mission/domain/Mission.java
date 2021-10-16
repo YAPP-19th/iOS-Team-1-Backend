@@ -19,7 +19,7 @@ public class Mission {
     @Builder
     public Mission(
             Organization organization, Account account, LocalDateTime startDate, LocalDateTime finishDate,
-            Integer successCount, Integer failureCount, Long rank
+            Integer successCount, Integer failureCount
     ){
         this.organization = organization;
         this.account = account;
@@ -27,7 +27,6 @@ public class Mission {
         this.finishDate = finishDate;
         this.successCount = successCount;
         this.failureCount = failureCount;
-        this.rank = rank;
     }
 
     @Id
@@ -50,7 +49,5 @@ public class Mission {
     private Integer successCount;
 
     private Integer failureCount;
-
-    private Long rank;
 
 }
