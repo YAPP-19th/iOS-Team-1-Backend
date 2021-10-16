@@ -51,7 +51,7 @@ public class Account {
     }
 
     public UserRequest toAccountRequestDto(String suffix){
-        return new UserRequest(email,nickname,email+suffix);
+        return new UserRequest(email,nickname,email+suffix,socialType);
     }
 
 }

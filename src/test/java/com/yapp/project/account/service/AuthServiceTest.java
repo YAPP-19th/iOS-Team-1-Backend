@@ -9,6 +9,8 @@ import com.yapp.project.aux.test.account.AccountTemplate;
 import com.yapp.project.config.exception.Content;
 import com.yapp.project.config.exception.account.DuplicateException;
 import com.yapp.project.config.exception.account.NotFoundUserInformationException;
+import com.yapp.project.config.exception.account.NotValidateException;
+import com.yapp.project.config.jwt.TokenProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,7 +29,39 @@ class AuthServiceTest {
     AccountRepository accountRepository;
 
     @Autowired
+    TokenProvider tokenProvider;
+
+    @Autowired
     AuthService authService;
+
+
+    @Test
+    @Transactional
+    void test_일반_회원가입_성공했을_때(){
+        AccountDto.UserRequest request = AccountTemplate.makeAccountRequestDto();
+        AccountDto.UserResponseMessage message = authService.normalSignup(request);
+        assertThat(message.getData().getEmail()).isEqualTo(request.getEmail());
+    }
+
+
+    @Test
+    @Transactional
+    void test_일반_회원가입_실패했을_때(){
+        AccountDto.UserRequest request = AccountTemplate.makeAccountRequestDto(AccountTemplate.EMAIL,
+                AccountTemplate.USERNAME,"1234");
+        assertThatThrownBy(() ->authService.normalSignup(request)).isInstanceOf(NotValidateException.class)
+                .hasMessage(Content.NOT_VAILDATION_PASSWORD);
+    }
+
+
+    @Test
+    @Transactional
+    void test_소셜_회원가입_성공했을_때(){
+        SocialDto.SocialSignUpRequest request = AccountTemplate.makeSocialSignUpRequest();
+        SocialDto.TokenMessage message = authService.socialSignUp(request);
+        assertThat(tokenProvider.validateToken(message.getData().getAccessToken())).isTrue();
+    }
+
 
     @Test
     @Transactional

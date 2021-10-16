@@ -2,6 +2,7 @@ package com.yapp.project.account.domain.dto;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.Authority;
+import com.yapp.project.account.domain.SocialType;
 import com.yapp.project.aux.Message;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,18 +23,23 @@ public class AccountDto {
         private String email;
         private String nickname;
         private String password;
+        private SocialType socialType;
         public Account toAccount(PasswordEncoder passwordEncoder){
             return Account.builder()
                     .email(email)
                     .nickname(nickname)
                     .password(passwordEncoder.encode(password))
                     .authority(Authority.ROLE_USER)
+                    .socialType(socialType)
                     .createdAt(LocalDateTime.now())
                     .lastLogin(LocalDateTime.now())
                     .build();
         }
         public UsernamePasswordAuthenticationToken toAuthentication() {
             return new UsernamePasswordAuthenticationToken(email,password);
+        }
+        public void updateSocialType(SocialType socialType){
+            this.socialType = socialType;
         }
     }
 
