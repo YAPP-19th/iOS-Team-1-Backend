@@ -16,9 +16,4 @@ public class Content {
     public static final String OVER_SIZE_ID_NUMBER = "속담 갯수를 초과했습니다.";
     public static final String ALREADY_FOUND_SAYING_RECORD = "이미 생성된  유저-명언 데이터 입니다.";
 
-    // Routine Error Message
-    public static final String BAD_REQUEST_CREATE_ROUTINE_DATA = "요청 데이터를 확인하세요.";
-    public static final String BAD_REQUEST_GET_ROUTINE_ID = "루틴 ID를 확인하세요.";
-    public static final String NOT_FOUND_ROUTINE = "루틴이 존재하지 않습니다.";
-
 }

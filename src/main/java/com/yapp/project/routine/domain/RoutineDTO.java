@@ -1,5 +1,7 @@
 package com.yapp.project.routine.domain;
 
+import com.yapp.project.aux.Message;
+import com.yapp.project.aux.StatusEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
@@ -61,4 +63,21 @@ public class RoutineDTO {
         }
     }
 
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @Builder
+    public static class ResponseRoutineMessageDto {
+        private Message message;
+        private ResponseRoutineDto data;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @Builder
+    public static class ResponseRoutineListMessageDto {
+        private Message message;
+        private List<ResponseRoutineDto> data;
+    }
 }

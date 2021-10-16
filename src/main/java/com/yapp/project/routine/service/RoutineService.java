@@ -1,14 +1,14 @@
 package com.yapp.project.routine.service;
 
 import com.yapp.project.account.domain.Account;
+import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
-import com.yapp.project.config.exception.Content;
+import com.yapp.project.config.exception.routine.RoutineContent;
 import com.yapp.project.routine.domain.*;
 import com.yapp.project.config.exception.routine.BadRequestException;
 import com.yapp.project.config.exception.routine.NotFoundRoutineException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +21,7 @@ public class RoutineService {
 
     private final RoutineRepository routineRepository;
 
-    public List<RoutineDTO.ResponseRoutineDto> updateRoutineSequence(Week day, ArrayList<Long> sequence, Account account) {
+    public RoutineDTO.ResponseRoutineListMessageDto updateRoutineSequence(Week day, ArrayList<Long> sequence, Account account) {
         List<Routine> routineList = findAllIsExistById(sequence);
         routineList.stream().forEach(x -> checkIsMine(account, x));
         updateRoutineDaysSequence(day, sequence, routineList);
@@ -29,53 +29,61 @@ public class RoutineService {
         return getRoutineList(day, account);
     }
 
-    public ResponseEntity deleteRoutine(Long routineId, Account account) {
+    public Message deleteRoutine(Long routineId, Account account) {
         Routine routine = findIsExistById(routineId);
         checkIsMine(account, routine);
         routineRepository.delete(routine);
-        return ResponseEntity.ok().build();
+        return Message.builder().msg("삭제 성공").status(StatusEnum.OK).build();
     }
 
-    public RoutineDTO.ResponseRoutineDto updateRoutine(Long routineId, RoutineDTO.RequestRoutineDto updateRoutine, Account account) {
+    public RoutineDTO.ResponseRoutineMessageDto updateRoutine(Long routineId, RoutineDTO.RequestRoutineDto updateRoutine, Account account) {
         checkDataIsNull(updateRoutine);
         Routine routine = findIsExistById(routineId);
         checkIsMine(account, routine);
         routine.updateRoutine(updateRoutine);
         updateDayList(updateRoutine, routine);
-        return RoutineDTO.ResponseRoutineDto.builder()
-                .routine(routineRepository.save(routine)).build();
+        return RoutineDTO.ResponseRoutineMessageDto.builder()
+                .message(Message.builder().msg("수정 성공").status(StatusEnum.OK).build())
+                .data(RoutineDTO.ResponseRoutineDto.builder().routine(routineRepository.save(routine)).build())
+                .build();
     }
 
-    public List<RoutineDTO.ResponseRoutineDto> getRoutineList(Week day, Account account) {
+    public RoutineDTO.ResponseRoutineListMessageDto getRoutineList(Week day, Account account) {
         List<Routine> routineList = routineRepository // Sort.by("days").descending(): sequence가 0인 루틴은 최신 등록순
                 .findAllByAccountAndDaysDayOrderByDaysSequence(account, day, Sort.by("days").descending());
-        return routineList.stream().map(routine -> RoutineDTO.ResponseRoutineDto.builder()
-                .routine(routine).build()).collect(Collectors.toList());
+        return RoutineDTO.ResponseRoutineListMessageDto.builder()
+                .message(Message.builder().msg("요일별 조회 성공").status(StatusEnum.OK).build())
+                .data(routineList.stream().map(routine -> RoutineDTO.ResponseRoutineDto.builder()
+                        .routine(routine).build()).collect(Collectors.toList()))
+                .build();
     }
 
-    public RoutineDTO.ResponseRoutineDto getRoutine(Long routineId, Account account) {
+    public RoutineDTO.ResponseRoutineMessageDto getRoutine(Long routineId, Account account) {
         Routine routine = findIsExistById(routineId);
         checkIsMine(account, routine);
-        return RoutineDTO.ResponseRoutineDto.builder()
-                .routine(routine).build();
+        return RoutineDTO.ResponseRoutineMessageDto.builder()
+                .message(Message.builder().msg("조회 성공").status(StatusEnum.OK).build())
+                .data(RoutineDTO.ResponseRoutineDto.builder().routine(routine).build())
+                .build();
     }
 
-    public RoutineDTO.ResponseRoutineDto createRoutine(RoutineDTO.RequestRoutineDto newRoutine, Account account) {
+    public RoutineDTO.ResponseRoutineMessageDto createRoutine(RoutineDTO.RequestRoutineDto newRoutine, Account account) {
         checkDataIsNull(newRoutine);
         Routine routine = Routine.builder()
                 .account(account)
                 .newRoutine(newRoutine).build();
         setDays(newRoutine.getDays(), routine);
-
-        return RoutineDTO.ResponseRoutineDto.builder()
-                .routine(routineRepository.save(routine)).build();
+        return RoutineDTO.ResponseRoutineMessageDto.builder()
+                .message(Message.builder().msg("생성 성공").status(StatusEnum.OK).build())
+                .data(RoutineDTO.ResponseRoutineDto.builder().routine(routineRepository.save(routine)).build())
+                .build();
     }
 
     private Boolean checkDataIsNull(RoutineDTO.RequestRoutineDto newRoutine) {
         if( newRoutine.getTitle().isBlank() ||
                 newRoutine.getGoal().isBlank() ||
                 newRoutine.getDays().isEmpty() ||
-                newRoutine.getStartTime().isBlank()) throw new BadRequestException(Content.BAD_REQUEST_CREATE_ROUTINE_DATA, StatusEnum.BAD_REQUEST);
+                newRoutine.getStartTime().isBlank()) throw new BadRequestException(RoutineContent.BAD_REQUEST_CREATE_ROUTINE_DATA, StatusEnum.BAD_REQUEST);
         return true;
     }
 
@@ -85,11 +93,11 @@ public class RoutineService {
     }
 
     private void checkIsMine(Account account, Routine routine) {
-        if(!account.getId().equals(routine.getAccount().getId())) throw new BadRequestException(Content.BAD_REQUEST_GET_ROUTINE_ID, StatusEnum.BAD_REQUEST);
+        if(!account.getId().equals(routine.getAccount().getId())) throw new BadRequestException(RoutineContent.BAD_REQUEST_GET_ROUTINE_ID, StatusEnum.BAD_REQUEST);
     }
 
     private Routine findIsExistById(Long routineId) {
-        return routineRepository.findById(routineId).orElseThrow(() -> new NotFoundRoutineException(Content.NOT_FOUND_ROUTINE, StatusEnum.NOT_FOUND));
+        return routineRepository.findById(routineId).orElseThrow(() -> new NotFoundRoutineException(RoutineContent.NOT_FOUND_ROUTINE, StatusEnum.NOT_FOUND));
     }
 
     private void updateDayList(RoutineDTO.RequestRoutineDto updateRoutine, Routine routine) {

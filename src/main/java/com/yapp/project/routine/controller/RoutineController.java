@@ -24,36 +24,36 @@ public class RoutineController {
 
     @ApiOperation(value = "루틴 추가", notes = "새로운 루틴 추가하기")
     @PostMapping("/")
-    public RoutineDTO.ResponseRoutineDto createRoutine(@RequestBody RoutineDTO.RequestRoutineDto newRoutine) {
+    public RoutineDTO.ResponseRoutineMessageDto createRoutine(@RequestBody RoutineDTO.RequestRoutineDto newRoutine) {
         return routineService.createRoutine(newRoutine, AccountUtil.getAccount());
     }
 
     @ApiOperation(value = "루틴 단일 조회", notes = "루틴ID로 루틴 조회하기")
     @GetMapping("/{routineId}")
-    public RoutineDTO.ResponseRoutineDto getRoutine(@PathVariable Long routineId) {
+    public RoutineDTO.ResponseRoutineMessageDto getRoutine(@PathVariable Long routineId) {
         return routineService.getRoutine(routineId, AccountUtil.getAccount());
     }
 
     @ApiOperation(value = "루틴 요일별 전체 조회", notes = "요일별 루틴 전체 조회하기")
     @GetMapping("/day/{day}")
-    public List<RoutineDTO.ResponseRoutineDto> getRoutineList(@PathVariable Week day) {
+    public RoutineDTO.ResponseRoutineListMessageDto getRoutineList(@PathVariable Week day) {
         return routineService.getRoutineList(day, AccountUtil.getAccount());
     }
 
     @ApiOperation(value = "루틴 수정", notes = "루틴 수정하기")
     @PatchMapping("/{routineId}")
-    public RoutineDTO.ResponseRoutineDto updateRoutine(@PathVariable Long routineId, @RequestBody RoutineDTO.RequestRoutineDto updateRoutine) {
+    public RoutineDTO.ResponseRoutineMessageDto updateRoutine(@PathVariable Long routineId, @RequestBody RoutineDTO.RequestRoutineDto updateRoutine) {
         return routineService.updateRoutine(routineId, updateRoutine, AccountUtil.getAccount());
     }
 
     @ApiOperation(value = "루틴 삭제", notes = "루틴 삭제하기")
     @DeleteMapping("/{routineId}")
-    public ResponseEntity deleteRoutine(@PathVariable Long routineId) {
+    public Message deleteRoutine(@PathVariable Long routineId) {
         return routineService.deleteRoutine(routineId, AccountUtil.getAccount());
     }
 
     @PatchMapping("/sequence/{day}")
-    public List<RoutineDTO.ResponseRoutineDto> updateRoutineSequence(
+    public RoutineDTO.ResponseRoutineListMessageDto updateRoutineSequence(
             @PathVariable Week day, @RequestBody ArrayList<Long> sequence) {
         return routineService.updateRoutineSequence(day, sequence, AccountUtil.getAccount());
     }
