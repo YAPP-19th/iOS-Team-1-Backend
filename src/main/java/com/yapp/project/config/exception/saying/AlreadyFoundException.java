@@ -8,6 +8,6 @@ public class AlreadyFoundException extends RuntimeException{
     private final StatusEnum status;
     public AlreadyFoundException(){
         super(SayingContent.ALREADY_FOUND_SAYING_RECORD);
-        this.status = StatusEnum.BAD_REQUEST;
+        this.status = StatusEnum.SAYING_BAD_REQUEST;
     }
 }
