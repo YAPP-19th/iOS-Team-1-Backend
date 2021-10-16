@@ -3,6 +3,7 @@ package com.yapp.project.routine.controller;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.common.AccountUtil;
+import com.yapp.project.routine.domain.Routine;
 import com.yapp.project.routine.domain.RoutineDTO;
 import com.yapp.project.routine.domain.Week;
 import com.yapp.project.routine.service.RoutineService;
@@ -52,9 +53,10 @@ public class RoutineController {
         return routineService.deleteRoutine(routineId, AccountUtil.getAccount());
     }
 
+    @ApiOperation(value = "요일 루틴 순서 편집", notes = "요일 루틴 순서 편집하기")
     @PatchMapping("/sequence/{day}")
     public RoutineDTO.ResponseRoutineListMessageDto updateRoutineSequence(
-            @PathVariable Week day, @RequestBody ArrayList<Long> sequence) {
-        return routineService.updateRoutineSequence(day, sequence, AccountUtil.getAccount());
+            @PathVariable Week day, @RequestBody RoutineDTO.RequestRoutineSequence sequence) {
+        return routineService.updateRoutineSequence(day, sequence.getSequence(), AccountUtil.getAccount());
     }
 }

@@ -1,7 +1,6 @@
 package com.yapp.project.routine.domain;
 
 import com.yapp.project.aux.Message;
-import com.yapp.project.aux.StatusEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
@@ -10,6 +9,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class RoutineDTO {
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    public static class RequestRoutineSequence {
+        @ApiModelProperty(value = "루틴ID 순서", example = "[3, 1, 5, 2]", required = true)
+        private ArrayList<Long> sequence = new ArrayList<>();
+    }
 
     @Getter
     @Setter
