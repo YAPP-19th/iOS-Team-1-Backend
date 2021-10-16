@@ -27,4 +27,12 @@ class SayingTest {
         Saying result = sayingRepository.save(saying);
         assertThat(result.getAuthor()).isEqualTo("작자미상");
     }
+
+    @Test
+    void test_author_넣었을_때(){
+        Saying saying = Saying.builder().author("안녕").content("hello").build();
+        Saying result = sayingRepository.save(saying);
+        assertThat(result.getAuthor()).isEqualTo("안녕");
+    }
+
 }
