@@ -7,9 +7,7 @@ import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.aux.test.account.AccountTemplate;
 import com.yapp.project.config.exception.Content;
-import com.yapp.project.config.exception.account.DuplicateException;
-import com.yapp.project.config.exception.account.NotFoundUserInformationException;
-import com.yapp.project.config.exception.account.NotValidateException;
+import com.yapp.project.config.exception.account.*;
 import com.yapp.project.config.jwt.TokenProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +47,7 @@ class AuthServiceTest {
     void test_일반_회원가입_실패했을_때(){
         AccountDto.UserRequest request = AccountTemplate.makeAccountRequestDto(AccountTemplate.EMAIL,
                 AccountTemplate.USERNAME,"1234");
-        assertThatThrownBy(() ->authService.normalSignup(request)).isInstanceOf(NotValidateException.class)
+        assertThatThrownBy(() ->authService.normalSignup(request)).isInstanceOf(PasswordInvalidException.class)
                 .hasMessage(Content.NOT_VAILDATION_PASSWORD);
     }
 
@@ -77,7 +75,7 @@ class AuthServiceTest {
         Account account = AccountTemplate.makeTestAccount();
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
         accountRepository.save(account);
-        assertThatThrownBy(() -> authService.signup(accountRequestDto)).isInstanceOf(DuplicateException.class)
+        assertThatThrownBy(() -> authService.signup(accountRequestDto)).isInstanceOf(EmailDuplicateException.class)
                 .hasMessage(Content.EMAIL_DUPLICATE);
     }
 
@@ -128,7 +126,7 @@ class AuthServiceTest {
         Account account = AccountTemplate.makeTestAccount();
         accountRepository.save(account);
         String nickname = account.getNickname();
-        assertThatThrownBy(() -> authService.existByNickname(nickname)).isInstanceOf(DuplicateException.class)
+        assertThatThrownBy(() -> authService.existByNickname(nickname)).isInstanceOf(NicknameDuplicateException.class)
                 .hasMessage(Content.NICKNAME_DUPLICATE);
     }
 
@@ -138,7 +136,7 @@ class AuthServiceTest {
         Account account = AccountTemplate.makeTestAccount("hello");
         accountRepository.save(account);
         String nickname = account.getNickname();
-        assertThatThrownBy(() -> authService.existByNickname(nickname)).isInstanceOf(DuplicateException.class)
+        assertThatThrownBy(() -> authService.existByNickname(nickname)).isInstanceOf(NicknameDuplicateException.class)
                 .hasMessage(Content.NICKNAME_DUPLICATE);
     }
 }

@@ -9,11 +9,7 @@ import com.yapp.project.account.util.PasswordUtil;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.PrefixType;
 import com.yapp.project.aux.StatusEnum;
-import com.yapp.project.config.exception.Content;
-import com.yapp.project.config.exception.account.DuplicateException;
-import com.yapp.project.config.exception.account.NotFoundUserInformationException;
-import com.yapp.project.config.exception.account.NotValidateException;
-import com.yapp.project.config.exception.account.TokenInvalidException;
+import com.yapp.project.config.exception.account.*;
 import com.yapp.project.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -79,10 +75,10 @@ public class AuthService {
     @Transactional
     public TokenMessage socialSignUp(SocialSignUpRequest requestDto){
         if (accountRepository.existsByEmail(requestDto.getEmail())){
-            throw new DuplicateException(Content.EMAIL_DUPLICATE, StatusEnum.BAD_REQUEST);
+            throw new EmailDuplicateException();
         }
         if (accountRepository.existsByNickname(requestDto.getNickname())){
-            throw new DuplicateException(Content.NICKNAME_DUPLICATE,StatusEnum.BAD_REQUEST);
+            throw new NicknameDuplicateException();
         }
         Account account = requestDto.toAccount(passwordEncoder,suffix);
         accountRepository.save(account);
@@ -130,20 +126,20 @@ public class AuthService {
         if (accountRepository.findByEmail(accountEmail).isPresent()){
             redisTemplate.delete(PrefixType.PREFIX_REFRESH_TOKEN+authentication.getName());
         }else{
-            throw new NotFoundUserInformationException(Content.NOT_FOUND_USER_INFORMATION,StatusEnum.BAD_REQUEST);
+            throw new NotFoundUserInformationException();
         }
         return Message.of(StatusEnum.OK,"로그아웃 되었습니다.");
     }
 
     public UserResponse signup(UserRequest accountRequestDto){
         if (accountRepository.existsByEmail(accountRequestDto.getEmail())){
-            throw new DuplicateException(Content.EMAIL_DUPLICATE, StatusEnum.BAD_REQUEST);
+            throw new EmailDuplicateException();
         }
         if (accountRepository.existsByNickname(accountRequestDto.getNickname())){
-            throw new DuplicateException(Content.NICKNAME_DUPLICATE,StatusEnum.BAD_REQUEST);
+            throw new NicknameDuplicateException();
         }
         if (accountRequestDto.getSocialType().equals(SocialType.NORMAL) && !PasswordUtil.validPassword(accountRequestDto.getPassword())){
-                throw new NotValidateException(Content.NOT_VAILDATION_PASSWORD, StatusEnum.BAD_REQUEST);
+                throw new PasswordInvalidException();
         }
         Account account = accountRequestDto.toAccount(passwordEncoder);
         return UserResponse.of(accountRepository.save(account));
@@ -151,7 +147,7 @@ public class AuthService {
 
     public TokenDto login(UserRequest accountRequestDto){
         Account account = accountRepository.findByEmail(accountRequestDto.getEmail())
-                .orElseThrow(() -> new NotFoundUserInformationException(Content.NOT_FOUND_USER_INFORMATION,StatusEnum.NOT_FOUND));
+                .orElseThrow(NotFoundUserInformationException::new);
         account.updateLastLoginAccount();
 
         UsernamePasswordAuthenticationToken authenticationToken = accountRequestDto.toAuthentication();
@@ -169,16 +165,16 @@ public class AuthService {
     public TokenMessage reissue(TokenRequestDto tokenRequestDto){
         ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
         if (!tokenProvider.validateToken(tokenRequestDto.getRefreshToken())){
-            throw new TokenInvalidException(Content.REFRESH_TOKEN_INVALID, StatusEnum.BAD_REQUEST);
+            throw new RefreshTokenInvalidException();
         }
         Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getRefreshToken());
         String refreshToken = valueOperations.get(PrefixType.PREFIX_REFRESH_TOKEN + authentication.getName());
         if (refreshToken == null){
-            throw new NotFoundUserInformationException(Content.LOGOUT_USER,StatusEnum.BAD_REQUEST);
+            throw new AlreadyLogoutException();
         }
 
         if (!refreshToken.equals(tokenRequestDto.getRefreshToken())){
-            throw new TokenInvalidException(Content.TOKEN_NOT_EQUAL_USER_INFORMATION, StatusEnum.NOT_FOUND);
+            throw new TokenInvalidException();
         }
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
@@ -198,7 +194,7 @@ public class AuthService {
     @Transactional(readOnly = true)
     public Message existByNickname(String nickname){
         if (accountRepository.existsByNickname(nickname))
-            throw new DuplicateException(Content.NICKNAME_DUPLICATE, StatusEnum.BAD_REQUEST);
+            throw new NicknameDuplicateException();
         return Message.of("중복되는 닉네임이 없습니다.");
     }
 

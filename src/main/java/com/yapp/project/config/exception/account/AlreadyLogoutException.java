@@ -4,10 +4,10 @@ import com.yapp.project.aux.StatusEnum;
 import lombok.Getter;
 
 @Getter
-public class TokenInvalidException extends RuntimeException{
+public class AlreadyLogoutException extends RuntimeException{
     private final StatusEnum status;
-    public TokenInvalidException(){
-        super(AccountContent.TOKEN_NOT_EQUAL_USER_INFORMATION);
+    public AlreadyLogoutException(){
+        super(AccountContent.LOGOUT_USER);
         this.status = StatusEnum.BAD_REQUEST;
     }
 }

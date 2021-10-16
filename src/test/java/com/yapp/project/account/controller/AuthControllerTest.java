@@ -3,7 +3,6 @@ package com.yapp.project.account.controller;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.dto.AccountDto;
 import com.yapp.project.account.domain.dto.SocialDto;
-import com.yapp.project.account.domain.dto.TokenDto;
 import com.yapp.project.account.domain.dto.TokenRequestDto;
 import com.yapp.project.account.domain.repository.AccountRepository;
 import com.yapp.project.account.service.AuthService;
@@ -11,9 +10,7 @@ import com.yapp.project.aux.Message;
 import com.yapp.project.aux.PrefixType;
 import com.yapp.project.aux.test.account.AccountTemplate;
 import com.yapp.project.config.exception.Content;
-import com.yapp.project.config.exception.account.DuplicateException;
-import com.yapp.project.config.exception.account.NotFoundUserInformationException;
-import com.yapp.project.config.exception.account.TokenInvalidException;
+import com.yapp.project.config.exception.account.*;
 import com.yapp.project.config.jwt.TokenProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +60,7 @@ class AuthControllerTest {
         Account account = AccountTemplate.makeTestAccount();
         accountRepository.save(account);
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
-        assertThatThrownBy(() ->authController.signup(accountRequestDto)).isInstanceOf(DuplicateException.class)
+        assertThatThrownBy(() ->authController.signup(accountRequestDto)).isInstanceOf(EmailDuplicateException.class)
                 .hasMessage(Content.EMAIL_DUPLICATE);
     }
 
@@ -138,7 +135,7 @@ class AuthControllerTest {
         accountRepository.save(account);
 
         TokenRequestDto tokenRequestDto = new TokenRequestDto("");
-        assertThatThrownBy(() -> authController.reissue(tokenRequestDto)).isInstanceOf(TokenInvalidException.class)
+        assertThatThrownBy(() -> authController.reissue(tokenRequestDto)).isInstanceOf(RefreshTokenInvalidException.class)
                 .hasMessage(Content.REFRESH_TOKEN_INVALID);
 
     }
@@ -157,7 +154,7 @@ class AuthControllerTest {
         redisTemplate.delete(PrefixType.PREFIX_REFRESH_TOKEN+AccountTemplate.EMAIL);
 
         TokenRequestDto tokenRequestDto = new TokenRequestDto(response.getBody().getData().getRefreshToken());
-        assertThatThrownBy(() ->authController.reissue(tokenRequestDto)).isInstanceOf(NotFoundUserInformationException.class)
+        assertThatThrownBy(() ->authController.reissue(tokenRequestDto)).isInstanceOf(AlreadyLogoutException.class)
                 .hasMessage(Content.LOGOUT_USER);
     }
 
