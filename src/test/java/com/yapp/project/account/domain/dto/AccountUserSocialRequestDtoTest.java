@@ -1,6 +1,7 @@
 package com.yapp.project.account.domain.dto;
 
 import com.yapp.project.account.domain.Account;
+import com.yapp.project.account.domain.SocialType;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,7 +11,8 @@ import static org.assertj.core.api.Assertions.*;
 class AccountUserSocialRequestDtoTest {
 
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    AccountDto.UserRequest accountRequestDto = new AccountDto.UserRequest("test@example.com","test","test1234");
+    AccountDto.UserRequest accountRequestDto = new AccountDto.UserRequest("test@example.com","test",
+            "test1234", SocialType.NORMAL);
 
     @Test
     void toAccount() {

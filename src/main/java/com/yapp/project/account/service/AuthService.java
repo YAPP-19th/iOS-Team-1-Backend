@@ -5,12 +5,14 @@ import com.yapp.project.account.domain.dto.SocialDto.*;
 import com.yapp.project.account.domain.dto.TokenDto;
 import com.yapp.project.account.domain.dto.TokenRequestDto;
 import com.yapp.project.account.domain.repository.AccountRepository;
+import com.yapp.project.account.util.PasswordUtil;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.PrefixType;
 import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.config.exception.Content;
 import com.yapp.project.config.exception.account.DuplicateException;
 import com.yapp.project.config.exception.account.NotFoundUserInformationException;
+import com.yapp.project.config.exception.account.NotValidateException;
 import com.yapp.project.config.exception.account.TokenInvalidException;
 import com.yapp.project.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -109,6 +111,7 @@ public class AuthService {
 
     @Transactional
     public UserResponseMessage normalSignup(UserRequest accountRequestDto){
+        accountRequestDto.updateSocialType(SocialType.NORMAL);
         return UserResponseMessage.builder()
                 .message(
                         Message.builder().
@@ -138,6 +141,9 @@ public class AuthService {
         }
         if (accountRepository.existsByNickname(accountRequestDto.getNickname())){
             throw new DuplicateException(Content.NICKNAME_DUPLICATE,StatusEnum.BAD_REQUEST);
+        }
+        if (accountRequestDto.getSocialType().equals(SocialType.NORMAL) && !PasswordUtil.validPassword(accountRequestDto.getPassword())){
+                throw new NotValidateException(Content.NOT_VAILDATION_PASSWORD, StatusEnum.BAD_REQUEST);
         }
         Account account = accountRequestDto.toAccount(passwordEncoder);
         return UserResponse.of(accountRepository.save(account));
