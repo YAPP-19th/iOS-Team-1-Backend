@@ -1,5 +1,6 @@
 package com.yapp.project.snapshot.domain;
 
+import com.yapp.project.mission.domain.Capture;
 import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,6 +14,10 @@ public class Snapshot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToOne(mappedBy = "snapshot")
+    @JoinColumn(name = "capture_id")
+    private Capture capture;
 
     private String url;
 

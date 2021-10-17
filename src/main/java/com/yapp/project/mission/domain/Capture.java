@@ -1,5 +1,6 @@
 package com.yapp.project.mission.domain;
 
+import com.yapp.project.organization.domain.Organization;
 import com.yapp.project.snapshot.domain.Snapshot;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +15,9 @@ import java.time.LocalDateTime;
 public class Capture {
 
     @Builder
-    public Capture(Mission mission, Snapshot snapshot, Long rank, Achievement achievement,LocalDateTime createdAt){
+    public Capture(Mission mission, Organization organization,
+                   Snapshot snapshot, Long rank, Achievement achievement,LocalDateTime createdAt){
+        this.organization = organization;
         this.mission = mission;
         this.snapshot = snapshot;
         this.rank = rank;
@@ -29,6 +32,9 @@ public class Capture {
 
     @ManyToOne(targetEntity = Mission.class, fetch = FetchType.LAZY)
     private Mission mission;
+
+    @ManyToOne(targetEntity = Organization.class, fetch = FetchType.LAZY)
+    private Organization organization;
 
     @OneToOne
     @JoinColumn(name = "snapshot_id")
