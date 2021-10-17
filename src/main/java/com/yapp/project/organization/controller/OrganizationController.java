@@ -3,6 +3,8 @@ package com.yapp.project.organization.controller;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
 import static com.yapp.project.organization.domain.dto.OrgDto.*;
+
+import com.yapp.project.aux.common.AccountUtil;
 import com.yapp.project.organization.service.GroupService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,7 @@ public class OrganizationController {
     @GetMapping
     public ResponseEntity<OrgListResponseMessage> findAll(){
         return new ResponseEntity<>(OrgListResponseMessage.builder()
-                .data(groupService.findAll())
+                .data(groupService.findAll(AccountUtil.getAccount()))
                 .message(Message.builder().status(StatusEnum.OK).msg("조회 성공").build())
                 .build(), HttpStatus.OK);
     }
@@ -32,7 +34,7 @@ public class OrganizationController {
     @GetMapping("/category/{category}")
     public ResponseEntity<OrgListResponseMessage> findByCategory(@PathVariable("category") String category){
         return new ResponseEntity<>(OrgListResponseMessage.builder()
-                .data(groupService.findByCategory(category))
+                .data(groupService.findByCategory(category, AccountUtil.getAccount()))
                 .message(Message.builder().status(StatusEnum.OK).msg("조회 성공").build())
                 .build(), HttpStatus.OK);
     }

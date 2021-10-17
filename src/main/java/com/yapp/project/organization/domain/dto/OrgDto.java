@@ -30,7 +30,7 @@ public class OrgDto {
         @ApiModelProperty(value = "그룹제목",example = "명상")
         private String title;
         @ApiModelProperty(value = "달성률",example = "87")
-        private Double rate;
+        private Integer rate;
         @ApiModelProperty(value = "이미지",example = "s3/organization/15")
         private String image;
         @ApiModelProperty(value = "참여자",example = "25")
@@ -63,7 +63,7 @@ public class OrgDto {
         @ApiModelProperty(value = "그룹제목",example = "명상")
         private String title;
         @ApiModelProperty(value = "달성률",example = "87")
-        private Double rate;
+        private Integer rate;
         @ApiModelProperty(value = "이렇게해보세",example = "명상을 처음 접해본다면, 호흡부터 시작해보세요.  \n" +
                 "기도를 통해 들어가 발끝까지 뻗어나가는 호흡을 조용히 느껴보며 머리의 생각을 비워보세요.  \n" +
                 "집중이 힘들다면 조용한 음악이나 자연의 소리를 틀어보는 것도 나쁘지 않아요. \n" +

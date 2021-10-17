@@ -1,5 +1,6 @@
 package com.yapp.project.organization.domain;
 
+import com.yapp.project.mission.domain.Capture;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.organization.domain.dto.OrgDto;
 import lombok.*;
@@ -16,7 +17,7 @@ import java.util.List;
 public class Organization {
 
     @Builder
-    public Organization(Long id, String title , Double rate, String category, Clause clause){
+    public Organization(Long id, String title , Integer rate, String category, Clause clause){
         this.id = id;
         this.title = title;
         this.rate = rate;
@@ -35,9 +36,13 @@ public class Organization {
     @ToString.Exclude
     private final List<Mission> missions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "organization")
+    @ToString.Exclude
+    private List<Capture> captures = new ArrayList<>();
+
     private String title;
 
-    private Double rate;
+    private Integer rate;
 
     private String image;
 
@@ -51,7 +56,11 @@ public class Organization {
 
     private String summary;
 
-    private Long count;
+    private Integer count;
+
+    public void setCaptures(List<Capture> captures) {
+        this.captures = captures;
+    }
 
     public OrgDto.OrgResponse toResponseDto(){
         return OrgDto.OrgResponse.builder().id(id)
