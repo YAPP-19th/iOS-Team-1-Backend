@@ -8,7 +8,6 @@ import com.yapp.project.config.exception.mission.MissionNotFoundException;
 import com.yapp.project.mission.domain.Cron;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.mission.domain.dto.MissionDto;
-import com.yapp.project.mission.domain.repository.CronRepository;
 import com.yapp.project.mission.domain.repository.MissionRepository;
 import com.yapp.project.organization.domain.Organization;
 import com.yapp.project.organization.domain.repository.OrganizationRepository;
@@ -25,7 +24,6 @@ import java.util.stream.Collectors;
 public class MissionService {
     private final MissionRepository missionRepository;
     private final OrganizationRepository organizationRepository;
-    private final CronRepository cronRepository;
 
     public Message createMission(MissionDto.MissionRequest request, Account account){
         if (missionRepository.findMissionByAccountAndOrganization_IdAndIsFinishIsFalse(account, request.getId()).isPresent()){
@@ -35,7 +33,6 @@ public class MissionService {
         Mission mission = request.toMission(account,organization);
         setDays(request.getWeeks(),mission);
         missionRepository.save(mission);
-        cronRepository.saveAll(mission.getWeeks());
         return Message.of(StatusEnum.MISSION_OK,"미션 생성 성공");
     }
 

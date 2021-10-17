@@ -11,7 +11,6 @@ import com.yapp.project.config.exception.mission.MissionContent;
 import com.yapp.project.config.exception.mission.MissionNotFoundException;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.mission.domain.dto.MissionDto;
-import com.yapp.project.mission.domain.repository.CronRepository;
 import com.yapp.project.mission.domain.repository.MissionRepository;
 import com.yapp.project.organization.domain.Organization;
 import com.yapp.project.organization.domain.repository.OrganizationRepository;
@@ -32,10 +31,6 @@ import static org.assertj.core.api.Assertions.*;
 class MissionServiceTest {
     @Mock
     private MissionRepository missionRepository;
-
-    @Mock
-    private CronRepository cronRepository;
-
 
     @Mock
     private OrganizationRepository organizationRepository;

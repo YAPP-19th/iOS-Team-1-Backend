@@ -24,7 +24,7 @@ public class MissionDto {
     @Builder
     @ToString
     public static class MissionRequest{
-        @ApiModelProperty(value = "미션_아이디",example = "1")
+        @ApiModelProperty(value = "그룹_아이디",example = "1")
         private Long id;
         @ApiModelProperty(value = "미션_시작일",example = "2021-11-01")
         private String startDate;

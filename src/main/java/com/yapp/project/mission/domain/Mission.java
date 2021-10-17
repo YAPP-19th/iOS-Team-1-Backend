@@ -71,18 +71,6 @@ public class Mission {
 
     private Boolean isFinish;
 
-    public void setCaptures(List<Capture> captures) {
-        this.captures = captures;
-    }
-
-    public void setWeeks(List<Cron> weeks) {
-        this.weeks = weeks;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
-
     public void addDays(List<Cron> days){
         this.weeks.addAll(days);
     }

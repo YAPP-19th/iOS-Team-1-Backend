@@ -19,6 +19,8 @@ public class GroupService {
     private final OrganizationRepository organizationRepository;
     private final MissionRepository missionRepository;
 
+
+
     @Transactional
     public List<OrgDto.OrgResponse> findAll(Account account){
         ArrayList<Long> excludeOrganization = getMyOrganizationId(account);
@@ -29,11 +31,7 @@ public class GroupService {
         else
             organizations = organizationRepository.findAll();
 
-        List<OrgDto.OrgResponse> res = new ArrayList<>();
-        for(Organization org: organizations){
-            res.add(org.toResponseDto());
-        }
-        return res;
+        return toOrgResponseList(organizations);
     }
 
     @Transactional
@@ -53,11 +51,7 @@ public class GroupService {
         else
             organizations = organizationRepository.findByCategoryAndMore(category);
 
-        List<OrgDto.OrgResponse> res = new ArrayList<>();
-        for (Organization org : organizations){
-            res.add(org.toResponseDto());
-        }
-        return res;
+        return toOrgResponseList(organizations);
     }
 
     private ArrayList<Long> getMyOrganizationId(Account account){
@@ -67,5 +61,13 @@ public class GroupService {
             excludeOrganization.add(mission.getOrganization().getId());
         }
         return excludeOrganization;
+    }
+
+    private List<OrgDto.OrgResponse> toOrgResponseList(List<Organization> organizations){
+        List<OrgDto.OrgResponse> res = new ArrayList<>();
+        for(Organization org: organizations){
+            res.add(org.toResponseDto());
+        }
+        return res;
     }
 }
