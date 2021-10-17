@@ -1,6 +1,6 @@
 package com.yapp.project.mission.domain;
 
-import com.yapp.project.routine.domain.Routine;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.yapp.project.routine.domain.Week;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,24 +22,17 @@ public class Cron {
     @Enumerated(EnumType.STRING)
     private Week week;
 
-    @ManyToOne
-    @JoinColumn(name = "routine_id")
-    private Routine routine;
-
-    @ManyToOne
-    @JoinColumn(name = "mission_id")
+    @ManyToOne(targetEntity = Mission.class, fetch = FetchType.LAZY)
+    @JsonBackReference
     private Mission mission;
 
     private LocalDateTime createdAt;
 
     @Builder
-    public Cron(Week week, Routine routine) {
+    public Cron(Week week, Mission mission) {
         this.week = week;
-        this.routine = routine;
+        this.mission = mission;
         this.createdAt = LocalDateTime.now();
     }
 
-    public void setRoutine(Routine routine) {
-        this.routine = routine;
-    }
 }
