@@ -2,6 +2,11 @@ package com.yapp.project.organization.service;
 
 import static com.yapp.project.aux.test.organization.OrganizationTemplate.*;
 import static org.mockito.BDDMockito.given;
+
+import com.yapp.project.account.domain.Account;
+import com.yapp.project.aux.test.account.AccountTemplate;
+import com.yapp.project.mission.domain.dao.MissionOrganization;
+import com.yapp.project.mission.domain.repository.MissionRepository;
 import com.yapp.project.organization.domain.Organization;
 import com.yapp.project.organization.domain.dto.OrgDto;
 import com.yapp.project.organization.domain.repository.OrganizationRepository;
@@ -22,18 +27,23 @@ class GroupServiceTest {
     @Mock
     private OrganizationRepository organizationRepository;
 
+    @Mock
+    private MissionRepository missionRepository;
+
     @InjectMocks
     private GroupService groupService;
 
     @Test
     void test_그룹_전체조회(){
+        Account account = AccountTemplate.makeTestAccount();
         Organization organization = makeTestOrganization();
         List<Organization> organizations = new ArrayList<>();
         organizations.add(organization);
-
+        ArrayList<MissionOrganization> emptyList = new ArrayList<>();
+        given(missionRepository.findMissionByAccountAndIsFinishIsFalse(account)).willReturn(emptyList);
         given(organizationRepository.findAll()).willReturn(organizations);
 
-        List<OrgDto.OrgResponse> res = groupService.findAll();
+        List<OrgDto.OrgResponse> res = groupService.findAll(account);
         assertThat(res.get(0).getTitle()).isEqualTo(organization.getTitle());
     }
 
@@ -49,11 +59,12 @@ class GroupServiceTest {
 
     @Test
     void test_카테고리로_그룹_조회_했을_때(){
+        Account account = AccountTemplate.makeTestAccount();
         Organization organization = makeTestOrganization();
         List<Organization> organizations = new ArrayList<>();
         organizations.add(organization);
         given(organizationRepository.findByCategoryAndMore(CATEGORY)).willReturn(organizations);
-        List<OrgDto.OrgResponse> res = groupService.findByCategory(CATEGORY);
+        List<OrgDto.OrgResponse> res = groupService.findByCategory(CATEGORY, account);
         OrgDto.OrgResponse orgResponse = res.get(0);
         assertThat(organization.getTitle()).isEqualTo(orgResponse.getTitle());
         assertThat(organization.getId()).isEqualTo(orgResponse.getId());
