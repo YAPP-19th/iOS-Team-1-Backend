@@ -2,6 +2,8 @@ package com.yapp.project.config.exception;
 
 import com.yapp.project.aux.Message;
 import com.yapp.project.config.exception.account.*;
+import com.yapp.project.config.exception.mission.AlreadyMissionExistException;
+import com.yapp.project.config.exception.mission.MissionNotFoundException;
 import com.yapp.project.config.exception.saying.AlreadyFoundException;
 import com.yapp.project.config.exception.saying.OverFlowSayingIdException;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    //[Account]
     @ExceptionHandler(AlreadyLogoutException.class)
     public ResponseEntity<Message> handle(AlreadyLogoutException e){
         final Message message = Message.of(e.getStatus(), e.getMessage());
@@ -56,6 +59,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
     }
 
+    // [Saying]
     @ExceptionHandler(AlreadyFoundException.class)
     public ResponseEntity<Message> handle(AlreadyFoundException e){
         final Message message = Message.of(e.getStatus() ,e.getMessage());
@@ -64,6 +68,19 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(OverFlowSayingIdException.class)
     public ResponseEntity<Message> handle(OverFlowSayingIdException e){
+        final Message message = Message.of(e.getStatus() ,e.getMessage());
+        return new ResponseEntity<>(message,HttpStatus.NOT_FOUND);
+    }
+
+    // [Mission]
+    @ExceptionHandler(AlreadyMissionExistException.class)
+    public ResponseEntity<Message> handle(AlreadyMissionExistException e){
+        final Message message = Message.of(e.getStatus() ,e.getMessage());
+        return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MissionNotFoundException.class)
+    public ResponseEntity<Message> handle(MissionNotFoundException e){
         final Message message = Message.of(e.getStatus() ,e.getMessage());
         return new ResponseEntity<>(message,HttpStatus.NOT_FOUND);
     }
