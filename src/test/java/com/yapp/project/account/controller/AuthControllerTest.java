@@ -48,7 +48,7 @@ class AuthControllerTest {
     @Transactional
     void test_회원가입_성공() {
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
-        ResponseEntity<AccountDto.UserResponseMessage> response = authController.signup(accountRequestDto);
+        ResponseEntity<SocialDto.TokenMessage> response = authController.signup(accountRequestDto);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(Objects.requireNonNull(response.getBody()).getMessage().getMsg()).isEqualTo("회원가입 축하드립니다");
     }
