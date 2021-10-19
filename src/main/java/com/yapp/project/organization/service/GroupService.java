@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -56,18 +57,10 @@ public class GroupService {
 
     private ArrayList<Long> getMyOrganizationId(Account account){
         ArrayList<MissionOrganization> missions = missionRepository.findMissionByAccountAndIsFinishIsFalse(account);
-        ArrayList<Long> excludeOrganization = new ArrayList<>();
-        for (MissionOrganization mission : missions){
-            excludeOrganization.add(mission.getOrganization().getId());
-        }
-        return excludeOrganization;
+        return (ArrayList<Long>) missions.stream().map(x -> x.getOrganization().getId()).collect(Collectors.toList());
     }
 
     private List<OrgDto.OrgResponse> toOrgResponseList(List<Organization> organizations){
-        List<OrgDto.OrgResponse> res = new ArrayList<>();
-        for(Organization org: organizations){
-            res.add(org.toResponseDto());
-        }
-        return res;
+        return organizations.stream().map(Organization::toResponseDto).collect(Collectors.toList());
     }
 }

@@ -26,7 +26,7 @@ public class OrganizationController {
     public ResponseEntity<OrgListResponseMessage> findAll(){
         return new ResponseEntity<>(OrgListResponseMessage.builder()
                 .data(groupService.findAll(AccountUtil.getAccount()))
-                .message(Message.builder().status(StatusEnum.OK).msg("조회 성공").build())
+                .message(Message.builder().status(StatusEnum.GROUP_OK).msg("조회 성공").build())
                 .build(), HttpStatus.OK);
     }
 
@@ -35,7 +35,7 @@ public class OrganizationController {
     public ResponseEntity<OrgListResponseMessage> findByCategory(@PathVariable("category") String category){
         return new ResponseEntity<>(OrgListResponseMessage.builder()
                 .data(groupService.findByCategory(category, AccountUtil.getAccount()))
-                .message(Message.builder().status(StatusEnum.OK).msg("조회 성공").build())
+                .message(Message.builder().status(StatusEnum.GROUP_OK).msg("조회 성공").build())
                 .build(), HttpStatus.OK);
     }
 
@@ -44,7 +44,7 @@ public class OrganizationController {
     public ResponseEntity<OrgDetailMessage> detailGroup(@PathVariable("id") Long id){
         return new ResponseEntity<>(OrgDetailMessage.builder()
                 .data(groupService.detailGroup(id))
-                .message(Message.builder().status(StatusEnum.OK).msg("디테일 페이지 접근 성공").build())
+                .message(Message.builder().status(StatusEnum.GROUP_OK).msg("디테일 페이지 접근 성공").build())
                 .build(),HttpStatus.OK);
     }
 

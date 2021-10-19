@@ -9,7 +9,6 @@ import com.yapp.project.account.service.AuthService;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.PrefixType;
 import com.yapp.project.aux.test.account.AccountTemplate;
-import com.yapp.project.config.exception.Content;
 import com.yapp.project.config.exception.account.*;
 import com.yapp.project.config.jwt.TokenProvider;
 import org.junit.jupiter.api.Test;
@@ -61,7 +60,7 @@ class AuthControllerTest {
         accountRepository.save(account);
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
         assertThatThrownBy(() ->authController.signup(accountRequestDto)).isInstanceOf(EmailDuplicateException.class)
-                .hasMessage(Content.EMAIL_DUPLICATE);
+                .hasMessage(AccountContent.EMAIL_DUPLICATE);
     }
 
     @Test
@@ -82,7 +81,7 @@ class AuthControllerTest {
         accountRepository.save(account);
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
         assertThatThrownBy(() -> authController.login(accountRequestDto)).isInstanceOf(NotFoundUserInformationException.class)
-                .hasMessage(Content.NOT_FOUND_USER_INFORMATION);
+                .hasMessage(AccountContent.NOT_FOUND_USER_INFORMATION);
     }
 
     @Test
@@ -100,7 +99,7 @@ class AuthControllerTest {
         Account account = AccountTemplate.makeTestAccount("meaning","meaning@example.com");
         accountRepository.save(account);
         assertThatThrownBy(() -> authController.logout()).isInstanceOf(NotFoundUserInformationException.class)
-                .hasMessage(Content.NOT_FOUND_USER_INFORMATION);
+                .hasMessage(AccountContent.NOT_FOUND_USER_INFORMATION);
     }
 
     @Test
@@ -136,7 +135,7 @@ class AuthControllerTest {
 
         TokenRequestDto tokenRequestDto = new TokenRequestDto("");
         assertThatThrownBy(() -> authController.reissue(tokenRequestDto)).isInstanceOf(RefreshTokenInvalidException.class)
-                .hasMessage(Content.REFRESH_TOKEN_INVALID);
+                .hasMessage(AccountContent.REFRESH_TOKEN_INVALID);
 
     }
 
@@ -155,7 +154,7 @@ class AuthControllerTest {
 
         TokenRequestDto tokenRequestDto = new TokenRequestDto(response.getBody().getData().getRefreshToken());
         assertThatThrownBy(() ->authController.reissue(tokenRequestDto)).isInstanceOf(AlreadyLogoutException.class)
-                .hasMessage(Content.LOGOUT_USER);
+                .hasMessage(AccountContent.LOGOUT_USER);
     }
 
     @Test
@@ -176,7 +175,7 @@ class AuthControllerTest {
 
         TokenRequestDto tokenRequestDto = new TokenRequestDto(response.getBody().getData().getRefreshToken());
         assertThatThrownBy(() ->authController.reissue(tokenRequestDto)).isInstanceOf(TokenInvalidException.class)
-                .hasMessage(Content.TOKEN_NOT_EQUAL_USER_INFORMATION);
+                .hasMessage(AccountContent.TOKEN_NOT_EQUAL_USER_INFORMATION);
 
     }
 }

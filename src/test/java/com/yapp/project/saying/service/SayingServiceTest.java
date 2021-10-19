@@ -3,8 +3,8 @@ package com.yapp.project.saying.service;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.test.account.AccountTemplate;
 import com.yapp.project.aux.test.saying.SayingTemplate;
-import com.yapp.project.config.exception.Content;
 import com.yapp.project.config.exception.saying.AlreadyFoundException;
+import com.yapp.project.config.exception.saying.SayingContent;
 import com.yapp.project.saying.domain.Saying;
 import com.yapp.project.saying.domain.dto.SayingDto;
 import com.yapp.project.saying.domain.repository.SayingRecordRepository;
@@ -53,7 +53,7 @@ class SayingServiceTest {
         given(sayingRecordRepository.findTopByAccount_IdOrderByIdDesc(account.getId()))
                 .willReturn(Optional.of(SayingTemplate.makeSayingRecord()));
         assertThatThrownBy(() -> sayingService.randomSaying(account, id)).isInstanceOf(AlreadyFoundException.class)
-                .hasMessage(Content.ALREADY_FOUND_SAYING_RECORD);
+                .hasMessage(SayingContent.ALREADY_FOUND_SAYING_RECORD);
     }
 
     @Test

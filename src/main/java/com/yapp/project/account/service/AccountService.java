@@ -4,6 +4,7 @@ package com.yapp.project.account.service;
 import com.yapp.project.account.domain.dto.AccountDto;
 import com.yapp.project.account.domain.repository.AccountRepository;
 import com.yapp.project.account.util.SecurityUtil;
+import com.yapp.project.config.exception.account.NotFoundUserInformationException;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -18,9 +19,6 @@ public class AccountService {
     public AccountDto.UserResponse getUserInfo() {
         return accountRepository.findByEmail(SecurityUtil.getCurrentAccountEmail())
                 .map(AccountDto.UserResponse::of)
-                .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
+                .orElseThrow(NotFoundUserInformationException::new);
     }
-
-
-
 }

@@ -83,26 +83,13 @@ public class AuthService {
         Account account = requestDto.toAccount(passwordEncoder,suffix);
         accountRepository.save(account);
         TokenDto tokenDto = login(account.toAccountRequestDto(suffix));
-        return TokenMessage.builder()
-                .message(
-                        Message.builder().
-                                msg("소셜 회원가입")
-                                .status(StatusEnum.SOCIAL_OK)
-                                .build()
-                )
-                .data(tokenDto).build();
+        return tokenDto.toTokenMessage("소셜 회원가입", StatusEnum.SOCIAL_OK);
+
     }
 
     @Transactional
     public TokenMessage normalLogin(UserRequest accountRequestDto){
-        return TokenMessage.builder()
-                .message(
-                        Message.builder().
-                                msg("기본 로그인")
-                                .status(StatusEnum.ACCOUNT_OK)
-                                .build()
-                )
-                .data(login(accountRequestDto)).build();
+        return login(accountRequestDto).toTokenMessage("기본 로그인", StatusEnum.ACCOUNT_OK);
     }
 
     @Transactional
@@ -161,6 +148,8 @@ public class AuthService {
         return tokenDto;
     }
 
+
+
     @Transactional
     public TokenMessage reissue(TokenRequestDto tokenRequestDto){
         ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
@@ -169,6 +158,17 @@ public class AuthService {
         }
         Authentication authentication = tokenProvider.getAuthentication(tokenRequestDto.getRefreshToken());
         String refreshToken = valueOperations.get(PrefixType.PREFIX_REFRESH_TOKEN + authentication.getName());
+
+        reissueRefreshExceptionCheck(refreshToken, tokenRequestDto);
+
+        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+        // redis refreshToken update
+        String key = PrefixType.PREFIX_REFRESH_TOKEN + authentication.getName();
+        valueOperations.set(key, tokenDto.getRefreshToken());
+        return tokenDto.toTokenMessage("토큰 재발급", StatusEnum.TOKEN_OK);
+    }
+
+    private void reissueRefreshExceptionCheck(String refreshToken,TokenRequestDto tokenRequestDto){
         if (refreshToken == null){
             throw new AlreadyLogoutException();
         }
@@ -176,19 +176,6 @@ public class AuthService {
         if (!refreshToken.equals(tokenRequestDto.getRefreshToken())){
             throw new TokenInvalidException();
         }
-
-        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
-        // redis refreshToken update
-        String key = PrefixType.PREFIX_REFRESH_TOKEN + authentication.getName();
-        valueOperations.set(key, tokenDto.getRefreshToken());
-        return TokenMessage.builder()
-                .message(
-                        Message.builder().
-                                msg("토큰 재발급")
-                                .status(StatusEnum.TOKEN_OK)
-                                .build()
-                )
-                .data(tokenDto).build();
     }
 
     @Transactional(readOnly = true)
