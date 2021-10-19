@@ -1,5 +1,7 @@
 package com.yapp.project.account.domain.dto;
 
+import com.yapp.project.aux.Message;
+import com.yapp.project.aux.StatusEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
@@ -17,4 +19,15 @@ public class TokenDto {
     private String refreshToken;
     @ApiModelProperty(value = "인증토큰만료기간",example = "112479853")
     private Long accessTokenExpiresIn;
+
+    public SocialDto.TokenMessage toTokenMessage(String message, StatusEnum status){
+        return SocialDto.TokenMessage.builder()
+                .message(
+                        Message.builder().
+                                msg(message)
+                                .status(status)
+                                .build()
+                )
+                .data(this).build();
+    }
 }
