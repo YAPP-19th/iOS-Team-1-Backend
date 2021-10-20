@@ -49,14 +49,15 @@ public class AuthService {
             emailSuffix = "@apple.com";
             socialType = SocialType.APPLE;
         }
-        if (accountRepository.existsByEmail(socialRequestDto.getId()+emailSuffix)){
-            Account account = accountRepository.findByEmail(socialRequestDto.getId()+emailSuffix).orElse(null);
+        String email = socialRequestDto.getId()+emailSuffix;
+        if (accountRepository.existsByEmail(email)){
+            Account account = accountRepository.findByEmail(email).orElse(null);
             assert  account!=null;
             TokenDto tokenDto = login(account.toAccountRequestDto(suffix));
             SocialResponse socialResponseDto = new SocialResponse("LOGIN",tokenDto);
             return socialResponseDto.toSocialResponseMessage("소셜 로그인 성공");
         }else {
-            MiddleAccount account = MiddleAccount.builder().email(socialRequestDto.getId()+emailSuffix).socialType(socialType)
+            MiddleAccount account = MiddleAccount.builder().email(email).socialType(socialType)
                     .build();
             SocialResponse socialResponseDto = new SocialResponse("SIGNUP",account);
             return socialResponseDto.toSocialResponseMessage("소셜 회원가입 진행중");
