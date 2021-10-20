@@ -4,6 +4,7 @@ import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.Authority;
 import com.yapp.project.account.domain.SocialType;
 import com.yapp.project.aux.Message;
+import com.yapp.project.aux.StatusEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,7 +30,17 @@ public class SocialDto {
     public static class SocialResponse {
         @ApiModelProperty(value = "진행여부",example = "LOGIN/SIGNUP")
         private String processes;
+        @ApiModelProperty(value = "토큰/유저정보")
         private Object data;
+
+        public SocialResponseMessage toSocialResponseMessage(String message){
+            return SocialResponseMessage.builder().message(
+                    Message.builder()
+                            .status(StatusEnum.SOCIAL_OK)
+                            .msg(message)
+                            .build()
+            ).data(this).build();
+        }
     }
 
     @Data
@@ -72,5 +83,13 @@ public class SocialDto {
     public static class TokenMessage {
         private Message message;
         private TokenDto data;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class MiddleAccount{
+        private String email;
+        private SocialType socialType;
     }
 }

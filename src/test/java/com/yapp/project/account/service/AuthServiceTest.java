@@ -36,8 +36,8 @@ class AuthServiceTest {
     @Transactional
     void test_일반_회원가입_성공했을_때(){
         AccountDto.UserRequest request = AccountTemplate.makeAccountRequestDto();
-        AccountDto.UserResponseMessage message = authService.normalSignup(request);
-        assertThat(message.getData().getEmail()).isEqualTo(request.getEmail());
+        SocialDto.TokenMessage message = authService.normalSignup(request);
+        assertThat(message.getData().getAccessToken()).isNotNull();
     }
 
 

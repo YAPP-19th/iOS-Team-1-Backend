@@ -33,8 +33,10 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final RedisTemplate<String,String> redisTemplate;
 
+
     @Value("${social.value}")
     private String suffix;
+
 
     @Transactional
     public SocialResponseMessage socialAccess(SocialRequest socialRequestDto){
@@ -47,30 +49,21 @@ public class AuthService {
             emailSuffix = "@apple.com";
             socialType = SocialType.APPLE;
         }
-        if (accountRepository.existsByEmail(socialRequestDto.getId()+emailSuffix)){
-            Account account = accountRepository.findByEmail(socialRequestDto.getId()+emailSuffix).orElse(null);
+        String email = socialRequestDto.getId()+emailSuffix;
+        if (accountRepository.existsByEmail(email)){
+            Account account = accountRepository.findByEmail(email).orElse(null);
             assert  account!=null;
             TokenDto tokenDto = login(account.toAccountRequestDto(suffix));
             SocialResponse socialResponseDto = new SocialResponse("LOGIN",tokenDto);
-            return SocialResponseMessage.builder()
-                    .message(
-                            Message.builder()
-                                    .status(StatusEnum.SOCIAL_OK)
-                                    .msg("소셜 로그인 성공")
-                                    .build()
-                    ).data(socialResponseDto).build();
+            return socialResponseDto.toSocialResponseMessage("소셜 로그인 성공");
         }else {
-            Account account = Account.builder().email(socialRequestDto.getId()+emailSuffix).socialType(socialType)
+            MiddleAccount account = MiddleAccount.builder().email(email).socialType(socialType)
                     .build();
             SocialResponse socialResponseDto = new SocialResponse("SIGNUP",account);
-            return SocialResponseMessage.builder().message(
-                    Message.builder()
-                            .status(StatusEnum.SOCIAL_OK)
-                            .msg("소셜 회원가입 진행중")
-                            .build()
-            ).data(socialResponseDto).build();
+            return socialResponseDto.toSocialResponseMessage("소셜 회원가입 진행중");
         }
     }
+
 
     @Transactional
     public TokenMessage socialSignUp(SocialSignUpRequest requestDto){
@@ -87,22 +80,17 @@ public class AuthService {
 
     }
 
+
     @Transactional
     public TokenMessage normalLogin(UserRequest accountRequestDto){
         return login(accountRequestDto).toTokenMessage("기본 로그인", StatusEnum.ACCOUNT_OK);
     }
 
     @Transactional
-    public UserResponseMessage normalSignup(UserRequest accountRequestDto){
+    public TokenMessage normalSignup(UserRequest accountRequestDto){
         accountRequestDto.updateSocialType(SocialType.NORMAL);
-        return UserResponseMessage.builder()
-                .message(
-                        Message.builder().
-                                msg("회원가입 축하드립니다")
-                                .status(StatusEnum.ACCOUNT_OK)
-                                .build()
-                )
-                .data(signup(accountRequestDto)).build();
+        signup(accountRequestDto);
+        return login(accountRequestDto).toTokenMessage("회원가입 축하드립니다", StatusEnum.ACCOUNT_OK);
     }
 
 
@@ -118,6 +106,7 @@ public class AuthService {
         return Message.of(StatusEnum.ACCOUNT_OK,"로그아웃 되었습니다.");
     }
 
+
     public UserResponse signup(UserRequest accountRequestDto){
         if (accountRepository.existsByEmail(accountRequestDto.getEmail())){
             throw new EmailDuplicateException();
@@ -131,6 +120,7 @@ public class AuthService {
         Account account = accountRequestDto.toAccount(passwordEncoder);
         return UserResponse.of(accountRepository.save(account));
     }
+
 
     public TokenDto login(UserRequest accountRequestDto){
         Account account = accountRepository.findByEmail(accountRequestDto.getEmail())
@@ -147,7 +137,6 @@ public class AuthService {
         valueOperations.set(key, tokenDto.getRefreshToken());
         return tokenDto;
     }
-
 
 
     @Transactional
