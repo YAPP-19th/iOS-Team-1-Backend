@@ -36,7 +36,7 @@ class AuthServiceTest {
     @Transactional
     void test_일반_회원가입_성공했을_때(){
         AccountDto.UserRequest request = AccountTemplate.makeAccountRequestDto();
-        SocialDto.TokenMessage message = authService.normalSignup(request);
+        SocialDto.TokenMessage message = authService.normalSignUp(request);
         assertThat(message.getData().getAccessToken()).isNotNull();
     }
 
@@ -46,7 +46,7 @@ class AuthServiceTest {
     void test_일반_회원가입_실패했을_때(){
         AccountDto.UserRequest request = AccountTemplate.makeAccountRequestDto(AccountTemplate.EMAIL,
                 AccountTemplate.USERNAME,"1234");
-        assertThatThrownBy(() ->authService.normalSignup(request)).isInstanceOf(PasswordInvalidException.class)
+        assertThatThrownBy(() ->authService.normalSignUp(request)).isInstanceOf(PasswordInvalidException.class)
                 .hasMessage(AccountContent.NOT_VAILDATION_PASSWORD);
     }
 
@@ -64,7 +64,7 @@ class AuthServiceTest {
     @Transactional
     void signupSuccess() {
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto("hello@example.com");
-        AccountDto.UserResponse accountUserResponseDto = authService.signup(accountRequestDto);
+        AccountDto.UserResponse accountUserResponseDto = authService.signUp(accountRequestDto);
         assertThat(accountUserResponseDto.getEmail()).isEqualTo(accountRequestDto.getEmail());
     }
 
@@ -74,7 +74,7 @@ class AuthServiceTest {
         Account account = AccountTemplate.makeTestAccount();
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
         accountRepository.save(account);
-        assertThatThrownBy(() -> authService.signup(accountRequestDto)).isInstanceOf(EmailDuplicateException.class)
+        assertThatThrownBy(() -> authService.signUp(accountRequestDto)).isInstanceOf(EmailDuplicateException.class)
                 .hasMessage(AccountContent.EMAIL_DUPLICATE);
     }
 
