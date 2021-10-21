@@ -19,7 +19,7 @@ public class AuthController {
     @ApiOperation(value = "회원가입", tags = "auth-controller")
     @PostMapping("/signup")
     public ResponseEntity<SocialDto.TokenMessage> signup(@RequestBody AccountDto.UserRequest request){
-        return new ResponseEntity<>(authService.normalSignup(request), HttpStatus.OK);
+        return new ResponseEntity<>(authService.normalSignUp(request), HttpStatus.OK);
     }
 
     @ApiOperation(value = "소셜 로그인 접근", tags = "auth-controller", notes = AccountNotes.SOCIAL_NOTES)

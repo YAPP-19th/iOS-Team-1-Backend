@@ -22,6 +22,22 @@ public class SocialDto {
         private String socialType;
         @ApiModelProperty(value = "소셜해당아이디",example = "142342124")
         private String id;
+
+        public SocialType getSocial(){
+            if (socialType.equalsIgnoreCase(SocialType.KAKAO.name())){
+                return SocialType.KAKAO;
+            }else {
+                return SocialType.APPLE;
+            }
+        }
+
+        public String getEmail(){
+            if (getSocial().equals(SocialType.KAKAO)){
+                return id+"@kakao.com";
+            }else{
+                return id+"@apple.com";
+            }
+        }
     }
 
     @Getter

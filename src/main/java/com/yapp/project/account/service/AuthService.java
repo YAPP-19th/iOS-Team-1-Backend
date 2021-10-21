@@ -33,33 +33,22 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final RedisTemplate<String,String> redisTemplate;
 
-
     @Value("${social.value}")
     private String suffix;
 
-
-    @Transactional
+    @Transactional(readOnly = true)
     public SocialResponseMessage socialAccess(SocialRequest socialRequestDto){
-        String emailSuffix = "";
-        SocialType socialType = null;
-        if (socialRequestDto.getSocialType().equalsIgnoreCase(SocialType.KAKAO.toString())){
-            emailSuffix = "@kakao.com";
-            socialType = SocialType.KAKAO;
-        }else{
-            emailSuffix = "@apple.com";
-            socialType = SocialType.APPLE;
-        }
-        String email = socialRequestDto.getId()+emailSuffix;
-        if (accountRepository.existsByEmail(email)){
-            Account account = accountRepository.findByEmail(email).orElse(null);
-            assert  account!=null;
+        SocialType socialType = socialRequestDto.getSocial();
+        String email = socialRequestDto.getEmail();
+        Account account = accountRepository.findByEmail(email).orElse(null);
+        if (account != null){
             TokenDto tokenDto = login(account.toAccountRequestDto(suffix));
             SocialResponse socialResponseDto = new SocialResponse("LOGIN",tokenDto);
             return socialResponseDto.toSocialResponseMessage("소셜 로그인 성공");
         }else {
-            MiddleAccount account = MiddleAccount.builder().email(email).socialType(socialType)
+            MiddleAccount middleAccount = MiddleAccount.builder().email(email).socialType(socialType)
                     .build();
-            SocialResponse socialResponseDto = new SocialResponse("SIGNUP",account);
+            SocialResponse socialResponseDto = new SocialResponse("SIGNUP", middleAccount);
             return socialResponseDto.toSocialResponseMessage("소셜 회원가입 진행중");
         }
     }
@@ -67,12 +56,9 @@ public class AuthService {
 
     @Transactional
     public TokenMessage socialSignUp(SocialSignUpRequest requestDto){
-        if (accountRepository.existsByEmail(requestDto.getEmail())){
-            throw new EmailDuplicateException();
-        }
-        if (accountRepository.existsByNickname(requestDto.getNickname())){
-            throw new NicknameDuplicateException();
-        }
+        String email = requestDto.getEmail();
+        String nickname = requestDto.getNickname();
+        checkDuplicateExceptionFields(email, nickname);
         Account account = requestDto.toAccount(passwordEncoder,suffix);
         accountRepository.save(account);
         TokenDto tokenDto = login(account.toAccountRequestDto(suffix));
@@ -81,20 +67,21 @@ public class AuthService {
     }
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public TokenMessage normalLogin(UserRequest accountRequestDto){
         return login(accountRequestDto).toTokenMessage("기본 로그인", StatusEnum.ACCOUNT_OK);
     }
 
+
     @Transactional
-    public TokenMessage normalSignup(UserRequest accountRequestDto){
+    public TokenMessage normalSignUp(UserRequest accountRequestDto){
         accountRequestDto.updateSocialType(SocialType.NORMAL);
-        signup(accountRequestDto);
+        signUp(accountRequestDto);
         return login(accountRequestDto).toTokenMessage("회원가입 축하드립니다", StatusEnum.ACCOUNT_OK);
     }
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Message logout(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String accountEmail = authentication.getName();
@@ -107,35 +94,11 @@ public class AuthService {
     }
 
 
-    public UserResponse signup(UserRequest accountRequestDto){
-        if (accountRepository.existsByEmail(accountRequestDto.getEmail())){
-            throw new EmailDuplicateException();
-        }
-        if (accountRepository.existsByNickname(accountRequestDto.getNickname())){
+    @Transactional(readOnly = true)
+    public Message existByNickname(String nickname){
+        if (accountRepository.existsByNickname(nickname))
             throw new NicknameDuplicateException();
-        }
-        if (accountRequestDto.getSocialType().equals(SocialType.NORMAL) && !PasswordUtil.validPassword(accountRequestDto.getPassword())){
-                throw new PasswordInvalidException();
-        }
-        Account account = accountRequestDto.toAccount(passwordEncoder);
-        return UserResponse.of(accountRepository.save(account));
-    }
-
-
-    public TokenDto login(UserRequest accountRequestDto){
-        Account account = accountRepository.findByEmail(accountRequestDto.getEmail())
-                .orElseThrow(NotFoundUserInformationException::new);
-        account.updateLastLoginAccount();
-
-        UsernamePasswordAuthenticationToken authenticationToken = accountRequestDto.toAuthentication();
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
-
-        // refreshToken redis에 저장
-        ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
-        String key = PrefixType.PREFIX_REFRESH_TOKEN + authentication.getName();
-        valueOperations.set(key, tokenDto.getRefreshToken());
-        return tokenDto;
+        return Message.of("중복되는 닉네임이 없습니다.");
     }
 
 
@@ -157,21 +120,52 @@ public class AuthService {
         return tokenDto.toTokenMessage("토큰 재발급", StatusEnum.TOKEN_OK);
     }
 
+
+    public UserResponse signUp(UserRequest accountRequestDto){
+        String email = accountRequestDto.getEmail();
+        String nickname = accountRequestDto.getNickname();
+        checkDuplicateExceptionFields(email, nickname);
+        if (accountRequestDto.getSocialType().equals(SocialType.NORMAL) && !PasswordUtil.validPassword(accountRequestDto.getPassword())){
+                throw new PasswordInvalidException();
+        }
+        Account account = accountRequestDto.toAccount(passwordEncoder);
+        return UserResponse.of(accountRepository.save(account));
+    }
+
+    private void checkDuplicateExceptionFields(String email, String nickname){
+         if (accountRepository.existsByEmail(email)){
+            throw new EmailDuplicateException();
+        }
+        if (accountRepository.existsByNickname(nickname)){
+            throw new NicknameDuplicateException();
+        }
+    }
+
+
+    public TokenDto login(UserRequest accountRequestDto){
+        Account account = accountRepository.findByEmail(accountRequestDto.getEmail())
+                .orElseThrow(NotFoundUserInformationException::new);
+        account.updateLastLoginAccount();
+
+        UsernamePasswordAuthenticationToken authenticationToken = accountRequestDto.toAuthentication();
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+
+        // refreshToken redis에 저장
+        ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
+        String key = PrefixType.PREFIX_REFRESH_TOKEN + authentication.getName();
+        valueOperations.set(key, tokenDto.getRefreshToken());
+        return tokenDto;
+    }
+
+
     private void reissueRefreshExceptionCheck(String refreshToken,TokenRequestDto tokenRequestDto){
         if (refreshToken == null){
             throw new AlreadyLogoutException();
         }
-
         if (!refreshToken.equals(tokenRequestDto.getRefreshToken())){
             throw new TokenInvalidException();
         }
-    }
-
-    @Transactional(readOnly = true)
-    public Message existByNickname(String nickname){
-        if (accountRepository.existsByNickname(nickname))
-            throw new NicknameDuplicateException();
-        return Message.of("중복되는 닉네임이 없습니다.");
     }
 
 }
