@@ -54,7 +54,8 @@ public class RetrospectController {
         return retrospectService.getRetrospectList(day, LocalDate.parse(date), AccountUtil.getAccount());
     }
 
-    @ApiOperation(value = "루틴 수행여부 설정(회고에 적용)", notes = "완료: DONE, 부분완료: TRY, 취소: NOT / 여기서 취소는 수행여부 체크 이후 취소를 의미합니다.")
+    @ApiOperation(value = "루틴 수행여부 설정(회고에 적용)", notes = "완료: DONE, 부분완료: TRY, 취소: NOT / 여기서 취소는 수행여부 체크 이후 취소를 의미합니다.\n " +
+            "돌아보기가 존재하면 아래 예시 데이터 대로 응답, 돌아보기가 존재하지 않으면 돌아보기 데이터는 빈 값으로 응답")
     @PostMapping("/result")
     public RetrospectDTO.ResponseRetrospectMessage setRetrospectResult(@RequestBody RetrospectDTO.RequestRetrospectResult result) {
         return retrospectService.setRetrospectResult(result, AccountUtil.getAccount());
