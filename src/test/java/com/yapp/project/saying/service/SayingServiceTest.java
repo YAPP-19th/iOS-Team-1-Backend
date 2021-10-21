@@ -6,6 +6,7 @@ import com.yapp.project.aux.test.saying.SayingTemplate;
 import com.yapp.project.config.exception.saying.AlreadyFoundException;
 import com.yapp.project.config.exception.saying.SayingContent;
 import com.yapp.project.saying.domain.Saying;
+import com.yapp.project.saying.domain.SayingRecord;
 import com.yapp.project.saying.domain.dto.SayingDto;
 import com.yapp.project.saying.domain.repository.SayingRecordRepository;
 import com.yapp.project.saying.domain.repository.SayingRepository;
@@ -40,9 +41,8 @@ class SayingServiceTest {
         Account account = AccountTemplate.makeTestAccount();
         int id = SayingUtils.randomSayingId();
         given(sayingRepository.findById((long)id)).willReturn(Optional.of(SayingTemplate.makeSaying()));
-        Saying saying = sayingService.randomSaying(account, id);
-        System.out.println(saying);
-        assertThat(saying.getContent()).isEqualTo(SayingTemplate.CONTENT);
+        SayingDto.SayingAccessMessage saying = sayingService.randomSaying(account, id);
+        assertThat(saying.getData().getContent()).isEqualTo(SayingTemplate.CONTENT);
     }
 
     @Test
@@ -62,9 +62,9 @@ class SayingServiceTest {
         SayingDto.SayingAccess request = SayingTemplate.makeSayingAccess();
         Saying saying = SayingTemplate.makeSaying();
         given(sayingRepository.findById(request.getId())).willReturn(Optional.of(saying));
-        SayingDto.SayingResponse response = sayingService.checkResult(request, account);
-        assertThat(response.getId()).isEqualTo(request.getId());
-        assertThat(response.getResult()).isTrue();
+        SayingDto.SayingResponseMessage response = sayingService.checkResult(request, account);
+        assertThat(response.getData().getId()).isEqualTo(request.getId());
+        assertThat(response.getData().getResult()).isTrue();
     }
 
     @Test
@@ -73,9 +73,29 @@ class SayingServiceTest {
         SayingDto.SayingAccess request = SayingTemplate.makeSayingAccess("");
         Saying saying = SayingTemplate.makeSaying();
         given(sayingRepository.findById(request.getId())).willReturn(Optional.of(saying));
-        SayingDto.SayingResponse response = sayingService.checkResult(request, account);
-        assertThat(response.getId()).isEqualTo(request.getId());
-        assertThat(response.getResult()).isFalse();
+        SayingDto.SayingResponseMessage response = sayingService.checkResult(request, account);
+        assertThat(response.getData().getId()).isEqualTo(request.getId());
+        assertThat(response.getData().getResult()).isFalse();
+    }
+
+    @Test
+    void test_오늘_명언_쓰기_했을_때(){
+        Account account = AccountTemplate.makeTestAccount();
+        Saying saying = SayingTemplate.makeSaying();
+        SayingRecord sayingRecord = SayingTemplate.makeSayingRecord(account, saying);
+        given(sayingRecordRepository.findTopByAccount_IdOrderByIdDesc(account.getId())).willReturn(Optional.of(sayingRecord));
+        SayingDto.SayingRecordResponseMessage message = sayingService.isTodayRecording(account);
+        boolean isTodayRecording = message.getData().getResult();
+        assertThat(isTodayRecording).isTrue();
+    }
+
+    @Test
+    void test_오늘_명언_쓰기_안_했을_때(){
+        Account account = AccountTemplate.makeTestAccount();
+        given(sayingRecordRepository.findTopByAccount_IdOrderByIdDesc(account.getId())).willReturn(Optional.empty());
+        SayingDto.SayingRecordResponseMessage message = sayingService.isTodayRecording(account);
+        boolean isTodayRecording = message.getData().getResult();
+        assertThat(isTodayRecording).isFalse();
     }
 
 }

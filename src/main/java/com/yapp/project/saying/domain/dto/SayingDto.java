@@ -1,6 +1,7 @@
 package com.yapp.project.saying.domain.dto;
 
 import com.yapp.project.aux.Message;
+import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.saying.domain.Saying;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,14 @@ public class SayingDto {
     @Getter
     @AllArgsConstructor
     @Builder
+    public static class SayingRecordResponse{
+        @ApiModelProperty(value = "명언 썼는지 확인",example = "True/False")
+        private Boolean result;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
     public static class SayingResponse{
         @ApiModelProperty(value = "명언아이디",example = "15")
         private Long id;
@@ -38,6 +47,12 @@ public class SayingDto {
     public static class SayingAccessMessage{
         private Message message;
         private Saying data;
+
+        public static SayingAccessMessage of(StatusEnum status, String message, Saying data){
+            return SayingAccessMessage.builder()
+                    .data(data)
+                    .message(Message.builder().status(status).msg(message).build()).build() ;
+        }
     }
 
     @Getter
@@ -46,5 +61,27 @@ public class SayingDto {
     public static class SayingResponseMessage{
         private Message message;
         private SayingResponse data;
+
+        public static SayingResponseMessage of(StatusEnum status, String message, SayingResponse data){
+            return SayingResponseMessage.builder()
+                    .message(Message.builder().status(status).msg(message).build())
+                    .data(data)
+                    .build();
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class SayingRecordResponseMessage{
+        private Message message;
+        private SayingRecordResponse data;
+
+        public static SayingRecordResponseMessage of(StatusEnum status, String message, SayingRecordResponse data){
+            return SayingRecordResponseMessage.builder()
+                    .message(Message.builder().status(status).msg(message).build())
+                    .data(data)
+                    .build();
+        }
     }
 }

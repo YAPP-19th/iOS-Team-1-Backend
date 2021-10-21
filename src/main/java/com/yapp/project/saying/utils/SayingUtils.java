@@ -6,9 +6,9 @@ public class SayingUtils {
     private SayingUtils(){
     }
     public static final int SIZE = 4;
-    private static Random random = new Random();
+    private static final Random RANDOM = new Random();
     public static int randomSayingId(){
-        return 1 + random.nextInt(SIZE);
+        return 1 + RANDOM.nextInt(SIZE);
     }
 
 }
