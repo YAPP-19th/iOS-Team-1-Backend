@@ -47,15 +47,13 @@ public class RetrospectService {
     public RetrospectDTO.RequestRetrospectMessage updateRetrospect(RetrospectDTO.RequestUpdateRetrospect updateRetrospect, Account account) throws IOException {
         Retrospect retrospect = retrospectRepository.findById(updateRetrospect.getRetrospectId()).orElseThrow(NotFoundRetrospectException::new);
         routineService.checkIsMine(account, retrospect.getRoutine());
-        if(updateRetrospect.getImage() == null){
-            retrospect.deleteImage();
-            retrospect.updateRetrospect(updateRetrospect.getContent());
-            retrospectRepository.save(retrospect);
-        } else{
+        if(updateRetrospect.getImage() == null) retrospect.deleteImage();
+        else {
             String newImagePath = saveImages(updateRetrospect.getImage(), retrospect.getRoutine().getId());
-            retrospect.updateRetrospect(updateRetrospect.getContent(),
-                    snapshotRepository.save(Snapshot.builder().url(newImagePath).build()));
+            if(!snapshotRepository.findByUrl(newImagePath).isPresent())
+                retrospect.updateRetrospect(snapshotRepository.save(Snapshot.builder().url(newImagePath).build()));
         }
+        retrospect.updateRetrospect(updateRetrospect.getContent());
         return makeRetrospectMessage(retrospect, "회고 수정 성공", StatusEnum.RETROSPECT_OK);
     }
 

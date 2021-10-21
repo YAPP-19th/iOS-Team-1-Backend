@@ -3,7 +3,6 @@ package com.yapp.project.retrospect;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.test.account.AccountTemplate;
 import com.yapp.project.config.exception.retrospect.NotFoundRetrospectException;
-import com.yapp.project.config.exception.routine.BadRequestRoutineException;
 import com.yapp.project.retrospect.domain.Result;
 import com.yapp.project.retrospect.domain.Retrospect;
 import com.yapp.project.retrospect.domain.RetrospectRepository;

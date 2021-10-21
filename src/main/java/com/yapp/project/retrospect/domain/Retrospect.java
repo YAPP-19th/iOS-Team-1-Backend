@@ -25,7 +25,7 @@ public class Retrospect {
     @JoinColumn(name = "routine_id")
     private Routine routine;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "image_id")
     private Snapshot image;
 
@@ -59,6 +59,11 @@ public class Retrospect {
 
     public void updateRetrospect(String content) {
         this.content = content;
+    }
+
+    public void updateRetrospect(Snapshot image) {
+        this.image = image;
+        this.image.addRetrospect(this);
     }
 
     public void deleteImage() {
