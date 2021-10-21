@@ -2,6 +2,7 @@ package com.yapp.project.retrospect;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.test.account.AccountTemplate;
+import com.yapp.project.config.exception.retrospect.BadRequestRetrospectException;
 import com.yapp.project.config.exception.retrospect.NotFoundRetrospectException;
 import com.yapp.project.retrospect.domain.Result;
 import com.yapp.project.retrospect.domain.Retrospect;
@@ -10,6 +11,7 @@ import com.yapp.project.retrospect.domain.dto.RetrospectDTO;
 import com.yapp.project.retrospect.service.RetrospectService;
 import com.yapp.project.routine.domain.Routine;
 import com.yapp.project.routine.domain.RoutineDTO;
+import com.yapp.project.routine.domain.RoutineDay;
 import com.yapp.project.routine.domain.Week;
 import com.yapp.project.routine.service.RoutineService;
 import com.yapp.project.snapshot.domain.Snapshot;
@@ -19,12 +21,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -112,6 +114,56 @@ public class RetrospectServiceTest {
         // when then
         assertThrows(NotFoundRetrospectException.class, () -> {
             retrospectService.updateRetrospect(fakeUpdateRetrospect, account);
+        });
+    }
+
+    @Test
+    void Test_Set_Result_Retrospect() {
+        // given
+        Account account = AccountTemplate.makeTestAccount();
+        List<Week> days = new ArrayList<>();
+        days.add(Week.MON); days.add(Week.THU); days.add(Week.WED); days.add(Week.TUE);
+        days.add(Week.FRI); days.add(Week.SAT); days.add(Week.SUN);
+        RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", "생활");
+        Routine fakeRoutine = Routine.builder().account(account).newRoutine(newRoutine).id(1L).build();
+        List<RoutineDay> newDays = days.stream().map(day -> RoutineDay.builder().day(day).sequence(0L).routine(fakeRoutine).build()).collect(Collectors.toList());
+        fakeRoutine.addDays(newDays);
+        Retrospect fakeRetrospect = Retrospect.builder().routine(fakeRoutine).isReport(false).result(Result.NOT).build();
+        fakeRetrospect.updateRetrospect("테스트 회고 내용");
+        RetrospectDTO.RequestRetrospectResult fakeResult =
+                RetrospectDTO.RequestRetrospectResult.builder().routineId(1L).result(Result.DONE).build();
+
+        // mocking
+        given(routineService.findIsExistByIdAndIsNotDelete(any())).willReturn(fakeRoutine);
+        given(retrospectRepository.findByRoutineAndDate(fakeRoutine, LocalDate.now())).willReturn(Optional.of(fakeRetrospect));
+        given(retrospectRepository.save(any())).willReturn(fakeRetrospect);
+
+        // when
+        RetrospectDTO.ResponseRetrospectMessage responseRetrospectMessage = retrospectService.setRetrospectResult(fakeResult, account);
+
+        // then
+        assertThat(fakeResult.getResult()).isEqualTo(responseRetrospectMessage.getData().getResult());
+    }
+
+    @Test
+    void Test_Set_Result_Not_Day_Retrospect() {
+        // given
+        Account account = AccountTemplate.makeTestAccount();
+        List<Week> days = new ArrayList<>();
+
+        RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", "생활");
+        Routine fakeRoutine = Routine.builder().account(account).newRoutine(newRoutine).id(1L).build();
+        Retrospect fakeRetrospect = Retrospect.builder().routine(fakeRoutine).isReport(false).result(Result.NOT).build();
+        fakeRetrospect.updateRetrospect("테스트 회고 내용");
+        RetrospectDTO.RequestRetrospectResult fakeResult =
+                RetrospectDTO.RequestRetrospectResult.builder().routineId(1L).result(Result.DONE).build();
+
+        // mocking
+        given(routineService.findIsExistByIdAndIsNotDelete(any())).willReturn(fakeRoutine);
+
+        // when then
+        assertThrows(BadRequestRetrospectException.class, () -> {
+            retrospectService.setRetrospectResult(fakeResult, account);
         });
     }
 }
