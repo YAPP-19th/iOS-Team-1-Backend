@@ -9,6 +9,7 @@ import com.yapp.project.account.util.PasswordUtil;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.PrefixType;
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.aux.content.AccountContent;
 import com.yapp.project.config.exception.account.*;
 import com.yapp.project.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -44,12 +45,12 @@ public class AuthService {
         if (account != null){
             TokenDto tokenDto = login(account.toAccountRequestDto(suffix));
             SocialResponse socialResponseDto = new SocialResponse("LOGIN",tokenDto);
-            return socialResponseDto.toSocialResponseMessage("소셜 로그인 성공");
+            return socialResponseDto.toSocialResponseMessage(AccountContent.SOCIAL_LOGIN_SUCCESS);
         }else {
             MiddleAccount middleAccount = MiddleAccount.builder().email(email).socialType(socialType)
                     .build();
             SocialResponse socialResponseDto = new SocialResponse("SIGNUP", middleAccount);
-            return socialResponseDto.toSocialResponseMessage("소셜 회원가입 진행중");
+            return socialResponseDto.toSocialResponseMessage(AccountContent.SOCIAL_SIGNUP_ING);
         }
     }
 
@@ -62,14 +63,14 @@ public class AuthService {
         Account account = requestDto.toAccount(passwordEncoder,suffix);
         accountRepository.save(account);
         TokenDto tokenDto = login(account.toAccountRequestDto(suffix));
-        return tokenDto.toTokenMessage("소셜 회원가입", StatusEnum.SOCIAL_OK);
+        return tokenDto.toTokenMessage(AccountContent.SOCIAL_SIGNUP_FINISH, StatusEnum.SOCIAL_OK);
 
     }
 
 
     @Transactional(readOnly = true)
     public TokenMessage normalLogin(UserRequest accountRequestDto){
-        return login(accountRequestDto).toTokenMessage("기본 로그인", StatusEnum.ACCOUNT_OK);
+        return login(accountRequestDto).toTokenMessage(AccountContent.NORMAL_LOGIN_SUCCESS, StatusEnum.ACCOUNT_OK);
     }
 
 
@@ -77,7 +78,7 @@ public class AuthService {
     public TokenMessage normalSignUp(UserRequest accountRequestDto){
         accountRequestDto.updateSocialType(SocialType.NORMAL);
         signUp(accountRequestDto);
-        return login(accountRequestDto).toTokenMessage("회원가입 축하드립니다", StatusEnum.ACCOUNT_OK);
+        return login(accountRequestDto).toTokenMessage(AccountContent.NORMAL_SIGNUP_SUCCESS, StatusEnum.ACCOUNT_OK);
     }
 
 
@@ -90,7 +91,7 @@ public class AuthService {
         }else{
             throw new NotFoundUserInformationException();
         }
-        return Message.of(StatusEnum.ACCOUNT_OK,"로그아웃 되었습니다.");
+        return Message.of(StatusEnum.ACCOUNT_OK,AccountContent.LOGOUT_SUCCESS);
     }
 
 
@@ -98,7 +99,7 @@ public class AuthService {
     public Message existByNickname(String nickname){
         if (accountRepository.existsByNickname(nickname))
             throw new NicknameDuplicateException();
-        return Message.of("중복되는 닉네임이 없습니다.");
+        return Message.of(AccountContent.DOES_NOT_EXISTS_DUPLICATE_NICKNAME);
     }
 
 
@@ -117,7 +118,7 @@ public class AuthService {
         // redis refreshToken update
         String key = PrefixType.PREFIX_REFRESH_TOKEN + authentication.getName();
         valueOperations.set(key, tokenDto.getRefreshToken());
-        return tokenDto.toTokenMessage("토큰 재발급", StatusEnum.TOKEN_OK);
+        return tokenDto.toTokenMessage(AccountContent.TOKEN_REISSUE_SUCCESS, StatusEnum.TOKEN_OK);
     }
 
 

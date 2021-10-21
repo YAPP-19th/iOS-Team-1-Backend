@@ -8,6 +8,7 @@ import com.yapp.project.account.domain.repository.AccountRepository;
 import com.yapp.project.account.service.AuthService;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.PrefixType;
+import com.yapp.project.aux.content.AccountContent;
 import com.yapp.project.aux.test.account.AccountTemplate;
 import com.yapp.project.config.exception.account.*;
 import com.yapp.project.config.jwt.TokenProvider;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
+import static com.yapp.project.aux.content.AccountContent.NORMAL_SIGNUP_SUCCESS;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
@@ -50,7 +52,7 @@ class AuthControllerTest {
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
         ResponseEntity<SocialDto.TokenMessage> response = authController.signup(accountRequestDto);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(Objects.requireNonNull(response.getBody()).getMessage().getMsg()).isEqualTo("회원가입 축하드립니다");
+        assertThat(Objects.requireNonNull(response.getBody()).getMessage().getMsg()).isEqualTo(NORMAL_SIGNUP_SUCCESS);
     }
 
     @Test
