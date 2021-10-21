@@ -2,6 +2,8 @@ package com.yapp.project.retrospect;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.test.account.AccountTemplate;
+import com.yapp.project.config.exception.retrospect.NotFoundRetrospectException;
+import com.yapp.project.config.exception.routine.BadRequestRoutineException;
 import com.yapp.project.retrospect.domain.Result;
 import com.yapp.project.retrospect.domain.Retrospect;
 import com.yapp.project.retrospect.domain.RetrospectRepository;
@@ -18,11 +20,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -69,5 +74,8 @@ public class RetrospectServiceTest {
     @Test
     void Test_Save_And_Get_Path_Success() {
         // Todo 이미지 저장 테스트 케이스는 S3 적용 후 작성
+        // 이미지 저장 로직은 공통으로 사용하여 하나의 테스트 케이스만 작성 예정
     }
+
+
 }

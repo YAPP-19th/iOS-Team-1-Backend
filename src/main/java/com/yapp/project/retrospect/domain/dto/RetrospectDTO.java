@@ -18,6 +18,19 @@ public class RetrospectDTO {
     @Setter
     @AllArgsConstructor
     @Builder
+    public static class RequestUpdateRetrospect {
+        @ApiModelProperty(value = "회고ID 보내주세요.", example = "2", required = true)
+        private Long retrospectId;
+        @ApiModelProperty(value = "회고 내용 보내주세요.", example = "알찬 러닝이었다.", required = true)
+        private String content;
+        @ApiModelProperty(value = "이미지 파일 보내주세요.", example = "multipart/form-data형식으로 보내주세요", required = true)
+        private MultipartFile image;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @Builder
     public static class RequestRetrospect {
         @ApiModelProperty(value = "루틴ID 보내주세요.", example = "2", required = true)
         private Long routineId;

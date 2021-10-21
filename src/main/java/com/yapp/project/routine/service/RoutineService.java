@@ -3,9 +3,8 @@ package com.yapp.project.routine.service;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
-import com.yapp.project.config.exception.routine.RoutineContent;
+import com.yapp.project.config.exception.routine.BadRequestRoutineException;
 import com.yapp.project.routine.domain.*;
-import com.yapp.project.config.exception.routine.BadRequestException;
 import com.yapp.project.config.exception.routine.NotFoundRoutineException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -84,7 +83,7 @@ public class RoutineService {
         if( newRoutine.getTitle().isBlank() ||
                 newRoutine.getGoal().isBlank() ||
                 newRoutine.getDays().isEmpty() ||
-                newRoutine.getStartTime().isBlank()) throw new BadRequestException(RoutineContent.BAD_REQUEST_CREATE_ROUTINE_DATA, StatusEnum.ROUTINE_BAD_REQUEST);
+                newRoutine.getStartTime().isBlank()) throw new BadRequestRoutineException();
         return true;
     }
 
@@ -94,11 +93,11 @@ public class RoutineService {
     }
 
     public void checkIsMine(Account account, Routine routine) {
-        if(!account.getId().equals(routine.getAccount().getId())) throw new BadRequestException(RoutineContent.BAD_REQUEST_GET_ROUTINE_ID, StatusEnum.ROUTINE_BAD_REQUEST);
+        if(!account.getId().equals(routine.getAccount().getId())) throw new BadRequestRoutineException();
     }
 
     public Routine findIsExistByIdAndIsNotDelete(Long routineId) {
-        return routineRepository.findByIdAndIsDelete(routineId, false).orElseThrow(() -> new NotFoundRoutineException(RoutineContent.NOT_FOUND_ROUTINE, StatusEnum.ROUTINE_NOT_FOUND));
+        return routineRepository.findByIdAndIsDelete(routineId, false).orElseThrow(() -> new NotFoundRoutineException());
     }
 
     private void updateDayList(RoutineDTO.RequestRoutineDto updateRoutine, Routine routine) {

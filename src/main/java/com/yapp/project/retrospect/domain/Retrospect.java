@@ -56,8 +56,14 @@ public class Retrospect {
         this.image = image;
         this.image.addRetrospect(this);
     }
+
     public void updateRetrospect(String content) {
         this.content = content;
     }
+
+    public void deleteImage() {
+        this.image = null;
+    }
+
 
 }

@@ -2,11 +2,11 @@ package com.yapp.project.routine;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.test.account.AccountTemplate;
+import com.yapp.project.config.exception.routine.BadRequestRoutineException;
 import com.yapp.project.routine.domain.Routine;
 import com.yapp.project.routine.domain.RoutineDTO;
 import com.yapp.project.routine.domain.RoutineRepository;
 import com.yapp.project.routine.domain.Week;
-import com.yapp.project.config.exception.routine.BadRequestException;
 import com.yapp.project.config.exception.routine.NotFoundRoutineException;
 import com.yapp.project.routine.service.RoutineService;
 import org.junit.jupiter.api.Test;
@@ -63,7 +63,7 @@ public class RoutineServiceTest {
         RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("", "", days, "07:35", "생활");
 
         // when then
-        assertThrows(BadRequestException.class, () -> {
+        assertThrows(BadRequestRoutineException.class, () -> {
             routineService.createRoutine(newRoutine, account);
         });
     }
@@ -116,7 +116,7 @@ public class RoutineServiceTest {
         given(routineRepository.findByIdAndIsDelete(1L, false)).willReturn(Optional.of(fakeRoutine));
 
         // when then
-        assertThrows(BadRequestException.class, () -> {
+        assertThrows(BadRequestRoutineException.class, () -> {
             routineService.getRoutine(1L, account2);
         });
     }

@@ -3,6 +3,7 @@ package com.yapp.project.retrospect.service;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.config.exception.retrospect.NotFoundRetrospectException;
 import com.yapp.project.retrospect.domain.Result;
 import com.yapp.project.retrospect.domain.Retrospect;
 import com.yapp.project.retrospect.domain.RetrospectRepository;
@@ -40,16 +41,30 @@ public class RetrospectService {
                 requestRetrospect.getContent(),
                 snapshotRepository.save(Snapshot.builder().url(imagePath).build()));
         else retrospect.updateRetrospect(requestRetrospect.getContent());
-        return makeRetrospectMessage(retrospect, "회고 작성 성공", StatusEnum.ROUTINE_OK);
+        return makeRetrospectMessage(retrospect, "회고 작성 성공", StatusEnum.RETROSPECT_OK);
     }
 
-    public String saveAndGetPath(Long routineId, MultipartFile image) throws IOException {
-        if(image == null) return null;
+    public RetrospectDTO.RequestRetrospectMessage updateRetrospect(RetrospectDTO.RequestUpdateRetrospect updateRetrospect, Account account) throws IOException {
+        Retrospect retrospect = retrospectRepository.findById(updateRetrospect.getRetrospectId()).orElseThrow(NotFoundRetrospectException::new);
+        routineService.checkIsMine(account, retrospect.getRoutine());
+        if(updateRetrospect.getImage() == null){
+            retrospect.deleteImage();
+            retrospect.updateRetrospect(updateRetrospect.getContent());
+            retrospectRepository.save(retrospect);
+        } else{
+            String newImagePath = saveImages(updateRetrospect.getImage(), retrospect.getRoutine().getId());
+            retrospect.updateRetrospect(updateRetrospect.getContent(),
+                    snapshotRepository.save(Snapshot.builder().url(newImagePath).build()));
+        }
+        return makeRetrospectMessage(retrospect, "회고 수정 성공", StatusEnum.RETROSPECT_OK);
+    }
+
+    public String saveImages(MultipartFile image, Long id) throws IOException {
         int dotIndex = image.getOriginalFilename().lastIndexOf(".");
         String fileName = image.getOriginalFilename().substring(0, dotIndex);
         String extension = image.getOriginalFilename().substring(dotIndex);
         String saveFileName = fileName + "_" + LocalDate.now() + extension;
-        String SAVE_PATH = FILE_SERVER_PATH + routineId + "/";
+        String SAVE_PATH = FILE_SERVER_PATH + id + "/";
         // Todo 추후 S3 전환 시, 아래 5라인 및 경로 수정, FILE_SERVER_PATH도 수정해야함.
         File path = new File(SAVE_PATH);
         if(!path.exists()) path.mkdir();
