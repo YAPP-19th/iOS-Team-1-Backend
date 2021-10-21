@@ -30,6 +30,12 @@ public class RetrospectService {
     private final SnapshotRepository snapshotRepository;
     private final RoutineService routineService;
 
+    public RetrospectDTO.RequestRetrospectMessage getRetrospect(Long retrospectId, Account account) {
+        Retrospect retrospect = retrospectRepository.findById(retrospectId).orElseThrow(NotFoundRetrospectException::new);
+        routineService.checkIsMine(account, retrospect.getRoutine());
+        return makeRetrospectMessage(retrospect, "회고 단일 조회 성공", StatusEnum.RETROSPECT_OK);
+    }
+
     public Message deleteRetrospect(Long retrospectId, Account account) {
         Retrospect retrospect = retrospectRepository.findById(retrospectId).orElseThrow(NotFoundRetrospectException::new);
         routineService.checkIsMine(account, retrospect.getRoutine());

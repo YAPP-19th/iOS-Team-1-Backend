@@ -38,4 +38,10 @@ public class RetrospectController {
         return retrospectService.deleteRetrospect(retrospectId, AccountUtil.getAccount());
     }
 
+    @ApiOperation(value = "회고 단일 조회", notes = "조회하려는 회고의 ID를 path로 넣어주세요.")
+    @GetMapping("/{retrospectId}")
+    public RetrospectDTO.RequestRetrospectMessage getRetrospect(@PathVariable Long retrospectId) {
+        return retrospectService.getRetrospect(retrospectId, AccountUtil.getAccount());
+    }
+
 }
