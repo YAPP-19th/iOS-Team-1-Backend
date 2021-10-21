@@ -92,11 +92,11 @@ public class RoutineService {
         routine.addDays(newDays);
     }
 
-    private void checkIsMine(Account account, Routine routine) {
+    public void checkIsMine(Account account, Routine routine) {
         if(!account.getId().equals(routine.getAccount().getId())) throw new BadRequestException(RoutineContent.BAD_REQUEST_GET_ROUTINE_ID, StatusEnum.ROUTINE_BAD_REQUEST);
     }
 
-    private Routine findIsExistById(Long routineId) {
+    public Routine findIsExistById(Long routineId) {
         return routineRepository.findById(routineId).orElseThrow(() -> new NotFoundRoutineException(RoutineContent.NOT_FOUND_ROUTINE, StatusEnum.ROUTINE_NOT_FOUND));
     }
 
