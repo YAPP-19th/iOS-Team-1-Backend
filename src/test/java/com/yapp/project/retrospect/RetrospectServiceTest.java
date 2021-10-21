@@ -77,5 +77,42 @@ public class RetrospectServiceTest {
         // 이미지 저장 로직은 공통으로 사용하여 하나의 테스트 케이스만 작성 예정
     }
 
+    @Test
+    void Test_Update_Non_Image_Success() throws IOException {
+        // given
+        Account account = AccountTemplate.makeTestAccount();
+        List<Week> days = new ArrayList<>();
+        days.add(Week.MON);
+        days.add(Week.TUE);
+        RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", "생활");
+        Routine fakeRoutine = Routine.builder().account(account).newRoutine(newRoutine).id(1L).build();
+        Retrospect fakeRetrospect = Retrospect.builder().routine(fakeRoutine).isReport(false).result(Result.NOT).build();
+        fakeRetrospect.updateRetrospect("테스트 회고 내용");
+        RetrospectDTO.RequestUpdateRetrospect fakeUpdateRetrospect = RetrospectDTO.RequestUpdateRetrospect.builder().retrospectId(1L).content("테스트 회고 수정").build();
 
+        Retrospect fakeRetrospect2 = Retrospect.builder().routine(fakeRoutine).isReport(false).result(Result.NOT).build();
+        fakeRetrospect2.updateRetrospect("테스트 회고 수정");
+
+        // mocking
+        given(retrospectRepository.findById(1L)).willReturn(Optional.of(fakeRetrospect));
+        given(retrospectRepository.save(any())).willReturn(fakeRetrospect2);
+
+        // when
+        RetrospectDTO.ResponseRetrospect fakeResponseRetrospect = retrospectService.updateRetrospect(fakeUpdateRetrospect, account).getData();
+
+        // then
+        assertThat(fakeRetrospect2.getContent()).isEqualTo(fakeResponseRetrospect.getContent());
+    }
+
+    @Test
+    void Test_Update_Failure(){
+        // given
+        Account account = AccountTemplate.makeTestAccount();
+        RetrospectDTO.RequestUpdateRetrospect fakeUpdateRetrospect = RetrospectDTO.RequestUpdateRetrospect.builder().retrospectId(2L).content("테스트 회고 수정").build();
+
+        // when then
+        assertThrows(NotFoundRetrospectException.class, () -> {
+            retrospectService.updateRetrospect(fakeUpdateRetrospect, account);
+        });
+    }
 }
