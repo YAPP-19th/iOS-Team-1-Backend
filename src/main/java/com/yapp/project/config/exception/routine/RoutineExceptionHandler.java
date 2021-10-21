@@ -1,8 +1,6 @@
 package com.yapp.project.config.exception.routine;
 
 import com.yapp.project.aux.Message;
-import com.yapp.project.config.exception.routine.BadRequestException;
-import com.yapp.project.config.exception.routine.NotFoundRoutineException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +17,9 @@ public class RoutineExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<Message> handle(BadRequestException e) {
+    @ExceptionHandler(BadRequestRoutineException.class)
+    public ResponseEntity<Message> handle(BadRequestRoutineException e) {
         final Message message = Message.of(e.getStatus(), e.getMessage());
-        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 }
