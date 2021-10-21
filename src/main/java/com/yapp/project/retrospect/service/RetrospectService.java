@@ -10,6 +10,8 @@ import com.yapp.project.retrospect.domain.RetrospectRepository;
 import com.yapp.project.retrospect.domain.dto.RetrospectDTO;
 import com.yapp.project.routine.domain.Routine;
 import com.yapp.project.routine.domain.RoutineDTO;
+import com.yapp.project.routine.domain.RoutineRepository;
+import com.yapp.project.routine.domain.Week;
 import com.yapp.project.routine.service.RoutineService;
 import com.yapp.project.snapshot.domain.Snapshot;
 import com.yapp.project.snapshot.domain.SnapshotRepository;
@@ -19,7 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +32,15 @@ public class RetrospectService {
 
     private final RetrospectRepository retrospectRepository;
     private final SnapshotRepository snapshotRepository;
+    private final RoutineRepository routineRepository;
     private final RoutineService routineService;
+
+
+    public RetrospectDTO.RequestRetrospectListMessage getRetrospectList(Week day, LocalDate date, Account account) {
+        List<Routine> allByAccountAndDaysDay = routineRepository.findAllByAccountAndDaysDayAndRetrospectsDate(account, day, date);
+        List<Retrospect> retrospectList = allByAccountAndDaysDay.stream().map(x -> x.getRetrospects().get(0)).collect(Collectors.toList());
+        return makeRetrospectListMessage(retrospectList, "요일 기준 회고 전체 조회 성공", StatusEnum.RETROSPECT_OK);
+    }
 
     public RetrospectDTO.RequestRetrospectMessage getRetrospect(Long retrospectId, Account account) {
         Retrospect retrospect = retrospectRepository.findById(retrospectId).orElseThrow(NotFoundRetrospectException::new);
@@ -54,6 +66,7 @@ public class RetrospectService {
                 requestRetrospect.getContent(),
                 snapshotRepository.save(Snapshot.builder().url(imagePath).build()));
         else retrospect.updateRetrospect(requestRetrospect.getContent());
+        retrospectRepository.save(retrospect);
         return makeRetrospectMessage(retrospect, "회고 작성 성공", StatusEnum.RETROSPECT_OK);
     }
 
@@ -67,6 +80,7 @@ public class RetrospectService {
                 retrospect.updateRetrospect(snapshotRepository.save(Snapshot.builder().url(newImagePath).build()));
         }
         retrospect.updateRetrospect(updateRetrospect.getContent());
+        retrospectRepository.save(retrospect);
         return makeRetrospectMessage(retrospect, "회고 수정 성공", StatusEnum.RETROSPECT_OK);
     }
 
@@ -87,8 +101,19 @@ public class RetrospectService {
         return RetrospectDTO.RequestRetrospectMessage.builder()
                 .message(Message.builder().msg(msg).status(status).build())
                 .data(RetrospectDTO.ResponseRetrospect.builder()
-                        .retrospect(retrospectRepository.save(retrospect))
+                        .retrospect(retrospect)
                         .routine(RoutineDTO.ResponseRoutineDto.builder()
                                 .routine(retrospect.getRoutine()).build()).build()).build();
+    }
+
+    private RetrospectDTO.RequestRetrospectListMessage makeRetrospectListMessage(List<Retrospect> retrospectList, String msg, StatusEnum status) {
+        List<RetrospectDTO.ResponseRetrospect> getRetrospectList = retrospectList.stream().map(x ->
+                RetrospectDTO.ResponseRetrospect.builder()
+                        .retrospect(x)
+                        .routine(RoutineDTO.ResponseRoutineDto.builder()
+                                .routine(x.getRoutine()).build()).build()).collect(Collectors.toList());
+        return RetrospectDTO.RequestRetrospectListMessage.builder()
+                .message(Message.builder().msg(msg).status(status).build())
+                .data(getRetrospectList).build();
     }
 }

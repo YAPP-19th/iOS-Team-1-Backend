@@ -4,10 +4,13 @@ import com.yapp.project.aux.Message;
 import com.yapp.project.aux.common.AccountUtil;
 import com.yapp.project.retrospect.domain.dto.RetrospectDTO;
 import com.yapp.project.retrospect.service.RetrospectService;
+import com.yapp.project.routine.domain.Week;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
 
 
 @RestController
@@ -44,4 +47,9 @@ public class RetrospectController {
         return retrospectService.getRetrospect(retrospectId, AccountUtil.getAccount());
     }
 
+    @ApiOperation(value = "회고 요일 기준 전체 조회", notes = "조회하려는 요일과 날짜를 path로 넣어주세요. \n day: MON, date: 2021-10-21")
+    @GetMapping("/list/{day}/{date}")
+    public RetrospectDTO.RequestRetrospectListMessage getRetrospectList(@PathVariable Week day, @PathVariable String date) {
+        return retrospectService.getRetrospectList(day, LocalDate.parse(date), AccountUtil.getAccount());
+    }
 }

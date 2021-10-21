@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
+import java.util.List;
 
 public class RetrospectDTO {
 
@@ -73,5 +74,14 @@ public class RetrospectDTO {
     public static class RequestRetrospectMessage {
         private Message message;
         private ResponseRetrospect data;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @Builder
+    public static class RequestRetrospectListMessage {
+        private Message message;
+        private List<ResponseRetrospect> data;
     }
 }
