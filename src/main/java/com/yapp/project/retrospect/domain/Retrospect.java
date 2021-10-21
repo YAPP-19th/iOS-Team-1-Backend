@@ -1,12 +1,14 @@
 package com.yapp.project.retrospect.domain;
 
 import com.yapp.project.routine.domain.Routine;
+import com.yapp.project.routine.domain.Week;
 import com.yapp.project.snapshot.domain.Snapshot;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -29,22 +31,33 @@ public class Retrospect {
 
     private String content;
 
-    private LocalDateTime date;
+    private LocalDate date;
 
-    private String result;
+    @Enumerated(EnumType.STRING)
+    private Result result;
 
     private Boolean isReport;
 
     private LocalDateTime createdAt;
 
     @Builder
-    public Retrospect(Routine routine, Snapshot image, String content, String result, Boolean isReport){
+    public Retrospect(Routine routine, Snapshot image, String content, Result result, Boolean isReport){
         this.routine = routine;
         this.image = image;
         this.content = content;
         this.result = result;
         this.isReport = isReport;
         this.createdAt = LocalDateTime.now();
+        this.date = LocalDate.now();
+    }
+
+    public void updateRetrospect(String content, Snapshot image) {
+        this.content = content;
+        this.image = image;
+        this.image.addRetrospect(this);
+    }
+    public void updateRetrospect(String content) {
+        this.content = content;
     }
 
 }
