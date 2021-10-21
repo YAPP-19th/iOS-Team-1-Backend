@@ -7,7 +7,7 @@ import lombok.Getter;
 public class BadRequestRoutineException extends RuntimeException{
     private final StatusEnum status;
     public BadRequestRoutineException(){
-        super(RoutineContent.BAD_REQUEST_CREATE_ROUTINE_DATA);
+        super(RoutineContent.BAD_REQUEST_GET_ROUTINE_ID);
         this.status = StatusEnum.ROUTINE_BAD_REQUEST;
     }
 }

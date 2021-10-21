@@ -1,5 +1,6 @@
 package com.yapp.project.retrospect.controller;
 
+import com.yapp.project.aux.Message;
 import com.yapp.project.aux.common.AccountUtil;
 import com.yapp.project.retrospect.domain.dto.RetrospectDTO;
 import com.yapp.project.retrospect.service.RetrospectService;
@@ -29,6 +30,12 @@ public class RetrospectController {
     @PatchMapping("/")
     public RetrospectDTO.RequestRetrospectMessage updateRetrospect(RetrospectDTO.RequestUpdateRetrospect retrospect) throws IOException {
         return retrospectService.updateRetrospect(retrospect, AccountUtil.getAccount());
+    }
+
+    @ApiOperation(value = "회고 삭제", notes = "삭제하려는 회고의 ID를 path로 넣어주세요.")
+    @DeleteMapping("/{retrospectId}")
+    public Message deleteRetrospect(@PathVariable Long retrospectId) {
+        return retrospectService.deleteRetrospect(retrospectId, AccountUtil.getAccount());
     }
 
 }
