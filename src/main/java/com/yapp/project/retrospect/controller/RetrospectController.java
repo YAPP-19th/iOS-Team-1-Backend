@@ -9,9 +9,10 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.List;
-
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,7 +23,7 @@ public class RetrospectController {
 
     @ApiOperation(value = "회고 추가", notes = "json이 아닌 multipart/form-data로 보내주서야 합니다.")
     @PostMapping("/")
-    public RetrospectDTO.RequestRetrospectMessage createRetrospect(RetrospectDTO.RequestRetrospect retrospect) throws IOException {
+    public RetrospectDTO.ResponseRetrospectMessage createRetrospect(RetrospectDTO.RequestRetrospect retrospect) throws IOException {
         String imagePath;
         if(retrospect.getImage() == null) imagePath = null;
         else imagePath = retrospectService.saveImages(retrospect.getImage(), retrospect.getRoutineId());
@@ -31,7 +32,7 @@ public class RetrospectController {
 
     @ApiOperation(value = "회고 수정", notes = "json이 아닌 multipart/form-data로 보내주서야 합니다.")
     @PatchMapping("/")
-    public RetrospectDTO.RequestRetrospectMessage updateRetrospect(RetrospectDTO.RequestUpdateRetrospect retrospect) throws IOException {
+    public RetrospectDTO.ResponseRetrospectMessage updateRetrospect(RetrospectDTO.RequestUpdateRetrospect retrospect) throws IOException {
         return retrospectService.updateRetrospect(retrospect, AccountUtil.getAccount());
     }
 
@@ -43,13 +44,19 @@ public class RetrospectController {
 
     @ApiOperation(value = "회고 단일 조회", notes = "조회하려는 회고의 ID를 path로 넣어주세요.")
     @GetMapping("/{retrospectId}")
-    public RetrospectDTO.RequestRetrospectMessage getRetrospect(@PathVariable Long retrospectId) {
+    public RetrospectDTO.ResponseRetrospectMessage getRetrospect(@PathVariable Long retrospectId) {
         return retrospectService.getRetrospect(retrospectId, AccountUtil.getAccount());
     }
 
     @ApiOperation(value = "회고 요일 기준 전체 조회", notes = "조회하려는 요일과 날짜를 path로 넣어주세요. \n day: MON, date: 2021-10-21")
     @GetMapping("/list/{day}/{date}")
-    public RetrospectDTO.RequestRetrospectListMessage getRetrospectList(@PathVariable Week day, @PathVariable String date) {
+    public RetrospectDTO.ResponseRetrospectListMessage getRetrospectList(@PathVariable Week day, @PathVariable String date) {
         return retrospectService.getRetrospectList(day, LocalDate.parse(date), AccountUtil.getAccount());
+    }
+
+    @ApiOperation(value = "루틴 수행여부 설정(회고에 적용)", notes = "완료: DONE, 부분완료: TRY, 취소: NOT / 여기서 취소는 수행여부 체크 이후 취소를 의미합니다.")
+    @PostMapping("/result")
+    public RetrospectDTO.ResponseRetrospectMessage setRetrospectResult(@RequestBody RetrospectDTO.RequestRetrospectResult result) {
+        return retrospectService.setRetrospectResult(result, AccountUtil.getAccount());
     }
 }

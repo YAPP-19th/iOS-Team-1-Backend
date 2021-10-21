@@ -3,6 +3,7 @@ package com.yapp.project.retrospect.service;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.config.exception.retrospect.BadRequestRetrospectException;
 import com.yapp.project.config.exception.retrospect.NotFoundRetrospectException;
 import com.yapp.project.retrospect.domain.Result;
 import com.yapp.project.retrospect.domain.Retrospect;
@@ -20,8 +21,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.format.TextStyle;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -35,14 +39,25 @@ public class RetrospectService {
     private final RoutineRepository routineRepository;
     private final RoutineService routineService;
 
+    public RetrospectDTO.ResponseRetrospectMessage setRetrospectResult(RetrospectDTO.RequestRetrospectResult retrospectResult, Account account) {
+        Routine routine = routineService.findIsExistByIdAndIsNotDelete(retrospectResult.getRoutineId());
+        routineService.checkIsMine(account, routine);
+        checkDate(routine);
+        Optional<Retrospect> preRetrospect = retrospectRepository.findByRoutineAndDate(routine, LocalDate.now());
+        Retrospect retrospect = preRetrospect.orElseGet(() ->
+                Retrospect.builder().routine(routine).isReport(false).build());
+        retrospect.updateResult(retrospectResult.getResult());
+        retrospectRepository.save(retrospect);
+        return makeRetrospectMessage(retrospect, "회고 수행 여부 설정 성공", StatusEnum.RETROSPECT_OK);
+    }
 
-    public RetrospectDTO.RequestRetrospectListMessage getRetrospectList(Week day, LocalDate date, Account account) {
+    public RetrospectDTO.ResponseRetrospectListMessage getRetrospectList(Week day, LocalDate date, Account account) {
         List<Routine> allByAccountAndDaysDay = routineRepository.findAllByAccountAndDaysDayAndRetrospectsDate(account, day, date);
         List<Retrospect> retrospectList = allByAccountAndDaysDay.stream().map(x -> x.getRetrospects().get(0)).collect(Collectors.toList());
         return makeRetrospectListMessage(retrospectList, "요일 기준 회고 전체 조회 성공", StatusEnum.RETROSPECT_OK);
     }
 
-    public RetrospectDTO.RequestRetrospectMessage getRetrospect(Long retrospectId, Account account) {
+    public RetrospectDTO.ResponseRetrospectMessage getRetrospect(Long retrospectId, Account account) {
         Retrospect retrospect = retrospectRepository.findById(retrospectId).orElseThrow(NotFoundRetrospectException::new);
         routineService.checkIsMine(account, retrospect.getRoutine());
         return makeRetrospectMessage(retrospect, "회고 단일 조회 성공", StatusEnum.RETROSPECT_OK);
@@ -55,7 +70,7 @@ public class RetrospectService {
         return Message.builder().msg("삭제 성공").status(StatusEnum.RETROSPECT_OK).build();
     }
 
-    public RetrospectDTO.RequestRetrospectMessage createRetrospect(RetrospectDTO.RequestRetrospect requestRetrospect, String imagePath ,Account account) {
+    public RetrospectDTO.ResponseRetrospectMessage createRetrospect(RetrospectDTO.RequestRetrospect requestRetrospect, String imagePath ,Account account) {
         Routine routine = routineService.findIsExistByIdAndIsNotDelete(requestRetrospect.getRoutineId());
         routineService.checkIsMine(account, routine);
         Optional<Retrospect> preRetrospect = retrospectRepository.findByRoutineAndDate(routine, LocalDate.now());
@@ -70,7 +85,7 @@ public class RetrospectService {
         return makeRetrospectMessage(retrospect, "회고 작성 성공", StatusEnum.RETROSPECT_OK);
     }
 
-    public RetrospectDTO.RequestRetrospectMessage updateRetrospect(RetrospectDTO.RequestUpdateRetrospect updateRetrospect, Account account) throws IOException {
+    public RetrospectDTO.ResponseRetrospectMessage updateRetrospect(RetrospectDTO.RequestUpdateRetrospect updateRetrospect, Account account) throws IOException {
         Retrospect retrospect = retrospectRepository.findById(updateRetrospect.getRetrospectId()).orElseThrow(NotFoundRetrospectException::new);
         routineService.checkIsMine(account, retrospect.getRoutine());
         if(updateRetrospect.getImage() == null) retrospect.deleteImage();
@@ -97,8 +112,8 @@ public class RetrospectService {
         return SAVE_PATH + saveFileName;
     }
 
-    private RetrospectDTO.RequestRetrospectMessage makeRetrospectMessage(Retrospect retrospect, String msg, StatusEnum status) {
-        return RetrospectDTO.RequestRetrospectMessage.builder()
+    private RetrospectDTO.ResponseRetrospectMessage makeRetrospectMessage(Retrospect retrospect, String msg, StatusEnum status) {
+        return RetrospectDTO.ResponseRetrospectMessage.builder()
                 .message(Message.builder().msg(msg).status(status).build())
                 .data(RetrospectDTO.ResponseRetrospect.builder()
                         .retrospect(retrospect)
@@ -106,14 +121,20 @@ public class RetrospectService {
                                 .routine(retrospect.getRoutine()).build()).build()).build();
     }
 
-    private RetrospectDTO.RequestRetrospectListMessage makeRetrospectListMessage(List<Retrospect> retrospectList, String msg, StatusEnum status) {
+    private RetrospectDTO.ResponseRetrospectListMessage makeRetrospectListMessage(List<Retrospect> retrospectList, String msg, StatusEnum status) {
         List<RetrospectDTO.ResponseRetrospect> getRetrospectList = retrospectList.stream().map(x ->
                 RetrospectDTO.ResponseRetrospect.builder()
                         .retrospect(x)
-                        .routine(RoutineDTO.ResponseRoutineDto.builder()
-                                .routine(x.getRoutine()).build()).build()).collect(Collectors.toList());
-        return RetrospectDTO.RequestRetrospectListMessage.builder()
+                        .routine(RoutineDTO.ResponseRoutineDto.builder().routine(x.getRoutine()).build()).build()).collect(Collectors.toList());
+        return RetrospectDTO.ResponseRetrospectListMessage.builder()
                 .message(Message.builder().msg(msg).status(status).build())
                 .data(getRetrospectList).build();
+    }
+
+    private void checkDate(Routine routine) {
+        DayOfWeek dayOfWeek = LocalDate.now().getDayOfWeek();
+        List<String> collect = routine.getDays().stream().map(x -> x.getDay().toString()).collect(Collectors.toList());
+        boolean contains = collect.contains(dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.US).toUpperCase());
+        if(!contains) throw new BadRequestRetrospectException();
     }
 }

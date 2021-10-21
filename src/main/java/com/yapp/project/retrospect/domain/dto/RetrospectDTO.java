@@ -1,8 +1,8 @@
 package com.yapp.project.retrospect.domain.dto;
 
 import com.yapp.project.aux.Message;
+import com.yapp.project.retrospect.domain.Result;
 import com.yapp.project.retrospect.domain.Retrospect;
-import com.yapp.project.routine.domain.Routine;
 import com.yapp.project.routine.domain.RoutineDTO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -14,6 +14,17 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class RetrospectDTO {
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @Builder
+    public static class RequestRetrospectResult {
+        @ApiModelProperty(value = "루틴ID 보내주세요.", example = "2", required = true)
+        private Long routineId;
+        @ApiModelProperty(value = "수행 결과 보내주세요.", example = "DONE", required = true)
+        private Result result;
+    }
 
     @Getter
     @Setter
@@ -53,6 +64,8 @@ public class RetrospectDTO {
         private LocalDate date;
         @ApiModelProperty(value = "이미지 경로", example = "이미지 경로입니다.")
         private String image;
+        @ApiModelProperty(value = "수행 여부", example = "루틴 수행 여부입니다.")
+        private Result result;
         private RoutineDTO.ResponseRoutineDto routine;
 
         @Builder
@@ -61,6 +74,7 @@ public class RetrospectDTO {
             this.routine = routine;
             this.content = retrospect.getContent();
             this.date = retrospect.getDate();
+            this.result = retrospect.getResult();
             if(retrospect.getImage() != null)
                 this.image = retrospect.getImage().getUrl();
             else this.image = null;
@@ -71,7 +85,7 @@ public class RetrospectDTO {
     @Setter
     @AllArgsConstructor
     @Builder
-    public static class RequestRetrospectMessage {
+    public static class ResponseRetrospectMessage {
         private Message message;
         private ResponseRetrospect data;
     }
@@ -80,7 +94,7 @@ public class RetrospectDTO {
     @Setter
     @AllArgsConstructor
     @Builder
-    public static class RequestRetrospectListMessage {
+    public static class ResponseRetrospectListMessage {
         private Message message;
         private List<ResponseRetrospect> data;
     }

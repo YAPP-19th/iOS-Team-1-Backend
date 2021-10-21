@@ -70,5 +70,9 @@ public class Retrospect {
         this.image = null;
     }
 
+    public void updateResult(Result result) {
+        this.result = result;
+    }
+
 
 }
