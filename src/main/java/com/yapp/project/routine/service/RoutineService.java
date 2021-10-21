@@ -32,7 +32,8 @@ public class RoutineService {
     public Message deleteRoutine(Long routineId, Account account) {
         Routine routine = findIsExistById(routineId);
         checkIsMine(account, routine);
-        routineRepository.delete(routine);
+        routine.deleteRoutine();
+        routineRepository.save(routine);
         return Message.builder().msg("삭제 성공").status(StatusEnum.ROUTINE_OK).build();
     }
 
@@ -97,7 +98,7 @@ public class RoutineService {
     }
 
     public Routine findIsExistById(Long routineId) {
-        return routineRepository.findById(routineId).orElseThrow(() -> new NotFoundRoutineException(RoutineContent.NOT_FOUND_ROUTINE, StatusEnum.ROUTINE_NOT_FOUND));
+        return routineRepository.findByIdAndIsDelete(routineId, false).orElseThrow(() -> new NotFoundRoutineException(RoutineContent.NOT_FOUND_ROUTINE, StatusEnum.ROUTINE_NOT_FOUND));
     }
 
     private void updateDayList(RoutineDTO.RequestRoutineDto updateRoutine, Routine routine) {

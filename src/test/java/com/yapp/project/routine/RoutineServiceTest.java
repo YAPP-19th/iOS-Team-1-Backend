@@ -79,7 +79,7 @@ public class RoutineServiceTest {
         Routine fakeRoutine = Routine.builder().account(account).newRoutine(newRoutine).build();
 
         // mocking
-        given(routineRepository.findById(1L)).willReturn(Optional.of(fakeRoutine));
+        given(routineRepository.findByIdAndIsDelete(1L, false)).willReturn(Optional.of(fakeRoutine));
 
         // when
         RoutineDTO.ResponseRoutineDto routine = routineService.getRoutine(1L, account).getData();
@@ -113,7 +113,7 @@ public class RoutineServiceTest {
         Routine fakeRoutine = Routine.builder().account(account1).newRoutine(newRoutine).build();
 
         // mocking
-        given(routineRepository.findById(1L)).willReturn(Optional.of(fakeRoutine));
+        given(routineRepository.findByIdAndIsDelete(1L, false)).willReturn(Optional.of(fakeRoutine));
 
         // when then
         assertThrows(BadRequestException.class, () -> {
@@ -153,7 +153,7 @@ public class RoutineServiceTest {
         RoutineDTO.RequestRoutineDto mockRoutine = new RoutineDTO.RequestRoutineDto("타이틀 수정", "수정", newDays, "07:35", "생활");
         Routine fakeRoutine = Routine.builder().account(account).newRoutine(newRoutine).build();
         // mocking
-        given(routineRepository.findById(1L)).willReturn(Optional.of(fakeRoutine));
+        given(routineRepository.findByIdAndIsDelete(1L, false)).willReturn(Optional.of(fakeRoutine));
         given(routineRepository.save(any())).willReturn(fakeRoutine);
 
         // when
