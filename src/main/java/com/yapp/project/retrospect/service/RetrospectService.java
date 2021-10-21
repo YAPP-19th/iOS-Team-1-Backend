@@ -8,6 +8,7 @@ import com.yapp.project.retrospect.domain.Retrospect;
 import com.yapp.project.retrospect.domain.RetrospectRepository;
 import com.yapp.project.retrospect.domain.dto.RetrospectDTO;
 import com.yapp.project.routine.domain.Routine;
+import com.yapp.project.routine.domain.RoutineDTO;
 import com.yapp.project.routine.service.RoutineService;
 import com.yapp.project.snapshot.domain.Snapshot;
 import com.yapp.project.snapshot.domain.SnapshotRepository;
@@ -29,7 +30,7 @@ public class RetrospectService {
     private final RoutineService routineService;
 
     public RetrospectDTO.RequestRetrospectMessage createRetrospect(RetrospectDTO.RequestRetrospect requestRetrospect, String imagePath ,Account account) {
-        Routine routine = routineService.findIsExistById(requestRetrospect.getRoutineId());
+        Routine routine = routineService.findIsExistByIdAndIsNotDelete(requestRetrospect.getRoutineId());
         routineService.checkIsMine(account, routine);
         Optional<Retrospect> preRetrospect = retrospectRepository.findByRoutineAndDate(routine, LocalDate.now());
         Retrospect retrospect = preRetrospect.orElseGet(() ->
@@ -59,7 +60,9 @@ public class RetrospectService {
     private RetrospectDTO.RequestRetrospectMessage makeRetrospectMessage(Retrospect retrospect, String msg, StatusEnum status) {
         return RetrospectDTO.RequestRetrospectMessage.builder()
                 .message(Message.builder().msg(msg).status(status).build())
-                .data(RetrospectDTO.ResponseRetrospect.builder().retrospect(retrospectRepository.save(retrospect)).build())
-                .build();
+                .data(RetrospectDTO.ResponseRetrospect.builder()
+                        .retrospect(retrospectRepository.save(retrospect))
+                        .routine(RoutineDTO.ResponseRoutineDto.builder()
+                                .routine(retrospect.getRoutine()).build()).build()).build();
     }
 }

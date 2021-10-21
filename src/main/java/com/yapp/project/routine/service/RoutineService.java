@@ -30,7 +30,7 @@ public class RoutineService {
     }
 
     public Message deleteRoutine(Long routineId, Account account) {
-        Routine routine = findIsExistById(routineId);
+        Routine routine = findIsExistByIdAndIsNotDelete(routineId);
         checkIsMine(account, routine);
         routine.deleteRoutine();
         routineRepository.save(routine);
@@ -39,7 +39,7 @@ public class RoutineService {
 
     public RoutineDTO.ResponseRoutineMessageDto updateRoutine(Long routineId, RoutineDTO.RequestRoutineDto updateRoutine, Account account) {
         checkDataIsNull(updateRoutine);
-        Routine routine = findIsExistById(routineId);
+        Routine routine = findIsExistByIdAndIsNotDelete(routineId);
         checkIsMine(account, routine);
         routine.updateRoutine(updateRoutine);
         updateDayList(updateRoutine, routine);
@@ -60,7 +60,7 @@ public class RoutineService {
     }
 
     public RoutineDTO.ResponseRoutineMessageDto getRoutine(Long routineId, Account account) {
-        Routine routine = findIsExistById(routineId);
+        Routine routine = findIsExistByIdAndIsNotDelete(routineId);
         checkIsMine(account, routine);
         return RoutineDTO.ResponseRoutineMessageDto.builder()
                 .message(Message.builder().msg("조회 성공").status(StatusEnum.ROUTINE_OK).build())
@@ -97,7 +97,7 @@ public class RoutineService {
         if(!account.getId().equals(routine.getAccount().getId())) throw new BadRequestException(RoutineContent.BAD_REQUEST_GET_ROUTINE_ID, StatusEnum.ROUTINE_BAD_REQUEST);
     }
 
-    public Routine findIsExistById(Long routineId) {
+    public Routine findIsExistByIdAndIsNotDelete(Long routineId) {
         return routineRepository.findByIdAndIsDelete(routineId, false).orElseThrow(() -> new NotFoundRoutineException(RoutineContent.NOT_FOUND_ROUTINE, StatusEnum.ROUTINE_NOT_FOUND));
     }
 
