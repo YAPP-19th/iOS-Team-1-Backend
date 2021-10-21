@@ -1,6 +1,7 @@
 package com.yapp.project.config.exception.saying;
 
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.aux.content.SayingContent;
 import lombok.Getter;
 
 @Getter

@@ -3,6 +3,7 @@ package com.yapp.project.mission.service;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.aux.content.MissionContent;
 import com.yapp.project.config.exception.mission.AlreadyMissionExistException;
 import com.yapp.project.config.exception.mission.MissionNotFoundException;
 import com.yapp.project.mission.domain.Cron;
@@ -33,7 +34,7 @@ public class MissionService {
         Mission mission = request.toMission(account,organization);
         setDays(request.getWeeks(),mission);
         missionRepository.save(mission);
-        return Message.of(StatusEnum.MISSION_OK,"미션 생성 성공");
+        return Message.of(StatusEnum.MISSION_OK, MissionContent.MISSION_CREATE_SUCCESS);
     }
 
     private void setDays(List<Week> days, Mission mission){
@@ -49,7 +50,7 @@ public class MissionService {
         }
         return MissionDto.MissionResponseMessage.builder()
                 .message(
-                        Message.builder().msg("진행중인 나의 미션 가져오기 성공").status(StatusEnum.MISSION_OK).build()
+                        Message.builder().msg(MissionContent.FIND_MY_MISSION_LISTS_ING).status(StatusEnum.MISSION_OK).build()
                 ).data(responses).build();
     }
 
@@ -58,7 +59,7 @@ public class MissionService {
         Mission mission = missionRepository.findMissionByAccountAndId(account, missionId).orElseThrow(MissionNotFoundException::new);
         MissionDto.MissionDetailResponse response = mission.toMissionDetailResponse();
         return MissionDto.MissionDetailResponseMessage.builder().message(
-                Message.builder().msg("나의 디테일 미션 페이지 가져오기 성공").status(StatusEnum.MISSION_OK).build()
+                Message.builder().msg(MissionContent.FIND_MY_MISSION_DETAIL).status(StatusEnum.MISSION_OK).build()
         ).data(response).build();
     }
 }

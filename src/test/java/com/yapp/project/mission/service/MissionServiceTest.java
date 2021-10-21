@@ -7,7 +7,7 @@ import com.yapp.project.aux.test.account.AccountTemplate;
 import com.yapp.project.aux.test.mission.MissionTemplate;
 import com.yapp.project.aux.test.organization.OrganizationTemplate;
 import com.yapp.project.config.exception.mission.AlreadyMissionExistException;
-import com.yapp.project.config.exception.mission.MissionContent;
+import com.yapp.project.aux.content.MissionContent;
 import com.yapp.project.config.exception.mission.MissionNotFoundException;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.mission.domain.dto.MissionDto;

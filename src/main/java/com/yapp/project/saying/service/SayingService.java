@@ -1,5 +1,6 @@
 package com.yapp.project.saying.service;
 
+import static com.yapp.project.aux.content.SayingContent.*;
 import static com.yapp.project.saying.domain.dto.SayingDto.*;
 
 import com.yapp.project.account.domain.Account;
@@ -31,7 +32,7 @@ public class SayingService {
                 .orElse(null);
 
         if (lastRecord == null || isNotTodayRecordingSaying(lastRecord)){
-            return SayingAccessMessage.of(StatusEnum.SAYING_OK,"명언 가져오기 성공", saying);
+            return SayingAccessMessage.of(StatusEnum.SAYING_OK, FIND_SAYING_SUCCESS, saying);
         }else{
             throw new AlreadyFoundException();
         }
@@ -45,11 +46,11 @@ public class SayingService {
             SayingRecord sayingRecord = SayingRecord.builder().account(account).saying(saying).build();
             sayingRecordRepository.save(sayingRecord);
             SayingResponse data = SayingResponse.builder().id(request.getId()).result(true).build();
-            return SayingResponseMessage.of(StatusEnum.SAYING_OK, "명언 쓰기 성공",data);
+            return SayingResponseMessage.of(StatusEnum.SAYING_OK, WRITE_SAYING_SUCCESS,data);
 
         }else{
             SayingResponse data = SayingResponse.builder().id(request.getId()).result(false).build();
-            return SayingResponseMessage.of(StatusEnum.SAYING_OK, "명언 쓰기 실패",data);
+            return SayingResponseMessage.of(StatusEnum.SAYING_OK, WRITE_SAYING_FAIL,data);
         }
     }
 
@@ -59,10 +60,10 @@ public class SayingService {
         SayingRecord sayingRecord = sayingRecordRepository.findTopByAccount_IdOrderByIdDesc(accountId).orElse(null);
         if (sayingRecord == null || isNotTodayRecordingSaying(sayingRecord)){
             SayingRecordResponse data = SayingRecordResponse.builder().result(false).build();
-            return SayingRecordResponseMessage.of(StatusEnum.SAYING_OK, "오늘 명언쓰기를 안하셨습니다.", data);
+            return SayingRecordResponseMessage.of(StatusEnum.SAYING_OK, TODAY_SAYING_NOT_COMPLETE, data);
         }else{
             SayingRecordResponse data = SayingRecordResponse.builder().result(true).build();
-            return SayingRecordResponseMessage.of(StatusEnum.SAYING_OK, "오늘 명언쓰기를 하셨습니다.", data);
+            return SayingRecordResponseMessage.of(StatusEnum.SAYING_OK, TODAY_SAYING_COMPLETE, data);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.yapp.project.config.exception.mission;
 
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.aux.content.MissionContent;
 import lombok.Getter;
 
 @Getter

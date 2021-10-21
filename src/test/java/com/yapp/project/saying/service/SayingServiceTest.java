@@ -4,7 +4,7 @@ import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.test.account.AccountTemplate;
 import com.yapp.project.aux.test.saying.SayingTemplate;
 import com.yapp.project.config.exception.saying.AlreadyFoundException;
-import com.yapp.project.config.exception.saying.SayingContent;
+import com.yapp.project.aux.content.SayingContent;
 import com.yapp.project.saying.domain.Saying;
 import com.yapp.project.saying.domain.SayingRecord;
 import com.yapp.project.saying.domain.dto.SayingDto;
