@@ -2,11 +2,11 @@ package com.yapp.project.routine;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.test.account.AccountTemplate;
+import com.yapp.project.config.exception.routine.BadRequestRoutineException;
 import com.yapp.project.routine.domain.Routine;
 import com.yapp.project.routine.domain.RoutineDTO;
 import com.yapp.project.routine.domain.RoutineRepository;
 import com.yapp.project.routine.domain.Week;
-import com.yapp.project.config.exception.routine.BadRequestException;
 import com.yapp.project.config.exception.routine.NotFoundRoutineException;
 import com.yapp.project.routine.service.RoutineService;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ public class RoutineServiceTest {
     private RoutineRepository routineRepository;
 
     @Test
-    void Test_Create_Routine_Success() {
+    void testCreateRoutineSuccess() {
         // given
         Account account = AccountTemplate.makeTestAccount();
         List<Week> days = new ArrayList<>();
@@ -54,7 +54,7 @@ public class RoutineServiceTest {
     }
 
     @Test
-    void Test_Create_Routine_Failure_BadRequest() {
+    void testCreateRoutineFailureBadRequest() {
         // given
         Account account = AccountTemplate.makeTestAccount();
         List<Week> days = new ArrayList<>();
@@ -63,13 +63,13 @@ public class RoutineServiceTest {
         RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("", "", days, "07:35", "생활");
 
         // when then
-        assertThrows(BadRequestException.class, () -> {
+        assertThrows(BadRequestRoutineException.class, () -> {
             routineService.createRoutine(newRoutine, account);
         });
     }
 
     @Test
-    void Test_Get_Routine_Success() {
+    void testGetRoutineSuccess() {
         // given
         Account account = AccountTemplate.makeTestAccount();
         List<Week> days = new ArrayList<>();
@@ -79,7 +79,7 @@ public class RoutineServiceTest {
         Routine fakeRoutine = Routine.builder().account(account).newRoutine(newRoutine).build();
 
         // mocking
-        given(routineRepository.findById(1L)).willReturn(Optional.of(fakeRoutine));
+        given(routineRepository.findByIdAndIsDeleteIsFalse(1L)).willReturn(Optional.of(fakeRoutine));
 
         // when
         RoutineDTO.ResponseRoutineDto routine = routineService.getRoutine(1L, account).getData();
@@ -91,7 +91,7 @@ public class RoutineServiceTest {
     }
 
     @Test
-    void Test_Get_Routine_Failure_NotFound() {
+    void testGetRoutineFailureNotFound() {
         // given
         Account account = AccountTemplate.makeTestAccount();
 
@@ -102,7 +102,7 @@ public class RoutineServiceTest {
     }
 
     @Test
-    void Test_Get_Routine_Failure_BadRequest() {
+    void testGetRoutineFailureBadRequest() {
         // given
         Account account1 = AccountTemplate.makeTestAccount();
         Account account2 = AccountTemplate.makeTestAccount("나는@두번째.사람");
@@ -113,16 +113,16 @@ public class RoutineServiceTest {
         Routine fakeRoutine = Routine.builder().account(account1).newRoutine(newRoutine).build();
 
         // mocking
-        given(routineRepository.findById(1L)).willReturn(Optional.of(fakeRoutine));
+        given(routineRepository.findByIdAndIsDeleteIsFalse(1L)).willReturn(Optional.of(fakeRoutine));
 
         // when then
-        assertThrows(BadRequestException.class, () -> {
+        assertThrows(BadRequestRoutineException.class, () -> {
             routineService.getRoutine(1L, account2);
         });
     }
 
     @Test
-    void Test_Get_RoutineList_Success() {
+    void testGetRoutineListSuccess() {
         // given
         Account account = AccountTemplate.makeTestAccount();
         List<Week> days = new ArrayList<>();
@@ -135,7 +135,7 @@ public class RoutineServiceTest {
 
         // mocking
         given(routineRepository
-                .findAllByAccountAndDaysDayOrderByDaysSequence(account, Week.MON, Sort.by("days").descending())).willReturn(routines);
+                .findAllByIsDeleteIsFalseAndAccountAndDaysDayOrderByDaysSequence(account, Week.MON, Sort.by("days").descending())).willReturn(routines);
         // when
         List<RoutineDTO.ResponseRoutineDto> routineList = routineService.getRoutineList(Week.MON, account).getData();
         // then
@@ -143,7 +143,7 @@ public class RoutineServiceTest {
     }
 
     @Test
-    void Test_Update_Routine_Success() {
+    void testUpdateRoutineSuccess() {
         //given
         Account account = AccountTemplate.makeTestAccount();
         List<Week> days = new ArrayList<>();
@@ -153,7 +153,7 @@ public class RoutineServiceTest {
         RoutineDTO.RequestRoutineDto mockRoutine = new RoutineDTO.RequestRoutineDto("타이틀 수정", "수정", newDays, "07:35", "생활");
         Routine fakeRoutine = Routine.builder().account(account).newRoutine(newRoutine).build();
         // mocking
-        given(routineRepository.findById(1L)).willReturn(Optional.of(fakeRoutine));
+        given(routineRepository.findByIdAndIsDeleteIsFalse(1L)).willReturn(Optional.of(fakeRoutine));
         given(routineRepository.save(any())).willReturn(fakeRoutine);
 
         // when
@@ -164,7 +164,7 @@ public class RoutineServiceTest {
     }
 
     @Test
-    void Test_Update_Routine_Sequence_Success() {
+    void testUpdateRoutineSequenceSuccess() {
         //given
         Account account = AccountTemplate.makeTestAccount();
         List<Routine> routines = new ArrayList<>();
@@ -181,7 +181,7 @@ public class RoutineServiceTest {
         // mocking
         given(routineRepository.findAllById(sequence)).willReturn(routines);
         given(routineRepository
-                .findAllByAccountAndDaysDayOrderByDaysSequence(account, Week.MON, Sort.by("days").descending())).willReturn(routines);
+                .findAllByIsDeleteIsFalseAndAccountAndDaysDayOrderByDaysSequence(account, Week.MON, Sort.by("days").descending())).willReturn(routines);
 
         // when
         List<RoutineDTO.ResponseRoutineDto> responseRoutineDtos = routineService.updateRoutineSequence(Week.MON, sequence, account).getData();

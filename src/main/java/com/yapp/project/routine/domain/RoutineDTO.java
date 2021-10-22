@@ -13,6 +13,7 @@ public class RoutineDTO {
     @Getter
     @Setter
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class RequestRoutineSequence {
         @ApiModelProperty(value = "루틴ID 순서", example = "[3, 1, 5, 2]", required = true)
         private ArrayList<Long> sequence = new ArrayList<>();

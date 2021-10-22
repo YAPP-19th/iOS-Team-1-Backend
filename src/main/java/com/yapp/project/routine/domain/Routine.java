@@ -72,4 +72,8 @@ public class Routine {
         this.isDelete = false;
         this.category = updateRoutine.getCategory();
     }
+
+    public void deleteRoutine() {
+        this.isDelete = true;
+    }
 }
