@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class RetrospectService {
-    private static final String FILE_SERVER_PATH = "/Users/sol/Desktop/yapp19th-iOS1/image/retrospect/";
+    private static final String FILE_SERVER_PATH = "/home/image/retrospect/";
 
     private final RetrospectRepository retrospectRepository;
     private final SnapshotRepository snapshotRepository;
