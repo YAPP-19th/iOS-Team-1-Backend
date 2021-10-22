@@ -1,11 +1,7 @@
 package com.yapp.project.organization.controller;
 
-import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
-import static com.yapp.project.organization.domain.dto.OrgDto.*;
-
 import com.yapp.project.aux.common.AccountUtil;
-import com.yapp.project.aux.content.OrganizationContent;
 import com.yapp.project.organization.service.GroupService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +11,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
+
+import static com.yapp.project.aux.content.OrganizationContent.*;
+import static com.yapp.project.organization.domain.dto.OrgDto.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,28 +25,22 @@ public class OrganizationController {
     @ApiOperation(value = "그룹 전체 리스트", tags = "organization-controller")
     @GetMapping
     public ResponseEntity<OrgListResponseMessage> findAll(){
-        return new ResponseEntity<>(OrgListResponseMessage.builder()
-                .data(groupService.findAll(AccountUtil.getAccount()))
-                .message(Message.builder().status(StatusEnum.GROUP_OK).msg(OrganizationContent.GROUP_FIND_SUCCESS).build())
-                .build(), HttpStatus.OK);
+        List<OrgResponse> data = groupService.findAll(AccountUtil.getAccount());
+        return new ResponseEntity<>(OrgListResponseMessage.of(StatusEnum.GROUP_OK, GROUP_FIND_SUCCESS, data), HttpStatus.OK);
     }
 
     @ApiOperation(value = "그룹 카테고리 리스트", tags = "organization-controller")
     @GetMapping("/category/{category}")
     public ResponseEntity<OrgListResponseMessage> findByCategory(@PathVariable("category") String category){
-        return new ResponseEntity<>(OrgListResponseMessage.builder()
-                .data(groupService.findByCategory(category, AccountUtil.getAccount()))
-                .message(Message.builder().status(StatusEnum.GROUP_OK).msg(OrganizationContent.GROUP_FIND_SUCCESS).build())
-                .build(), HttpStatus.OK);
+        List<OrgResponse> data = groupService.findByCategory(category, AccountUtil.getAccount());
+        return new ResponseEntity<>(OrgListResponseMessage.of(StatusEnum.GROUP_OK, GROUP_FIND_SUCCESS, data), HttpStatus.OK);
     }
 
     @ApiOperation(value = "그룹 디테일 페이지",tags = "organization-controller")
     @GetMapping("/detail/{id}")
     public ResponseEntity<OrgDetailMessage> detailGroup(@PathVariable("id") Long id){
-        return new ResponseEntity<>(OrgDetailMessage.builder()
-                .data(groupService.detailGroup(id))
-                .message(Message.builder().status(StatusEnum.GROUP_OK).msg(OrganizationContent.GROUP_FIND_DETAIL_PAGE_SUCCESS).build())
-                .build(),HttpStatus.OK);
+        OrgDetailResponse data = groupService.detailGroup(id);
+        return new ResponseEntity<>(OrgDetailMessage.of(StatusEnum.GROUP_OK, GROUP_FIND_DETAIL_PAGE_SUCCESS, data),HttpStatus.OK);
     }
 
 

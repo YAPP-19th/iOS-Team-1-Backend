@@ -22,7 +22,7 @@ public class GroupService {
 
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<OrgDto.OrgResponse> findAll(Account account){
         ArrayList<Long> excludeOrganization = getMyOrganizationId(account);
 
@@ -35,14 +35,14 @@ public class GroupService {
         return toOrgResponseList(organizations);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public OrgDto.OrgDetailResponse detailGroup(Long id){
         Organization organization = organizationRepository.findById(id).orElse(null);
         assert organization!=null;
         return organization.toDetailResponseDto();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<OrgDto.OrgResponse> findByCategory(String category, Account account){
         ArrayList<Long> excludeOrganization = getMyOrganizationId(account);
 
