@@ -50,19 +50,19 @@ public class RetrospectService {
                 Retrospect.builder().routine(routine).isReport(false).build());
         retrospect.updateResult(retrospectResult.getResult());
         Retrospect saveRetrospect = retrospectRepository.save(retrospect);
-        return RetrospectDTO.ResponseRetrospectMessage.of(saveRetrospect, "회고 수행 여부 설정 성공", StatusEnum.RETROSPECT_OK);
+        return RetrospectDTO.ResponseRetrospectMessage.of(StatusEnum.RETROSPECT_OK , "회고 수행 여부 설정 성공", saveRetrospect);
     }
 
     public RetrospectDTO.ResponseRetrospectListMessage getRetrospectList(Week day, LocalDate date, Account account) {
         List<Routine> allByAccountAndDaysDay = routineRepository.findAllByAccountAndDaysDayAndRetrospectsDate(account, day, date);
         List<Retrospect> retrospectList = allByAccountAndDaysDay.stream().map(x -> x.getRetrospects().get(0)).collect(Collectors.toList());
-        return RetrospectDTO.ResponseRetrospectListMessage.of(retrospectList, "요일 기준 회고 전체 조회 성공", StatusEnum.RETROSPECT_OK);
+        return RetrospectDTO.ResponseRetrospectListMessage.of(StatusEnum.RETROSPECT_OK, "요일 기준 회고 전체 조회 성공", retrospectList);
     }
 
     public RetrospectDTO.ResponseRetrospectMessage getRetrospect(Long retrospectId, Account account) {
         Retrospect retrospect = retrospectRepository.findById(retrospectId).orElseThrow(NotFoundRetrospectException::new);
         routineService.checkIsMine(account, retrospect.getRoutine());
-        return RetrospectDTO.ResponseRetrospectMessage.of(retrospect, "회고 단일 조회 성공", StatusEnum.RETROSPECT_OK);
+        return RetrospectDTO.ResponseRetrospectMessage.of(StatusEnum.RETROSPECT_OK, "회고 단일 조회 성공", retrospect);
     }
 
     public Message deleteRetrospect(Long retrospectId, Account account) {
@@ -85,7 +85,7 @@ public class RetrospectService {
         else
             retrospect.updateRetrospect(requestRetrospect.getContent());
         Retrospect saveRetrospect = retrospectRepository.save(retrospect);
-        return RetrospectDTO.ResponseRetrospectMessage.of(saveRetrospect, "회고 작성 성공", StatusEnum.RETROSPECT_OK);
+        return RetrospectDTO.ResponseRetrospectMessage.of(StatusEnum.RETROSPECT_OK, "회고 작성 성공", saveRetrospect);
     }
 
     @Transactional
@@ -100,7 +100,7 @@ public class RetrospectService {
         }
         retrospect.updateRetrospect(updateRetrospect.getContent());
         Retrospect saveRetrospect = retrospectRepository.save(retrospect);
-        return RetrospectDTO.ResponseRetrospectMessage.of(saveRetrospect, "회고 수정 성공", StatusEnum.RETROSPECT_OK);
+        return RetrospectDTO.ResponseRetrospectMessage.of(StatusEnum.RETROSPECT_OK,"회고 수정 성공", saveRetrospect);
     }
 
     public String saveImages(MultipartFile image, Long id) throws IOException {

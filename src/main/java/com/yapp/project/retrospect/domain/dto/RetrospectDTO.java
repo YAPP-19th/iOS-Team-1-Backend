@@ -91,7 +91,7 @@ public class RetrospectDTO {
         private Message message;
         private ResponseRetrospect data;
 
-        public static ResponseRetrospectMessage of(Retrospect retrospect, String msg, StatusEnum status){
+        public static ResponseRetrospectMessage of(StatusEnum status, String msg, Retrospect retrospect){
             return RetrospectDTO.ResponseRetrospectMessage.builder()
                     .message(Message.builder().msg(msg).status(status).build())
                     .data(RetrospectDTO.ResponseRetrospect.builder()
@@ -109,7 +109,7 @@ public class RetrospectDTO {
         private Message message;
         private List<ResponseRetrospect> data;
 
-        public static ResponseRetrospectListMessage of(List<Retrospect> retrospectList, String msg, StatusEnum status) {
+        public static ResponseRetrospectListMessage of(StatusEnum status, String msg, List<Retrospect> retrospectList) {
             List<RetrospectDTO.ResponseRetrospect> getRetrospectList = retrospectList.stream().map(x ->
                     RetrospectDTO.ResponseRetrospect.builder()
                             .retrospect(x)
