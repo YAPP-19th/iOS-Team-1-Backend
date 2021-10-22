@@ -33,7 +33,7 @@ public class RoutineServiceTest {
     private RoutineRepository routineRepository;
 
     @Test
-    void Test_Create_Routine_Success() {
+    void testCreateRoutineSuccess() {
         // given
         Account account = AccountTemplate.makeTestAccount();
         List<Week> days = new ArrayList<>();
@@ -54,7 +54,7 @@ public class RoutineServiceTest {
     }
 
     @Test
-    void Test_Create_Routine_Failure_BadRequest() {
+    void testCreateRoutineFailureBadRequest() {
         // given
         Account account = AccountTemplate.makeTestAccount();
         List<Week> days = new ArrayList<>();
@@ -69,7 +69,7 @@ public class RoutineServiceTest {
     }
 
     @Test
-    void Test_Get_Routine_Success() {
+    void testGetRoutineSuccess() {
         // given
         Account account = AccountTemplate.makeTestAccount();
         List<Week> days = new ArrayList<>();
@@ -91,7 +91,7 @@ public class RoutineServiceTest {
     }
 
     @Test
-    void Test_Get_Routine_Failure_NotFound() {
+    void testGetRoutineFailureNotFound() {
         // given
         Account account = AccountTemplate.makeTestAccount();
 
@@ -102,7 +102,7 @@ public class RoutineServiceTest {
     }
 
     @Test
-    void Test_Get_Routine_Failure_BadRequest() {
+    void testGetRoutineFailureBadRequest() {
         // given
         Account account1 = AccountTemplate.makeTestAccount();
         Account account2 = AccountTemplate.makeTestAccount("나는@두번째.사람");
@@ -122,7 +122,7 @@ public class RoutineServiceTest {
     }
 
     @Test
-    void Test_Get_RoutineList_Success() {
+    void testGetRoutineListSuccess() {
         // given
         Account account = AccountTemplate.makeTestAccount();
         List<Week> days = new ArrayList<>();
@@ -143,7 +143,7 @@ public class RoutineServiceTest {
     }
 
     @Test
-    void Test_Update_Routine_Success() {
+    void testUpdateRoutineSuccess() {
         //given
         Account account = AccountTemplate.makeTestAccount();
         List<Week> days = new ArrayList<>();
@@ -164,7 +164,7 @@ public class RoutineServiceTest {
     }
 
     @Test
-    void Test_Update_Routine_Sequence_Success() {
+    void testUpdateRoutineSequenceSuccess() {
         //given
         Account account = AccountTemplate.makeTestAccount();
         List<Routine> routines = new ArrayList<>();

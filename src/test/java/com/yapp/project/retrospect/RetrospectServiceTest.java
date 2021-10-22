@@ -45,7 +45,7 @@ public class RetrospectServiceTest {
     private SnapshotRepository snapshotRepository;
 
     @Test
-    void Test_Create_Retrospect_Success() {
+    void testCreateRetrospectSuccess() {
         // given
         Account account = AccountTemplate.makeTestAccount();
         List<Week> days = new ArrayList<>();
@@ -73,13 +73,13 @@ public class RetrospectServiceTest {
     }
 
     @Test
-    void Test_Save_And_Get_Path_Success() {
+    void testSaveAndGetPathSuccess() {
         // Todo 이미지 저장 테스트 케이스는 S3 적용 후 작성
         // 이미지 저장 로직은 공통으로 사용하여 하나의 테스트 케이스만 작성 예정
     }
 
     @Test
-    void Test_Update_Non_Image_Success() throws IOException {
+    void testUpdateNonImageSuccess() throws IOException {
         // given
         Account account = AccountTemplate.makeTestAccount();
         List<Week> days = new ArrayList<>();
@@ -106,7 +106,7 @@ public class RetrospectServiceTest {
     }
 
     @Test
-    void Test_Update_Failure(){
+    void testUpdateRetrospectFailure(){
         // given
         Account account = AccountTemplate.makeTestAccount();
         RetrospectDTO.RequestUpdateRetrospect fakeUpdateRetrospect = RetrospectDTO.RequestUpdateRetrospect.builder().retrospectId(2L).content("테스트 회고 수정").build();
@@ -118,7 +118,7 @@ public class RetrospectServiceTest {
     }
 
     @Test
-    void Test_Set_Result_Retrospect() {
+    void testSetResultRetrospect() {
         // given
         Account account = AccountTemplate.makeTestAccount();
         List<Week> days = new ArrayList<>();
@@ -146,7 +146,7 @@ public class RetrospectServiceTest {
     }
 
     @Test
-    void Test_Set_Result_Not_Day_Retrospect() {
+    void testSetResultNotDayRetrospect() {
         // given
         Account account = AccountTemplate.makeTestAccount();
         List<Week> days = new ArrayList<>();

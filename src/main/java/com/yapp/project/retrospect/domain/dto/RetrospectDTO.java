@@ -1,6 +1,7 @@
 package com.yapp.project.retrospect.domain.dto;
 
 import com.yapp.project.aux.Message;
+import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.retrospect.domain.Result;
 import com.yapp.project.retrospect.domain.Retrospect;
 import com.yapp.project.routine.domain.RoutineDTO;
@@ -12,6 +13,7 @@ import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RetrospectDTO {
 
@@ -88,6 +90,15 @@ public class RetrospectDTO {
     public static class ResponseRetrospectMessage {
         private Message message;
         private ResponseRetrospect data;
+
+        public static ResponseRetrospectMessage of(Retrospect retrospect, String msg, StatusEnum status){
+            return RetrospectDTO.ResponseRetrospectMessage.builder()
+                    .message(Message.builder().msg(msg).status(status).build())
+                    .data(RetrospectDTO.ResponseRetrospect.builder()
+                            .retrospect(retrospect)
+                            .routine(RoutineDTO.ResponseRoutineDto.builder()
+                                    .routine(retrospect.getRoutine()).build()).build()).build();
+        }
     }
 
     @Getter
@@ -97,5 +108,15 @@ public class RetrospectDTO {
     public static class ResponseRetrospectListMessage {
         private Message message;
         private List<ResponseRetrospect> data;
+
+        public static ResponseRetrospectListMessage of(List<Retrospect> retrospectList, String msg, StatusEnum status) {
+            List<RetrospectDTO.ResponseRetrospect> getRetrospectList = retrospectList.stream().map(x ->
+                    RetrospectDTO.ResponseRetrospect.builder()
+                            .retrospect(x)
+                            .routine(RoutineDTO.ResponseRoutineDto.builder().routine(x.getRoutine()).build()).build()).collect(Collectors.toList());
+            return RetrospectDTO.ResponseRetrospectListMessage.builder()
+                    .message(Message.builder().msg(msg).status(status).build())
+                    .data(getRetrospectList).build();
+        }
     }
 }
