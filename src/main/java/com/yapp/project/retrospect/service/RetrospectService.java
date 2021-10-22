@@ -44,7 +44,7 @@ public class RetrospectService {
     public RetrospectDTO.ResponseRetrospectMessage setRetrospectResult(RetrospectDTO.RequestRetrospectResult retrospectResult, Account account) {
         Routine routine = routineService.findIsExistByIdAndIsNotDelete(retrospectResult.getRoutineId());
         routineService.checkIsMine(account, routine);
-        checkDate(routine);
+        checkIsDate(routine);
         Optional<Retrospect> preRetrospect = retrospectRepository.findByRoutineAndDate(routine, LocalDate.now());
         Retrospect retrospect = preRetrospect.orElseGet(() ->
                 Retrospect.builder().routine(routine).isReport(false).build());
