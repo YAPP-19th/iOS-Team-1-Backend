@@ -4,6 +4,7 @@ import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.Authority;
 import com.yapp.project.account.domain.SocialType;
 import com.yapp.project.aux.Message;
+import com.yapp.project.aux.StatusEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -70,6 +71,12 @@ public class AccountDto {
     public static class UserResponseMessage{
         private Message message;
         private UserResponse data;
+
+        public static UserResponseMessage of(StatusEnum status, String message, UserResponse data){
+            return UserResponseMessage.builder().data(data).message(
+                    Message.builder().status(status).msg(message).build()
+            ).build();
+        }
     }
 
 

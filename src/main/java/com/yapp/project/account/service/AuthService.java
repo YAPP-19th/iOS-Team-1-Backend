@@ -82,7 +82,7 @@ public class AuthService {
     }
 
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Message logout(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String accountEmail = authentication.getName();
@@ -126,7 +126,9 @@ public class AuthService {
         String email = accountRequestDto.getEmail();
         String nickname = accountRequestDto.getNickname();
         checkDuplicateExceptionFields(email, nickname);
-        if (accountRequestDto.getSocialType().equals(SocialType.NORMAL) && !PasswordUtil.validPassword(accountRequestDto.getPassword())){
+        SocialType socialType = accountRequestDto.getSocialType();
+        String password = accountRequestDto.getPassword();
+        if (socialType.equals(SocialType.NORMAL) && !PasswordUtil.validPassword(password)){
                 throw new PasswordInvalidException();
         }
         Account account = accountRequestDto.toAccount(passwordEncoder);

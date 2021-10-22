@@ -1,5 +1,6 @@
 package com.yapp.project.account.util;
 
+import com.yapp.project.config.exception.account.NotFoundUserInformationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,7 +13,7 @@ public class SecurityUtil {
     public static String getCurrentAccountEmail() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getName() ==null){
-            throw new IllegalArgumentException("Security Context에 대한 인증 정보가 없습니다.");
+            throw new NotFoundUserInformationException();
         }
         return authentication.getName();
     }

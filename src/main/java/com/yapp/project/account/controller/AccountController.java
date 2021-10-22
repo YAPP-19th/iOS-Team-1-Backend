@@ -1,8 +1,9 @@
 package com.yapp.project.account.controller;
 
-import com.yapp.project.account.domain.dto.AccountDto;
+import static com.yapp.project.account.domain.dto.AccountDto.*;
+import static com.yapp.project.aux.content.AccountContent.ACCOUNT_OK_MSG;
+
 import com.yapp.project.account.service.AccountService;
-import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,8 @@ public class AccountController {
 
     @ApiOperation(value = "회원정보", tags = "account-controller")
     @GetMapping("/me")
-    public AccountDto.UserResponseMessage getMyAccountInfo() {
-        return AccountDto.UserResponseMessage.builder().data(accountService.getUserInfo())
-                .message(Message.builder().msg("성공").status(StatusEnum.ACCOUNT_OK).build()).build();
+    public UserResponseMessage getMyAccountInfo() {
+        UserResponse data = accountService.getUserInfo();
+        return UserResponseMessage.of(StatusEnum.ACCOUNT_OK, ACCOUNT_OK_MSG, data);
     }
 }
