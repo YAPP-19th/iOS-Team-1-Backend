@@ -8,7 +8,7 @@ import com.yapp.project.config.exception.mission.AlreadyMissionExistException;
 import com.yapp.project.config.exception.mission.MissionNotFoundException;
 import com.yapp.project.mission.domain.Cron;
 import com.yapp.project.mission.domain.Mission;
-import com.yapp.project.mission.domain.dto.MissionDto;
+import static com.yapp.project.mission.domain.dto.MissionDto.*;
 import com.yapp.project.mission.domain.repository.MissionRepository;
 import com.yapp.project.organization.domain.Organization;
 import com.yapp.project.organization.domain.repository.OrganizationRepository;
@@ -26,7 +26,7 @@ public class MissionService {
     private final MissionRepository missionRepository;
     private final OrganizationRepository organizationRepository;
 
-    public Message createMission(MissionDto.MissionRequest request, Account account){
+    public Message createMission(MissionRequest request, Account account){
         if (missionRepository.findMissionByAccountAndOrganization_IdAndIsFinishIsFalse(account, request.getId()).isPresent()){
             throw new AlreadyMissionExistException();
         }
@@ -38,29 +38,26 @@ public class MissionService {
     }
 
     private void setDays(List<Week> days, Mission mission){
-        List<Cron> missionDays = days.stream().map(day -> Cron.builder().week(day).mission(mission).build()).collect(Collectors.toList());
+        List<Cron> missionDays = days.stream()
+                .map(day -> Cron.builder().week(day).mission(mission).build()).collect(Collectors.toList());
         mission.addDays(missionDays);
     }
 
 
-    public MissionDto.MissionResponseMessage findAllIsDoing(Account account) {
-        List<MissionDto.MissionResponse> responses = new ArrayList<>();
+    public MissionResponseMessage findAllIsDoing(Account account) {
+        List<MissionResponse> responses = new ArrayList<>();
         for (Mission mission : missionRepository.findAllByAccountAndIsFinishIsFalse(account)) {
             responses.add(mission.toMissionResponse());
         }
-        return MissionDto.MissionResponseMessage.builder()
-                .message(
-                        Message.builder().msg(MissionContent.FIND_MY_MISSION_LISTS_ING).status(StatusEnum.MISSION_OK).build()
-                ).data(responses).build();
+        return MissionResponseMessage.of(StatusEnum.MISSION_OK, MissionContent.FIND_MY_MISSION_LISTS_ING, responses);
     }
 
 
-    public MissionDto.MissionDetailResponseMessage findDetailMyMission(Account account, Long missionId) {
-        Mission mission = missionRepository.findMissionByAccountAndId(account, missionId).orElseThrow(MissionNotFoundException::new);
-        MissionDto.MissionDetailResponse response = mission.toMissionDetailResponse();
-        return MissionDto.MissionDetailResponseMessage.builder().message(
-                Message.builder().msg(MissionContent.FIND_MY_MISSION_DETAIL).status(StatusEnum.MISSION_OK).build()
-        ).data(response).build();
+    public MissionDetailResponseMessage findDetailMyMission(Account account, Long missionId) {
+        Mission mission = missionRepository.findMissionByAccountAndId(account, missionId)
+                .orElseThrow(MissionNotFoundException::new);
+        MissionDetailResponse response = mission.toMissionDetailResponse();
+        return MissionDetailResponseMessage.of(StatusEnum.MISSION_OK, MissionContent.FIND_MY_MISSION_DETAIL, response);
     }
 }
 

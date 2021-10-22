@@ -2,6 +2,7 @@ package com.yapp.project.mission.domain.dto;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.Message;
+import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.mission.utils.DateUtils;
 import com.yapp.project.organization.domain.Organization;
@@ -75,6 +76,12 @@ public class MissionDto {
     public static class MissionDetailResponseMessage{
         private Message message;
         private MissionDetailResponse data;
+
+        public static MissionDetailResponseMessage of(StatusEnum status, String message, MissionDetailResponse data){
+            return MissionDetailResponseMessage.builder().data(data).message(
+                    Message.builder().msg(message).status(status).build()
+            ).build();
+        }
     }
 
     @Getter
@@ -100,5 +107,11 @@ public class MissionDto {
     public static class MissionResponseMessage{
         private Message message;
         private List<MissionResponse> data;
+
+        public static MissionResponseMessage of(StatusEnum status, String message, List<MissionResponse> data){
+            return MissionResponseMessage.builder().data(data).message(
+                    Message.builder().status(status).msg(message).build()
+            ).build();
+        }
     }
 }

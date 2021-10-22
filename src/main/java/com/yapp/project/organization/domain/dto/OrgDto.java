@@ -1,6 +1,7 @@
 package com.yapp.project.organization.domain.dto;
 
 import com.yapp.project.aux.Message;
+import com.yapp.project.aux.StatusEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,6 +52,12 @@ public class OrgDto {
     public static class OrgListResponseMessage{
         private Message message;
         private List<OrgResponse> data;
+
+        public static OrgListResponseMessage of(StatusEnum status, String message, List<OrgResponse> data){
+            return OrgListResponseMessage.builder().data(data).message(
+                    Message.builder().msg(message).status(status).build()
+            ).build();
+        }
     }
 
     @Getter
@@ -87,5 +94,11 @@ public class OrgDto {
     public static class OrgDetailMessage{
         private Message message;
         private OrgDetailResponse data;
+
+        public static OrgDetailMessage of(StatusEnum status, String message, OrgDetailResponse data){
+            return OrgDetailMessage.builder().data(data).message(
+                    Message.builder().status(status).msg(message).build()
+            ).build();
+        }
     }
 }

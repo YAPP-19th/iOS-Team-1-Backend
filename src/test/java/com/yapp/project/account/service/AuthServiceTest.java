@@ -65,8 +65,9 @@ class AuthServiceTest {
     @Transactional
     void signupSuccess() {
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto("hello@example.com");
-        AccountDto.UserResponse accountUserResponseDto = authService.signUp(accountRequestDto);
-        assertThat(accountUserResponseDto.getEmail()).isEqualTo(accountRequestDto.getEmail());
+        SocialDto.TokenMessage tokenMessage = authService.normalSignUp(accountRequestDto);
+        String token = tokenMessage.getData().getAccessToken();
+        assertThat(tokenProvider.validateToken(token)).isTrue();
     }
 
     @Test
