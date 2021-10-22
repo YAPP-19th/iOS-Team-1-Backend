@@ -11,9 +11,9 @@ import java.util.Optional;
 
 @Repository
 public interface RoutineRepository extends JpaRepository<Routine, Long> {
-    List<Routine> findAllByAccountAndDaysDayOrderByDaysSequence(Account account, Week days, Sort sort);
+    List<Routine> findAllByIsDeleteIsFalseAndAccountAndDaysDayOrderByDaysSequence(Account account, Week days, Sort sort);
 
-    Optional<Routine> findByIdAndIsDelete(Long routineId, Boolean isDelete);
+    Optional<Routine> findByIdAndIsDeleteIsFalse(Long routineId);
 
     List<Routine> findAllByAccountAndDaysDayAndRetrospectsDate(Account account, Week day, LocalDate parse);
 }

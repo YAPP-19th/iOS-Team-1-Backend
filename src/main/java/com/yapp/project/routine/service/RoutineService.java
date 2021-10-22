@@ -50,7 +50,7 @@ public class RoutineService {
 
     public RoutineDTO.ResponseRoutineListMessageDto getRoutineList(Week day, Account account) {
         List<Routine> routineList = routineRepository // Sort.by("days").descending(): sequence가 0인 루틴은 최신 등록순
-                .findAllByAccountAndDaysDayOrderByDaysSequence(account, day, Sort.by("days").descending());
+                .findAllByIsDeleteIsFalseAndAccountAndDaysDayOrderByDaysSequence(account, day, Sort.by("days").descending());
         return RoutineDTO.ResponseRoutineListMessageDto.builder()
                 .message(Message.builder().msg("요일별 조회 성공").status(StatusEnum.ROUTINE_OK).build())
                 .data(routineList.stream().map(routine -> RoutineDTO.ResponseRoutineDto.builder()
@@ -97,7 +97,7 @@ public class RoutineService {
     }
 
     public Routine findIsExistByIdAndIsNotDelete(Long routineId) {
-        return routineRepository.findByIdAndIsDelete(routineId, false).orElseThrow(() -> new NotFoundRoutineException());
+        return routineRepository.findByIdAndIsDeleteIsFalse(routineId).orElseThrow(() -> new NotFoundRoutineException());
     }
 
     private void updateDayList(RoutineDTO.RequestRoutineDto updateRoutine, Routine routine) {
