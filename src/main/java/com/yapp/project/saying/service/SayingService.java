@@ -47,7 +47,6 @@ public class SayingService {
             sayingRecordRepository.save(sayingRecord);
             SayingResponse data = SayingResponse.builder().id(request.getId()).result(true).build();
             return SayingResponseMessage.of(StatusEnum.SAYING_OK, WRITE_SAYING_SUCCESS,data);
-
         }else{
             SayingResponse data = SayingResponse.builder().id(request.getId()).result(false).build();
             return SayingResponseMessage.of(StatusEnum.SAYING_OK, WRITE_SAYING_FAIL,data);
