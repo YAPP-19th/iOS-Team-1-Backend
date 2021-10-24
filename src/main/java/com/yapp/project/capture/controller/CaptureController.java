@@ -27,7 +27,7 @@ public class CaptureController {
         if(image == null) {
             throw new InvalidCaptureException();
         } else{
-            imagePath = saveImages(image, missionId,  "/home/vixx/image/capture/");
+            imagePath = saveImages(image, missionId,  "/home/image/capture/");
         }
         return captureService.captureTodayMission(imagePath, missionId);
     }
