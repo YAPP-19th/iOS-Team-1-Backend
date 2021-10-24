@@ -1,7 +1,6 @@
 package com.yapp.project.retrospect.domain;
 
 import com.yapp.project.routine.domain.Routine;
-import com.yapp.project.routine.domain.Week;
 import com.yapp.project.snapshot.domain.Snapshot;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

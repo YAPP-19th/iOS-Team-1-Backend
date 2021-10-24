@@ -28,7 +28,9 @@ public class MissionTemplate {
 
     public static Mission makeMission(Account account, Organization organization,
                                       LocalDate startDate, LocalDate finishDate){
-        return Mission.builder().account(account).organization(organization).startDate(startDate).finishDate(finishDate).build();
+        Mission mission = Mission.builder().id(MISSION_ID).account(account).organization(organization).startDate(startDate).finishDate(finishDate).build();
+        mission.defaultSetting();
+        return mission;
     }
 
     public static Mission makeMission(Account account, Organization organization){

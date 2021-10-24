@@ -31,7 +31,9 @@ public class OrganizationTemplate {
     }
 
     public static Organization makeTestOrganization(String title, String category){
-        return Organization.builder().id(id++).title(title).category(category).clause(CLAUSE).rate(86).build();
+        Organization organization = Organization.builder().id(id++).title(title).category(category).clause(CLAUSE).rate(86).build();
+        organization.defaultSetting();
+        return organization;
     }
 
 }

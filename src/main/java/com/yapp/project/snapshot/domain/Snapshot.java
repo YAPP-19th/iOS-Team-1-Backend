@@ -1,6 +1,5 @@
 package com.yapp.project.snapshot.domain;
 
-import com.yapp.project.mission.domain.Capture;
 import com.yapp.project.retrospect.domain.Retrospect;
 import lombok.*;
 import javax.persistence.*;
@@ -16,10 +15,6 @@ public class Snapshot {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy = "snapshot")
-    @JoinColumn(name = "capture_id")
-    private Capture capture;
-
     @OneToOne(mappedBy = "image")
     @JoinColumn(name = "retrospect_id")
     private Retrospect retrospect;
@@ -29,7 +24,8 @@ public class Snapshot {
     private LocalDateTime createdAt;
 
     @Builder
-    public Snapshot(String url){
+    public Snapshot(Long id, String url){
+        this.id = id;
         this.url = url;
         this.createdAt = LocalDateTime.now();
     }

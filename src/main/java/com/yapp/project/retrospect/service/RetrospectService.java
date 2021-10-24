@@ -10,7 +10,6 @@ import com.yapp.project.retrospect.domain.Retrospect;
 import com.yapp.project.retrospect.domain.RetrospectRepository;
 import com.yapp.project.retrospect.domain.dto.RetrospectDTO;
 import com.yapp.project.routine.domain.Routine;
-import com.yapp.project.routine.domain.RoutineDTO;
 import com.yapp.project.routine.domain.RoutineRepository;
 import com.yapp.project.routine.domain.Week;
 import com.yapp.project.routine.service.RoutineService;
@@ -18,10 +17,8 @@ import com.yapp.project.snapshot.domain.Snapshot;
 import com.yapp.project.snapshot.domain.SnapshotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.File;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -30,6 +27,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.yapp.project.aux.common.SnapShotUtil.saveImages;
 
 @Service
 @RequiredArgsConstructor
@@ -94,7 +93,7 @@ public class RetrospectService {
         routineService.checkIsMine(account, retrospect.getRoutine());
         if(updateRetrospect.getImage() == null) retrospect.deleteImage();
         else {
-            String newImagePath = saveImages(updateRetrospect.getImage(), retrospect.getRoutine().getId());
+            String newImagePath = saveImages(updateRetrospect.getImage(), retrospect.getRoutine().getId(), FILE_SERVER_PATH);
             if(!snapshotRepository.findByUrl(newImagePath).isPresent())
                 retrospect.updateRetrospect(snapshotRepository.save(Snapshot.builder().url(newImagePath).build()));
         }
@@ -103,18 +102,6 @@ public class RetrospectService {
         return RetrospectDTO.ResponseRetrospectMessage.of(StatusEnum.RETROSPECT_OK,"회고 수정 성공", saveRetrospect);
     }
 
-    public String saveImages(MultipartFile image, Long id) throws IOException {
-        int dotIndex = image.getOriginalFilename().lastIndexOf(".");
-        String fileName = image.getOriginalFilename().substring(0, dotIndex);
-        String extension = image.getOriginalFilename().substring(dotIndex);
-        String saveFileName = fileName + "_" + LocalDate.now() + extension;
-        String SAVE_PATH = FILE_SERVER_PATH + id + "/";
-        // Todo 추후 S3 전환 시, 아래 5라인 및 경로 수정, FILE_SERVER_PATH도 수정해야함.
-        File path = new File(SAVE_PATH);
-        if(!path.exists()) path.mkdir();
-        image.transferTo(new File(SAVE_PATH, saveFileName));
-        return SAVE_PATH + saveFileName;
-    }
 
     private void checkIsDate(Routine routine) {
         DayOfWeek dayOfWeek = LocalDate.now().getDayOfWeek();

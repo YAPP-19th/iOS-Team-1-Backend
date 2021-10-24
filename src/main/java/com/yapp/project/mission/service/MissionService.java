@@ -9,12 +9,14 @@ import com.yapp.project.config.exception.mission.MissionNotFoundException;
 import com.yapp.project.mission.domain.Cron;
 import com.yapp.project.mission.domain.Mission;
 import static com.yapp.project.mission.domain.dto.MissionDto.*;
+
 import com.yapp.project.mission.domain.repository.MissionRepository;
 import com.yapp.project.organization.domain.Organization;
 import com.yapp.project.organization.domain.repository.OrganizationRepository;
 import com.yapp.project.routine.domain.Week;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,14 +28,15 @@ public class MissionService {
     private final MissionRepository missionRepository;
     private final OrganizationRepository organizationRepository;
 
+    @Transactional
     public Message createMission(MissionRequest request, Account account){
         if (missionRepository.findMissionByAccountAndOrganization_IdAndIsFinishIsFalse(account, request.getId()).isPresent()){
             throw new AlreadyMissionExistException();
         }
         Organization organization = organizationRepository.getById(request.getId());
         Mission mission = request.toMission(account,organization);
-        setDays(request.getWeeks(),mission);
         missionRepository.save(mission);
+        setDays(request.getWeeks(),mission);
         return Message.of(StatusEnum.MISSION_OK, MissionContent.MISSION_CREATE_SUCCESS);
     }
 
@@ -43,7 +46,7 @@ public class MissionService {
         mission.addDays(missionDays);
     }
 
-
+    @Transactional(readOnly = true)
     public MissionResponseMessage findAllIsDoing(Account account) {
         List<MissionResponse> responses = new ArrayList<>();
         for (Mission mission : missionRepository.findAllByAccountAndIsFinishIsFalse(account)) {
@@ -52,7 +55,7 @@ public class MissionService {
         return MissionResponseMessage.of(StatusEnum.MISSION_OK, MissionContent.FIND_MY_MISSION_LISTS_ING, responses);
     }
 
-
+    @Transactional(readOnly = true)
     public MissionDetailResponseMessage findDetailMyMission(Account account, Long missionId) {
         Mission mission = missionRepository.findMissionByAccountAndId(account, missionId)
                 .orElseThrow(MissionNotFoundException::new);

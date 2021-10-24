@@ -1,0 +1,72 @@
+package com.yapp.project.capture.domain;
+
+import com.yapp.project.mission.domain.Mission;
+import com.yapp.project.capture.domain.dto.CaptureDto;
+import com.yapp.project.organization.domain.Organization;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@Entity
+@NoArgsConstructor
+public class Capture {
+
+    @Builder
+    public Capture(Long id, Mission mission, Organization organization, Integer rank, Achievement achievement){
+        this.id = id;
+        this.organization = organization;
+        this.mission = mission;
+        this.rank = rank;
+        this.myAchievementRate = achievement.getMyAchievementRate();
+        this.groupAchievementRate = achievement.getGroupAchievementRate();
+        this.createdAt = LocalDateTime.now();
+    }
+
+    @PrePersist
+    public void prePersist(){
+        this.isDelete= isDelete != null && isDelete;
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(targetEntity = Mission.class, fetch = FetchType.LAZY)
+    private Mission mission;
+
+    @ManyToOne(targetEntity = Organization.class, fetch = FetchType.LAZY)
+    private Organization organization;
+
+    @OneToMany(mappedBy = "capture", fetch = FetchType.EAGER)
+    private List<CaptureImage> captureImage = new ArrayList<>();
+
+    private Integer rank;
+
+    private Integer myAchievementRate;
+
+    private Integer groupAchievementRate;
+
+    private Boolean isDelete;
+
+    private LocalDateTime createdAt;
+
+    public CaptureDto.CaptureResponse toCaptureResponse(){
+        return CaptureDto.CaptureResponse.builder().images(captureImage).captureId(id)
+                .build();
+    }
+
+    public void removeCapture(){
+        isDelete=true;
+    }
+
+    public void updateCaptureImage(CaptureImage images){
+        captureImage.add(images);
+    }
+
+}

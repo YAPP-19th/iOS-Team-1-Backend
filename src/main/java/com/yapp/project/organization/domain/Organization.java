@@ -1,6 +1,6 @@
 package com.yapp.project.organization.domain;
 
-import com.yapp.project.mission.domain.Capture;
+import com.yapp.project.capture.domain.Capture;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.organization.domain.dto.OrgDto;
 import lombok.*;
@@ -27,6 +27,12 @@ public class Organization {
         this.promise = clause.getPromise();
         this.summary = clause.getSummary();
     }
+
+    @PrePersist
+    public void prePersist(){
+        this.count = this.count == null ? 0 : this.count;
+    }
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,5 +81,17 @@ public class Organization {
                 .summary(summary).build();
     }
 
+    public void updateCurrentCount(){
+        this.count = count==null? 0: count;
+        this.count+=1;
+    }
 
+    public void defaultSetting(){
+        this.count = 0;
+        this.rate = 0;
+    }
+
+    public Integer getCount(){
+        return count!=null?count:0;
+    }
 }
