@@ -9,10 +9,9 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.format.TextStyle;
-import java.util.Locale;
+
+import static com.yapp.project.aux.common.SnapShotUtil.saveImages;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,8 +24,11 @@ public class RetrospectController {
     @PostMapping("/")
     public RetrospectDTO.ResponseRetrospectMessage createRetrospect(RetrospectDTO.RequestRetrospect retrospect) throws IOException {
         String imagePath;
-        if(retrospect.getImage() == null) imagePath = null;
-        else imagePath = retrospectService.saveImages(retrospect.getImage(), retrospect.getRoutineId());
+        if(retrospect.getImage() == null) {
+            imagePath = null;
+        } else{
+            imagePath = saveImages(retrospect.getImage(), retrospect.getRoutineId(), "/home/image/retrospect/");
+        }
         return retrospectService.createRetrospect(retrospect, imagePath, AccountUtil.getAccount());
     }
 
