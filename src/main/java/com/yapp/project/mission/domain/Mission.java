@@ -1,6 +1,7 @@
 package com.yapp.project.mission.domain;
 
 import com.yapp.project.account.domain.Account;
+import com.yapp.project.capture.domain.Capture;
 import com.yapp.project.mission.domain.dto.MissionDto;
 import com.yapp.project.organization.domain.Organization;
 import lombok.Builder;
@@ -53,7 +54,7 @@ public class Mission {
     @ToString.Exclude
     private Account account;
 
-    @OneToMany(mappedBy = "mission")
+    @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<Cron> weeks = new ArrayList<>();
 
@@ -115,4 +116,13 @@ public class Mission {
         return (this.successCount/(this.failureCount+this.successCount))*100;
     }
 
+    public void updateSuccessCount(){
+        this.successCount+=1;
+    }
+
+    public void defaultSetting(){
+        this.successCount = 0;
+        this.failureCount = 0;
+        this.isFinish = false;
+    }
 }
