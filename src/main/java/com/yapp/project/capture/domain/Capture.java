@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATETIME_NOW;
+
 @Getter
 @Entity
 @NoArgsConstructor
@@ -25,7 +27,7 @@ public class Capture {
         this.rank = rank;
         this.myAchievementRate = achievement.getMyAchievementRate();
         this.groupAchievementRate = achievement.getGroupAchievementRate();
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = KST_LOCAL_DATETIME_NOW();
     }
 
     @PrePersist

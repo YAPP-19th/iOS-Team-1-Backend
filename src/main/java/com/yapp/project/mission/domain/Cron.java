@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATETIME_NOW;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -32,7 +34,7 @@ public class Cron {
     public Cron(Week week, Mission mission) {
         this.week = week;
         this.mission = mission;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = KST_LOCAL_DATETIME_NOW();
     }
 
 }

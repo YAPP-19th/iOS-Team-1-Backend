@@ -6,6 +6,8 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATETIME_NOW;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -47,7 +49,7 @@ public class Account {
     private String fcmToken;
 
     public void updateLastLoginAccount(){
-        this.lastLogin = LocalDateTime.now();
+        this.lastLogin = KST_LOCAL_DATETIME_NOW();
     }
 
     public UserRequest toAccountRequestDto(String suffix){

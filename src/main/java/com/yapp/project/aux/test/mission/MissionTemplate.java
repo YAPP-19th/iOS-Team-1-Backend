@@ -10,12 +10,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATE_NOW;
+
 public class MissionTemplate {
     private MissionTemplate(){
     }
     private static final Long MISSION_ID = 1000L;
-    public static final LocalDate START_DATE = LocalDate.now();
-    public static final String STR_START_DATE = LocalDate.now().toString();
+    public static final LocalDate START_DATE = KST_LOCAL_DATE_NOW();
+    public static final String STR_START_DATE = START_DATE.toString();
     public static final String STR_FINISH_DATE = START_DATE.plusDays(7L).toString();
     public static final LocalDate FINISH_DATE = START_DATE.plusDays(7L);
     protected static final List<Week> WEEKS = new ArrayList<>();

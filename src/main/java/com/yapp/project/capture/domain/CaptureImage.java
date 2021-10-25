@@ -7,6 +7,8 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATETIME_NOW;
+
 @Entity
 @NoArgsConstructor
 @ToString
@@ -17,7 +19,7 @@ public class CaptureImage {
         this.id=id;
         this.url=url;
         this.capture = capture;
-        this.createdAt=LocalDateTime.now();
+        this.createdAt= KST_LOCAL_DATETIME_NOW();
     }
 
     @Id

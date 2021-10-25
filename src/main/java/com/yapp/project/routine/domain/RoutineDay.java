@@ -1,7 +1,5 @@
 package com.yapp.project.routine.domain;
 
-import com.yapp.project.routine.domain.Routine;
-import com.yapp.project.routine.domain.Week;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+
+import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATETIME_NOW;
 
 @Entity
 @Getter
@@ -36,7 +36,7 @@ public class RoutineDay {
         this.day = day;
         this.sequence = sequence;
         this.routine = routine;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = KST_LOCAL_DATETIME_NOW();
     }
 
     public void updateSequence(Long sequence) {
