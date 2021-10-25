@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATETIME_NOW;
+
 @Getter
 @Entity
 @NoArgsConstructor
@@ -17,7 +19,7 @@ public class SayingRecord {
     public SayingRecord(Account account, Saying saying){
         this.account = account;
         this.saying = saying;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = KST_LOCAL_DATETIME_NOW();
     }
 
     @Id

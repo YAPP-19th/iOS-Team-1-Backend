@@ -27,13 +27,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATE_NOW;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-public class RetrospectServiceTest {
+class RetrospectServiceTest {
 
     @Mock
     private RoutineService routineService;
@@ -60,7 +62,7 @@ public class RetrospectServiceTest {
         RetrospectDTO.RequestRetrospect fakeRequestRetrospect = RetrospectDTO.RequestRetrospect.builder().routineId(1L).content("테스트 회고 내용").build();
 
         // mocking
-        given(retrospectRepository.findByRoutineAndDate(fakeRoutine, LocalDate.now())).willReturn(Optional.of(fakeRetrospect));
+        given(retrospectRepository.findByRoutineAndDate(fakeRoutine, KST_LOCAL_DATE_NOW())).willReturn(Optional.of(fakeRetrospect));
         given(snapshotRepository.save(any())).willReturn(fakeSnapShot);
         given(retrospectRepository.save(any())).willReturn(fakeRetrospectSnapShot);
         given(routineService.findIsExistByIdAndIsNotDelete(1L)).willReturn(fakeRoutine);
@@ -72,11 +74,11 @@ public class RetrospectServiceTest {
         assertThat(fakeRequestRetrospect.getRoutineId()).isEqualTo(fakeResponseRetrospect.getRoutine().getId());
     }
 
-    @Test
-    void testSaveAndGetPathSuccess() {
-        // Todo 이미지 저장 테스트 케이스는 S3 적용 후 작성
-        // 이미지 저장 로직은 공통으로 사용하여 하나의 테스트 케이스만 작성 예정
-    }
+//    @Test
+//    void testSaveAndGetPathSuccess() {
+//        // Todo 이미지 저장 테스트 케이스는 S3 적용 후 작성
+//        // 이미지 저장 로직은 공통으로 사용하여 하나의 테스트 케이스만 작성 예정
+//    }
 
     @Test
     void testUpdateNonImageSuccess() throws IOException {
@@ -135,7 +137,7 @@ public class RetrospectServiceTest {
 
         // mocking
         given(routineService.findIsExistByIdAndIsNotDelete(any())).willReturn(fakeRoutine);
-        given(retrospectRepository.findByRoutineAndDate(fakeRoutine, LocalDate.now())).willReturn(Optional.of(fakeRetrospect));
+        given(retrospectRepository.findByRoutineAndDate(fakeRoutine, KST_LOCAL_DATE_NOW())).willReturn(Optional.of(fakeRetrospect));
         given(retrospectRepository.save(any())).willReturn(fakeRetrospect);
 
         // when

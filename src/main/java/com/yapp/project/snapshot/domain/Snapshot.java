@@ -5,6 +5,8 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATETIME_NOW;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,7 +29,7 @@ public class Snapshot {
     public Snapshot(Long id, String url){
         this.id = id;
         this.url = url;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = KST_LOCAL_DATETIME_NOW();
     }
 
     public void addRetrospect(Retrospect retrospect){

@@ -10,6 +10,9 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATETIME_NOW;
+import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATE_NOW;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -46,8 +49,8 @@ public class Retrospect {
         this.content = content;
         this.result = result;
         this.isReport = isReport;
-        this.createdAt = LocalDateTime.now();
-        this.date = LocalDate.now();
+        this.createdAt = KST_LOCAL_DATETIME_NOW();
+        this.date = KST_LOCAL_DATE_NOW();
     }
 
     public void updateRetrospect(String content, Snapshot image) {

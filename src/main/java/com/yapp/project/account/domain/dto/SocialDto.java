@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDateTime;
+import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATETIME_NOW;
 
 public class SocialDto {
     private SocialDto(){
@@ -84,8 +84,8 @@ public class SocialDto {
             return Account.builder()
                     .socialType(SocialType.valueOf(socialType))
                     .authority(Authority.ROLE_USER)
-                    .createdAt(LocalDateTime.now())
-                    .lastLogin(LocalDateTime.now())
+                    .createdAt(KST_LOCAL_DATETIME_NOW())
+                    .lastLogin(KST_LOCAL_DATETIME_NOW())
                     .nickname(nickname)
                     .email(email)
                     .password(passwordEncoder.encode(email+suffix))

@@ -1,5 +1,6 @@
 package com.yapp.project.saying.service;
 
+import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATE_NOW;
 import static com.yapp.project.aux.content.SayingContent.*;
 import static com.yapp.project.saying.domain.dto.SayingDto.*;
 
@@ -14,8 +15,6 @@ import com.yapp.project.saying.domain.repository.SayingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -67,6 +66,6 @@ public class SayingService {
     }
 
     private boolean isNotTodayRecordingSaying(SayingRecord sayingRecord){
-        return sayingRecord.getCreatedAt().toLocalDate().isBefore(LocalDateTime.now().toLocalDate());
+        return sayingRecord.getCreatedAt().toLocalDate().isBefore(KST_LOCAL_DATE_NOW());
     }
 }

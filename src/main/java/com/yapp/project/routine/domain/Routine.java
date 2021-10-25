@@ -12,6 +12,8 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATETIME_NOW;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -57,7 +59,7 @@ public class Routine {
         this.startTime = LocalTime.parse(newRoutine.getStartTime());
         this.isDelete = false;
         this.category = newRoutine.getCategory();
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = KST_LOCAL_DATETIME_NOW();
         this.id = id;
     }
 

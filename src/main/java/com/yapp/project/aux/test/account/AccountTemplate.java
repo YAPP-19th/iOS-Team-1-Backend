@@ -7,7 +7,7 @@ import com.yapp.project.account.domain.dto.AccountDto.*;
 import com.yapp.project.account.domain.dto.SocialDto;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.time.LocalDateTime;
+import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATETIME_NOW;
 
 public class AccountTemplate {
 
@@ -43,7 +43,7 @@ public class AccountTemplate {
 
     public static Account makeTestAccount(String username, String email, Authority authority){
         return Account.builder().id(id++).nickname(username).password(bCryptPasswordEncoder.encode(PASSWORD))
-                .email(email).createdAt(LocalDateTime.now()).lastLogin(LocalDateTime.now())
+                .email(email).createdAt(KST_LOCAL_DATETIME_NOW()).lastLogin(KST_LOCAL_DATETIME_NOW())
                 .authority(authority).build();
     }
 

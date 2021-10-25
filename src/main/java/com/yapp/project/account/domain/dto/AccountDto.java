@@ -12,7 +12,7 @@ import lombok.Getter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDateTime;
+import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATETIME_NOW;
 
 public class AccountDto {
     private AccountDto(){
@@ -37,8 +37,8 @@ public class AccountDto {
                     .password(passwordEncoder.encode(password))
                     .authority(Authority.ROLE_USER)
                     .socialType(socialType)
-                    .createdAt(LocalDateTime.now())
-                    .lastLogin(LocalDateTime.now())
+                    .createdAt(KST_LOCAL_DATETIME_NOW())
+                    .lastLogin(KST_LOCAL_DATETIME_NOW())
                     .build();
         }
         public UsernamePasswordAuthenticationToken toAuthentication() {

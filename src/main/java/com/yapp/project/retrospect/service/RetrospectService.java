@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATE_NOW;
 import static com.yapp.project.aux.common.SnapShotUtil.saveImages;
 
 @Service
@@ -44,7 +45,7 @@ public class RetrospectService {
         Routine routine = routineService.findIsExistByIdAndIsNotDelete(retrospectResult.getRoutineId());
         routineService.checkIsMine(account, routine);
         checkIsDate(routine);
-        Optional<Retrospect> preRetrospect = retrospectRepository.findByRoutineAndDate(routine, LocalDate.now());
+        Optional<Retrospect> preRetrospect = retrospectRepository.findByRoutineAndDate(routine, KST_LOCAL_DATE_NOW());
         Retrospect retrospect = preRetrospect.orElseGet(() ->
                 Retrospect.builder().routine(routine).isReport(false).build());
         retrospect.updateResult(retrospectResult.getResult());
@@ -75,7 +76,7 @@ public class RetrospectService {
     public RetrospectDTO.ResponseRetrospectMessage createRetrospect(RetrospectDTO.RequestRetrospect requestRetrospect, String imagePath ,Account account) {
         Routine routine = routineService.findIsExistByIdAndIsNotDelete(requestRetrospect.getRoutineId());
         routineService.checkIsMine(account, routine);
-        Optional<Retrospect> preRetrospect = retrospectRepository.findByRoutineAndDate(routine, LocalDate.now());
+        Optional<Retrospect> preRetrospect = retrospectRepository.findByRoutineAndDate(routine, KST_LOCAL_DATE_NOW());
         Retrospect retrospect = preRetrospect.orElseGet(() ->
                 Retrospect.builder().routine(routine).content(requestRetrospect.getContent())
                         .isReport(false).result(Result.NOT).build());
@@ -104,7 +105,7 @@ public class RetrospectService {
 
 
     private void checkIsDate(Routine routine) {
-        DayOfWeek dayOfWeek = LocalDate.now().getDayOfWeek();
+        DayOfWeek dayOfWeek = KST_LOCAL_DATE_NOW().getDayOfWeek();
         List<String> dateList = routine.getDays().stream().map(x -> x.getDay().toString()).collect(Collectors.toList());
         boolean isContains = dateList.contains(dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.US).toUpperCase());
         if(!isContains) throw new BadRequestRetrospectException();
