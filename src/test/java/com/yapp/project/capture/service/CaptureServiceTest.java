@@ -55,6 +55,7 @@ class CaptureServiceTest{
 
     @Test
     void test_오늘_사진_인증_성공_했을_때() {
+        //given
         String imagePath = "home/image/capture";
         Account account = AccountTemplate.makeTestAccount();
         Organization organization = OrganizationTemplate.makeTestOrganization();
@@ -65,12 +66,15 @@ class CaptureServiceTest{
         LocalDateTime todayMidnight = LocalDateTime.of(today, midnight);
         given(captureRepository.findByCreatedAtIsAfterAndMission_Id(todayMidnight, missionId)).willReturn(Optional.empty());
         given(missionRepository.findById(missionId)).willReturn(Optional.of(mission));
+        //when
         CaptureResponseMessage message = captureService.captureTodayMission(imagePath, missionId);
+        //then
         assertThat(message.getData().getResult()).isTrue();
     }
 
     @Test
     void test_오늘_사진_인증_성공_이미_했을_때() {
+        //given
         String imagePath = "home/image/capture";
         Account account = AccountTemplate.makeTestAccount();
         Organization organization = OrganizationTemplate.makeTestOrganization();
@@ -81,6 +85,7 @@ class CaptureServiceTest{
         LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
         LocalDateTime todayMidnight = LocalDateTime.of(today, midnight);
         given(captureRepository.findByCreatedAtIsAfterAndMission_Id(todayMidnight, missionId)).willReturn(Optional.of(capture));
+        //when -> then
         assertThatThrownBy(() -> captureService.captureTodayMission(imagePath, missionId))
                 .isInstanceOf(AlreadyExistsCaptureException.class).hasMessage(CAPTURE_ALREADY_FINISH);
     }
@@ -88,6 +93,7 @@ class CaptureServiceTest{
 
     @Test
     void test_미션_관련_내_사진_가져올_때() {
+        //given
         Account account = AccountTemplate.makeTestAccount();
         Organization organization = OrganizationTemplate.makeTestOrganization();
         Mission mission = MissionTemplate.makeMission(account, organization);
@@ -99,8 +105,10 @@ class CaptureServiceTest{
             captures.add(CaptureTemplate.makeCapture(mission));
         }
         PageRequest pageRequest = PageRequest.of(page,size, Sort.by("createdAt").descending());
-        given(captureRepository.findByMission_IdAndIsDeleteIsFalse(pageRequest, mission.getId())).willReturn(Optional.of(captures));
-        CaptureListResponseMessage message = captureService.getMyMissionImages(missionId, page, size);
+        given(captureRepository.findByMission_IdAndIsDeleteIsFalseOrderByCreatedAtDesc(pageRequest, mission.getId())).willReturn(Optional.of(captures));
+        //when
+        CaptureListResponseMessage message = captureService.getMyMissionImages(missionId, page, size,1);
+        //then
         assertThat(message.getMessage().getStatus()).isEqualTo(StatusEnum.CAPTURE_OK);
         assertThat(message.getMessage().getMsg()).isEqualTo(CaptureContent.CAPTURE_LIST_SUCCESS);
         int listSize = message.getData().getCaptures().size();
@@ -110,6 +118,7 @@ class CaptureServiceTest{
 
     @Test
     void test_미션_관련_내_사진_가져오는데_아무것도_없을_때(){
+        //given
         Account account = AccountTemplate.makeTestAccount();
         Organization organization = OrganizationTemplate.makeTestOrganization();
         Mission mission = MissionTemplate.makeMission(account, organization);
@@ -118,8 +127,10 @@ class CaptureServiceTest{
         Long missionId = mission.getId();
         List<Capture> captures = Collections.emptyList();
         PageRequest pageRequest = PageRequest.of(page,size, Sort.by("createdAt").descending());
-        given(captureRepository.findByMission_IdAndIsDeleteIsFalse(pageRequest, mission.getId())).willReturn(Optional.of(captures));
-        CaptureListResponseMessage message = captureService.getMyMissionImages(missionId, page, size);
+        given(captureRepository.findByMission_IdAndIsDeleteIsFalseOrderByCreatedAtDesc(pageRequest, mission.getId())).willReturn(Optional.of(captures));
+        //when
+        CaptureListResponseMessage message = captureService.getMyMissionImages(missionId, page, size,1);
+        //then
         assertThat(message.getMessage().getStatus()).isEqualTo(StatusEnum.CAPTURE_OK);
         assertThat(message.getMessage().getMsg()).isEqualTo(CaptureContent.CAPTURE_LIST_SUCCESS);
         int listSize = message.getData().getCaptures().size();
@@ -129,6 +140,7 @@ class CaptureServiceTest{
 
     @Test
     void test_과거_미션을_통해_했었던_이미지들을_지웠을_때(){
+        //given
         Account account = AccountTemplate.makeTestAccount();
         Organization organization = OrganizationTemplate.makeTestOrganization();
         Mission mission = MissionTemplate.makeMission(account, organization);
@@ -139,12 +151,41 @@ class CaptureServiceTest{
         List<Long> captureIds = captures.stream().map(Capture::getId).collect(Collectors.toList());
         DeleteIdListRequest request = DeleteIdListRequest.builder()
                 .captureIdLists(captureIds).build();
+        //when
         CaptureResponseMessage message = captureService.deleteCaptureImages(request);
+        //then
         assertThat(message.getMessage().getStatus()).isEqualTo(StatusEnum.CAPTURE_OK);
         assertThat(message.getMessage().getMsg()).isEqualTo(CaptureContent.CAPTURE_DELETE_SUCCESS);
         boolean result = message.getData().getResult();
         assertThat(result).isTrue();
     }
 
+    @Test
+    void test_그룹_관련_이미지_가져왔을_때(){
+        //given
+        Account account = AccountTemplate.makeTestAccount();
+        Account account2 = AccountTemplate.makeTestAccount("second","secondary@example.com");
+        Organization organization = OrganizationTemplate.makeTestOrganization();
+        Mission mission = MissionTemplate.makeMission(account, organization);
+        Mission mission2 = MissionTemplate.makeMission(account2, organization);
+        int page = 0;
+        int size = 6;
+        Long organizationId = organization.getId();
+        List<Capture> captures = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            captures.add(CaptureTemplate.makeCapture(mission));
+            captures.add(CaptureTemplate.makeCapture(mission2));
+        }
+        PageRequest pageRequest = PageRequest.of(page,size, Sort.by("createdAt").descending());
+        //when
+        given(captureRepository.findByOrganization_IdAndIsDeleteIsFalseOrderByCreatedAtDesc(pageRequest, organization.getId())).willReturn(Optional.of(captures));
+        //then
+        CaptureListResponseMessage message = captureService.getOrganizationImages(organizationId,0,6,1);
+        assertThat(message.getMessage().getStatus()).isEqualTo(StatusEnum.CAPTURE_OK);
+        assertThat(message.getMessage().getMsg()).isEqualTo(CaptureContent.CAPTURE_LIST_SUCCESS);
+        int listSize = message.getData().getCaptures().size();
+        assertThat(listSize).isEqualTo(6);
+
+    }
 
 }
