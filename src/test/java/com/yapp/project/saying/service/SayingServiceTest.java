@@ -10,7 +10,7 @@ import com.yapp.project.saying.domain.SayingRecord;
 import com.yapp.project.saying.domain.dto.SayingDto;
 import com.yapp.project.saying.domain.repository.SayingRecordRepository;
 import com.yapp.project.saying.domain.repository.SayingRepository;
-import com.yapp.project.saying.utils.SayingUtils;
+import com.yapp.project.aux.common.Utils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,7 +39,7 @@ class SayingServiceTest {
     @Test
     void test_아직_명언쓰기를_하지_않았을_때(){
         Account account = AccountTemplate.makeTestAccount();
-        int id = SayingUtils.randomSayingId();
+        int id = Utils.randomSayingId();
         given(sayingRepository.findById((long)id)).willReturn(Optional.of(SayingTemplate.makeSaying()));
         SayingDto.SayingAccessMessage saying = sayingService.randomSaying(account, id);
         assertThat(saying.getData().getContent()).isEqualTo(SayingTemplate.CONTENT);
@@ -48,7 +48,7 @@ class SayingServiceTest {
     @Test
     void test_명언쓰기를_완성_했을_때(){
         Account account = AccountTemplate.makeTestAccount();
-        int id = SayingUtils.randomSayingId();
+        int id = Utils.randomSayingId();
         given(sayingRepository.findById((long)id)).willReturn(Optional.of(SayingTemplate.makeSaying()));
         given(sayingRecordRepository.findTopByAccount_IdOrderByIdDesc(account.getId()))
                 .willReturn(Optional.of(SayingTemplate.makeSayingRecord()));
