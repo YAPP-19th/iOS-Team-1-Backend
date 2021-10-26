@@ -86,4 +86,31 @@ public class AccountDto {
         @ApiModelProperty(value = "닉네임",example = "미닝")
         private String nickname;
     }
+
+    @Getter
+    @AllArgsConstructor
+    public static class EmailRequest{
+        @ApiModelProperty(value = "이메일", example = "springboot@example.com")
+        private String email;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class AuthenticationNumberRequest{
+        @ApiModelProperty(value = "이메일", example = "springboot@example.com")
+        private String email;
+
+        @ApiModelProperty(value = "인증번호", example = "8520")
+        private String number;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class ResetPasswordRequest{
+        @ApiModelProperty(value = "이메일", example = "springboot@example.com")
+        private String email;
+
+        @ApiModelProperty(value = "비밀번호", example = "Test!23$")
+        private String password;
+    }
 }

@@ -21,4 +21,6 @@ public class DateUtil {
     public static LocalDate KST_LOCAL_DATE_NOW(){
         return LocalDate.now(ZoneId.of(ZONE));
     }
+
+    public static final int TEMP_NUMBER_SECONDS = 1000*60*3;
 }

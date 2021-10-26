@@ -52,4 +52,11 @@ public class AccountExceptionHandler {
         final Message message = Message.of(e.getStatus() ,e.getMessage());
         return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(NotEqualAuthenticationNumberException.class)
+    public ResponseEntity<Message> handle(NotEqualAuthenticationNumberException e){
+        final Message message = Message.of(e.getStatus() ,e.getMessage());
+        return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
+    }
+
 }
