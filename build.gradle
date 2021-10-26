@@ -42,7 +42,8 @@ dependencies {
 	implementation 'io.springfox:springfox-swagger2:2.9.2'
 	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
 
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:2.5.4'
+	// [EMAIL]
+	implementation 'org.springframework.boot:spring-boot-starter-mail:2.5.4'
 
 	// [TEST]
 	testImplementation 'org.assertj:assertj-core:3.21.0'
