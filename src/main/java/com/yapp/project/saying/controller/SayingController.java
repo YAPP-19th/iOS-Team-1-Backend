@@ -5,7 +5,7 @@ import com.yapp.project.aux.common.AccountUtil;
 import static com.yapp.project.saying.domain.dto.SayingDto.*;
 
 import com.yapp.project.saying.service.SayingService;
-import com.yapp.project.saying.utils.SayingUtils;
+import com.yapp.project.aux.common.Utils;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +22,7 @@ public class SayingController {
     @ApiOperation(value = "오늘의 사용자 명언", tags = "saying-controller")
     @GetMapping("/today")
     public SayingAccessMessage randomSaying(){
-        int randomSayingId = SayingUtils.randomSayingId();
+        int randomSayingId = Utils.randomSayingId();
         Account account = AccountUtil.getAccount();
         return sayingService.randomSaying(account, randomSayingId);
     }

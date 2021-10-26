@@ -20,5 +20,7 @@ public class AccountContent {
     public static final String LOGOUT_SUCCESS = "로그아웃 되었습니다.";
     public static final String DOES_NOT_EXISTS_DUPLICATE_NICKNAME = "중복되는 닉네임이 없습니다.";
     public static final String TOKEN_REISSUE_SUCCESS = "토큰 재발급";
+    public static final String NOT_EQUAL_NUMBER = "인증 번호가 일치하지 않습니다.";
+    public static final String EMAIL_SUBJECT = "Minning 인증코드";
 
 }

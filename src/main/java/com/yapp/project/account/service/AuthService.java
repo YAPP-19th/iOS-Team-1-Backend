@@ -9,13 +9,18 @@ import com.yapp.project.account.util.PasswordUtil;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.PrefixType;
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.aux.common.DateUtil;
+import com.yapp.project.aux.common.Utils;
 import com.yapp.project.aux.content.AccountContent;
 import com.yapp.project.config.exception.account.*;
+import com.yapp.project.config.jwt.TokenInfo;
 import com.yapp.project.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -23,6 +28,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Duration;
+
+import static com.yapp.project.aux.content.AccountContent.ACCOUNT_OK_MSG;
+import static com.yapp.project.aux.content.AccountContent.EMAIL_SUBJECT;
 
 
 @Service
@@ -33,9 +43,16 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RedisTemplate<String,String> redisTemplate;
+    private final JavaMailSender javaMailSender;
 
     @Value("${social.value}")
     private String suffix;
+
+    @Value("${spring.mail.username}")
+    private String sendFrom;
+
+    @Value("${property.status}")
+    private String profile;
 
     @Transactional(readOnly = true)
     public SocialResponseMessage socialAccess(SocialRequest socialRequestDto){
@@ -118,22 +135,80 @@ public class AuthService {
         // redis refreshToken update
         String key = PrefixType.PREFIX_REFRESH_TOKEN + authentication.getName();
         valueOperations.set(key, tokenDto.getRefreshToken());
+        redisTemplate.expire(key, Duration.ofSeconds(TokenInfo.REFRESH_TOKEN_EXPIRE_TIME));
         return tokenDto.toTokenMessage(AccountContent.TOKEN_REISSUE_SUCCESS, StatusEnum.TOKEN_OK);
     }
 
 
-    public UserResponse signUp(UserRequest accountRequestDto){
+    @Transactional
+    public Message sendAuthenticationNumber(EmailRequest request){
+        ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
+        String email = request.getEmail();
+        Account account = accountRepository.findByEmail(email).orElseThrow(NotFoundUserInformationException::new);
+        String key = PrefixType.PREFIX_TEMP_NUMBER + account.getEmail();
+        String number = Utils.authenticationNumber();
+        valueOperations.set(key, number);
+        redisTemplate.expire(key,Duration.ofSeconds(DateUtil.TEMP_NUMBER_SECONDS));
+        sendEmail(email, number);
+        return Message.of(StatusEnum.ACCOUNT_OK, ACCOUNT_OK_MSG);
+    }
+
+
+    @Transactional(readOnly = true)
+    public Message checkAuthenticationNumber(AuthenticationNumberRequest request){
+        ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
+        String email = request.getEmail();
+        String value = valueOperations.get(PrefixType.PREFIX_TEMP_NUMBER+email);
+        assert value!=null;
+        if (value.equals(request.getNumber())){
+            return Message.of(StatusEnum.ACCOUNT_OK, ACCOUNT_OK_MSG);
+        }else{
+            throw new NotEqualAuthenticationNumberException();
+        }
+    }
+
+    @Transactional
+    public Message resetPassword(ResetPasswordRequest request){
+        Account account = accountRepository.findByEmail(request.getEmail())
+                .orElseThrow(NotFoundUserInformationException::new);
+        SocialType socialType = account.getSocialType();
+        String password = request.getPassword();
+        checkPasswordValidation(socialType, password);
+        account.resetPassword(passwordEncoder, request.getPassword());
+        return Message.of(StatusEnum.ACCOUNT_OK, ACCOUNT_OK_MSG);
+    }
+
+
+    public void signUp(UserRequest accountRequestDto){
         String email = accountRequestDto.getEmail();
         String nickname = accountRequestDto.getNickname();
         checkDuplicateExceptionFields(email, nickname);
         SocialType socialType = accountRequestDto.getSocialType();
         String password = accountRequestDto.getPassword();
-        if (socialType.equals(SocialType.NORMAL) && !PasswordUtil.validPassword(password)){
-                throw new PasswordInvalidException();
-        }
+        checkPasswordValidation(socialType, password);
         Account account = accountRequestDto.toAccount(passwordEncoder);
-        return UserResponse.of(accountRepository.save(account));
+        accountRepository.save(account);
     }
+
+
+    private void sendEmail(String email, String number){
+        if (profile.equals("test")){
+            return;
+        }
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+        simpleMailMessage.setTo(email);
+        simpleMailMessage.setFrom(sendFrom);
+        simpleMailMessage.setSubject(EMAIL_SUBJECT);
+        simpleMailMessage.setText(number);
+        javaMailSender.send(simpleMailMessage);
+    }
+
+    private void checkPasswordValidation(SocialType socialType, String password){
+        if (socialType.equals(SocialType.NORMAL) && !PasswordUtil.validPassword(password)){
+            throw new PasswordInvalidException();
+        }
+    }
+
 
     private void checkDuplicateExceptionFields(String email, String nickname){
          if (accountRepository.existsByEmail(email)){
@@ -158,6 +233,7 @@ public class AuthService {
         ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
         String key = PrefixType.PREFIX_REFRESH_TOKEN + authentication.getName();
         valueOperations.set(key, tokenDto.getRefreshToken());
+        redisTemplate.expire(key, Duration.ofSeconds(TokenInfo.REFRESH_TOKEN_EXPIRE_TIME));
         return tokenDto;
     }
 

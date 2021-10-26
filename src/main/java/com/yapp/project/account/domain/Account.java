@@ -2,6 +2,7 @@ package com.yapp.project.account.domain;
 
 import com.yapp.project.account.domain.dto.AccountDto.*;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -54,6 +55,10 @@ public class Account {
 
     public UserRequest toAccountRequestDto(String suffix){
         return new UserRequest(email,nickname,email+suffix,socialType);
+    }
+
+    public void resetPassword(PasswordEncoder passwordEncoder, String newPassword){
+        this.password = passwordEncoder.encode(newPassword);
     }
 
 }
