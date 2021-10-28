@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MissionRepository extends JpaRepository<Mission,Long> {
-    ArrayList<MissionOrganization> findMissionByAccountAndIsFinishIsFalse(Account account);
-    List<Mission> findAllByAccountAndIsFinishIsFalse(Account account);
+    ArrayList<MissionOrganization> findMissionByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(Account account);
+    List<Mission> findAllByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(Account account);
     Optional<Mission> findMissionByAccountAndId(Account account, Long missionId);
-    Optional<Mission> findMissionByAccountAndOrganization_IdAndIsFinishIsFalse(Account account, Long organizationId);
+    Optional<Mission> findMissionByAccountAndOrganization_IdAndIsFinishIsFalseAndIsDeleteIsFalse(Account account, Long organizationId);
 }

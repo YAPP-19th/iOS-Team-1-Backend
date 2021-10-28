@@ -40,7 +40,7 @@ class GroupServiceTest {
         List<Organization> organizations = new ArrayList<>();
         organizations.add(organization);
         ArrayList<MissionOrganization> emptyList = new ArrayList<>();
-        given(missionRepository.findMissionByAccountAndIsFinishIsFalse(account)).willReturn(emptyList);
+        given(missionRepository.findMissionByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(account)).willReturn(emptyList);
         given(organizationRepository.findAll()).willReturn(organizations);
 
         List<OrgDto.OrgResponse> res = groupService.findAll(account);

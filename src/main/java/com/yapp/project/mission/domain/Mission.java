@@ -38,6 +38,7 @@ public class Mission {
     @PrePersist
     public void prePersist(){
         this.isFinish = (this.isFinish!=null)&&this.isFinish;
+        this.isDelete = (this.isDelete!=null)&&this.isDelete;
         this.successCount = this.successCount!=null?this.successCount:0;
         this.failureCount = this.failureCount!=null?this.failureCount:0;
     }
@@ -56,11 +57,11 @@ public class Mission {
 
     @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private List<Cron> weeks = new ArrayList<>();
+    private final List<Cron> weeks = new ArrayList<>();
 
-    @OneToMany(mappedBy = "mission")
+    @OneToMany(mappedBy = "mission", fetch = FetchType.EAGER)
     @ToString.Exclude
-    private List<Capture> captures = new ArrayList<>();
+    private final List<Capture> captures = new ArrayList<>();
 
     private LocalDate startDate;
 
@@ -71,6 +72,8 @@ public class Mission {
     private Integer failureCount;
 
     private Boolean isFinish;
+
+    private Boolean isDelete;
 
     public void addDays(List<Cron> days){
         this.weeks.addAll(days);
@@ -106,18 +109,21 @@ public class Mission {
         if (this.successCount == null){
             this.successCount = 0;
             return 0;
-        }
-        else if (this.failureCount == null){
+        } else if (this.failureCount == null){
             this.failureCount = 0;
             return 0;
-        }
-        else if (this.successCount + this.failureCount == 0)
+        } else if (this.successCount + this.failureCount == 0){
             return 0;
+        }
         return (this.successCount/(this.failureCount+this.successCount))*100;
     }
 
     public void updateSuccessCount(){
         this.successCount+=1;
+    }
+
+    public void remove(){
+        this.isDelete=true;
     }
 
     public void defaultSetting(){
