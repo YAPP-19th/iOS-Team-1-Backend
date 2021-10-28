@@ -50,10 +50,10 @@ public class RetrospectController {
         return retrospectService.getRetrospect(retrospectId, AccountUtil.getAccount());
     }
 
-    @ApiOperation(value = "회고 요일 기준 전체 조회", notes = "조회하려는 요일과 날짜를 path로 넣어주세요. \n day: MON, date: 2021-10-21")
-    @GetMapping("/list/{day}/{date}")
-    public RetrospectDTO.ResponseRetrospectListMessage getRetrospectList(@PathVariable Week day, @PathVariable String date) {
-        return retrospectService.getRetrospectList(day, LocalDate.parse(date), AccountUtil.getAccount());
+    @ApiOperation(value = "회고 날짜 기준 전체 조회", notes = "조회하려는 날짜를 path로 넣어주세요. \n date: 2021-10-21")
+    @GetMapping("/list/{date}")
+    public RetrospectDTO.ResponseRetrospectListMessage getRetrospectList(@PathVariable String date) {
+        return retrospectService.getRetrospectList(LocalDate.parse(date), AccountUtil.getAccount());
     }
 
     @ApiOperation(value = "루틴 수행여부 설정(회고에 적용)", notes = "완료: DONE, 부분완료: TRY, 취소: NOT / 여기서 취소는 수행여부 체크 이후 취소를 의미합니다.\n " +
