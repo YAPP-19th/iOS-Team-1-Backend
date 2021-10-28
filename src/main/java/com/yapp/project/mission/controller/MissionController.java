@@ -32,4 +32,10 @@ public class MissionController {
         return missionService.findDetailMyMission(AccountUtil.getAccount(), id);
     }
 
+    @ApiOperation(value = "미션 삭제", tags = "mission-controller")
+    @DeleteMapping("/{id}")
+    public Message deleteMyMission(@PathVariable Long id){
+        return missionService.deleteMyMission(id);
+    }
+
 }
