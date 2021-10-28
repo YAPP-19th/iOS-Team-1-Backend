@@ -1,11 +1,14 @@
 package com.yapp.project.account.domain;
 
 import com.yapp.project.account.domain.dto.AccountDto.*;
+import com.yapp.project.weekReport.domain.WeekReport;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATETIME_NOW;
 
@@ -48,6 +51,9 @@ public class Account {
     private Boolean isDelete;
 
     private String fcmToken;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    private List<WeekReport> weekReportList = new ArrayList<>();
 
     public void updateLastLoginAccount(){
         this.lastLogin = KST_LOCAL_DATETIME_NOW();
