@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,16 +33,17 @@ class MissionRepositoryTest {
     private OrganizationRepository organizationRepository;
 
     @Test
+    @Transactional
     void test_유저로_끝나지_않고_삭제되지_않은_진행중인_그룹을_찾을_때(){
         //given
         Account account = AccountTemplate.makeTestAccount();
         Organization organization = OrganizationTemplate.makeTestOrganization();
-        Mission mission = MissionTemplate.makeMission(account, organization);
-        accountRepository.save(account);
-        organizationRepository.save(organization);
+        Account dbAccount = accountRepository.save(account);
+        Organization dbOrganization = organizationRepository.save(organization);
+        Mission mission = MissionTemplate.makeMission(dbAccount, dbOrganization);
         missionRepository.save(mission);
         //when
-        ArrayList<MissionOrganization> list = missionRepository.findMissionByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(account);
+        ArrayList<MissionOrganization> list = missionRepository.findMissionByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(dbAccount);
         //then
         Organization response = list.get(0).getOrganization();
         assertThat(organization.getId()).isEqualTo(response.getId());
@@ -50,16 +52,17 @@ class MissionRepositoryTest {
     }
 
     @Test
+    @Transactional
     void test_유저로_끝나지_않고_삭제되지_않은_미션을_찾을_때(){
         //given
         Account account = AccountTemplate.makeTestAccount();
         Organization organization = OrganizationTemplate.makeTestOrganization();
-        Mission mission = MissionTemplate.makeMission(account, organization);
-        accountRepository.save(account);
-        organizationRepository.save(organization);
+        Account dbAccount = accountRepository.save(account);
+        Organization dbOrganization = organizationRepository.save(organization);
+        Mission mission = MissionTemplate.makeMission(dbAccount, dbOrganization);
         missionRepository.save(mission);
         //when
-        List<Mission> list = missionRepository.findAllByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(account);
+        List<Mission> list = missionRepository.findAllByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(dbAccount);
         Mission response = list.get(0);
         //then
         assertThat(response.getOrganization().getTitle()).isEqualTo(organization.getTitle());
@@ -77,14 +80,14 @@ class MissionRepositoryTest {
         //given
         Account account = AccountTemplate.makeTestAccount();
         Organization organization = OrganizationTemplate.makeTestOrganization();
-        Mission mission = MissionTemplate.makeMission(account, organization);
+        Account dbAccount = accountRepository.save(account);
+        Organization dbOrganization = organizationRepository.save(organization);
+        Mission mission = MissionTemplate.makeMission(dbAccount, dbOrganization);
         mission.remove();
-        accountRepository.save(account);
-        organizationRepository.save(organization);
         missionRepository.save(mission);
         //when
         Mission response = missionRepository
-                .findMissionByAccountAndOrganization_IdAndIsFinishIsFalseAndIsDeleteIsFalse(account, organization.getId())
+                .findMissionByAccountAndOrganization_IdAndIsFinishIsFalseAndIsDeleteIsFalse(dbAccount, dbOrganization.getId())
                 .orElse(null);
         //then
         assertThat(response).isNull();
