@@ -53,9 +53,8 @@ public class RetrospectService {
         return RetrospectDTO.ResponseRetrospectMessage.of(StatusEnum.RETROSPECT_OK , "회고 수행 여부 설정 성공", saveRetrospect);
     }
 
-    public RetrospectDTO.ResponseRetrospectListMessage getRetrospectList(Week day, LocalDate date, Account account) {
-        List<Routine> allByAccountAndDaysDay = routineRepository.findAllByAccountAndDaysDayAndRetrospectsDate(account, day, date);
-        List<Retrospect> retrospectList = allByAccountAndDaysDay.stream().map(x -> x.getRetrospects().get(0)).collect(Collectors.toList());
+    public RetrospectDTO.ResponseRetrospectListMessage getRetrospectList(LocalDate date, Account account) {
+        List<Retrospect> retrospectList = retrospectRepository.findAllByDateAndRoutineAccount(date, account);
         return RetrospectDTO.ResponseRetrospectListMessage.of(StatusEnum.RETROSPECT_OK, "요일 기준 회고 전체 조회 성공", retrospectList);
     }
 
