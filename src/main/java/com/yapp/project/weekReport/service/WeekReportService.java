@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
@@ -47,16 +46,15 @@ public class WeekReportService {
                 List<String> newDays = new ArrayList<>();
                 int i = 0;
                 while (!startDate.plusDays(i).isEqual(lastMon)) {
-//                    System.out.println(startDate.plusDays(i).getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase());
                     newDays.add(startDate.plusDays(i++).getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase());
                 }
-                mockDays.forEach(z -> System.out.print(z + " "));
-                System.out.println();
-                newDays.forEach(z -> System.out.print(z + " "));
-                System.out.println();
+//                mockDays.forEach(z -> System.out.print(z + " "));
+//                System.out.println();
+//                newDays.forEach(z -> System.out.print(z + " "));
+//                System.out.println();
                 mockDays.removeAll(newDays);
-                mockDays.forEach(z -> System.out.print(z + " "));
-                System.out.println("\n---");
+//                mockDays.forEach(z -> System.out.print(z + " "));
+//                System.out.println("\n---");
                 result[0] -= mockDays.size();
                 System.out.println(result[0]);
             }
@@ -73,22 +71,18 @@ public class WeekReportService {
 
         reportRoutineDTOList.forEach( x -> {
             retrospectList.forEach( y -> {
-                if(y.getRoutine().getId() == x.getRoutineId()) {
-                    if(y.getDate().isBefore(lastMon)) {
-                        String day = y.getDate().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase();
-                        if(y.getResult() == Result.DONE){
-                            result[1]++;
-                            x.addRetrospectDay(day);
-                        }
-                        else if(y.getResult() == Result.TRY){
-                            result[2]++;
-                            x.addRetrospectDay(day);
-                        }
+                if(y.getRoutine().getId() == x.getRoutineId() && y.getDate().isBefore(lastMon)) {
+                    String day = y.getDate().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase();
+                    if(y.getResult() == Result.DONE){
+                        result[1]++;
+                        x.addRetrospectDay(WeekReportDTO.RetrospectResult.builder().day(day).result(y.getResult()).build());
+                    } else if(y.getResult() == Result.TRY){
+                        result[2]++;
+                        x.addRetrospectDay(WeekReportDTO.RetrospectResult.builder().day(day).result(y.getResult()).build());
                     }
                 }
             });
         });
-
         return WeekReportDTO.ResponseTest.builder()
                 .data(reportRoutineDTOList)
                 .fullyDone(result[1])

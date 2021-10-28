@@ -2,6 +2,7 @@ package com.yapp.project.weekReport.domain.dto;
 
 import com.yapp.project.aux.Message;
 
+import com.yapp.project.retrospect.domain.Result;
 import com.yapp.project.routine.domain.RoutineDay;
 import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,7 @@ public class WeekReportDTO {
 
         private String category;
 
-        private List<String> retrospectDays = new ArrayList<>();
+        private List<RetrospectResult> retrospectResultList = new ArrayList<>();
 
         @Builder
         public ReportRoutineDTO(Long routineId, String title, List<String> days, String category) {
@@ -37,8 +38,8 @@ public class WeekReportDTO {
 
         }
 
-        public void addRetrospectDay(String retrospectDay) {
-            this.retrospectDays.add(retrospectDay);
+        public void addRetrospectDay(RetrospectResult retrospectDay) {
+            this.retrospectResultList.add(retrospectDay);
         }
     }
 
@@ -53,5 +54,14 @@ public class WeekReportDTO {
         private Integer partiallyDone;
         private Integer notDone;
         private String rate;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @Builder
+    public static class RetrospectResult {
+        private String day;
+        private Result result;
     }
 }
