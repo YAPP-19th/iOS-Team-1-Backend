@@ -4,6 +4,7 @@ import com.yapp.project.account.domain.dto.*;
 import com.yapp.project.account.service.AuthService;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.note.account.AccountNotes;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("api/v1/auth")
 @RequiredArgsConstructor
+@Api(tags = "유저 관련", hidden = true)
 public class AuthController {
     private final AuthService authService;
 

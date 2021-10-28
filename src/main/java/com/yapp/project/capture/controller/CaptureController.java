@@ -3,6 +3,7 @@ package com.yapp.project.capture.controller;
 import com.yapp.project.aux.note.capture.CaptureNotes;
 import com.yapp.project.capture.service.CaptureService;
 import com.yapp.project.config.exception.capture.InvalidCaptureException;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +17,11 @@ import static com.yapp.project.capture.domain.dto.CaptureDto.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/capture")
+@Api(tags = "사진 정보")
 public class CaptureController {
     private final CaptureService captureService;
 
-    @ApiOperation(value = "오늘의 미션 인증 처리", tags = "capture-controller")
+    @ApiOperation(value = "오늘의 미션 인증 처리", tags = "미션_관련_사진")
     @PostMapping
     public CaptureResponseMessage captureTodayMission(CaptureRequest request) throws IOException {
         MultipartFile image = request.getImage();
@@ -33,13 +35,13 @@ public class CaptureController {
         return captureService.captureTodayMission(imagePath, missionId);
     }
 
-    @ApiOperation(value = "끝난 미션 관련 나의 이미지들 삭제하기", tags = "capture-controller")
+    @ApiOperation(value = "끝난 미션 관련 나의 이미지들 삭제하기", tags = "미션_관련_사진")
     @DeleteMapping
     public CaptureResponseMessage deleteCaptureImages(DeleteIdListRequest request){
         return captureService.deleteCaptureImages(request);
     }
 
-    @ApiOperation(value = "미션 관련 나의 이미지들 가져오기", tags = "capture-controller", notes = CaptureNotes.GET_CAPTURE_NOTES)
+    @ApiOperation(value = "미션 관련 나의 이미지들 가져오기", tags = "미션_관련_사진", notes = CaptureNotes.GET_CAPTURE_NOTES)
     @GetMapping("/mission/{missionId}")
     public CaptureListResponseMessage getMyMissionImages(@PathVariable Long missionId,
                                                      @RequestParam int page,@RequestParam int size,@RequestParam Integer recent){
@@ -50,7 +52,7 @@ public class CaptureController {
     }
 
 
-    @ApiOperation(value = "그룹 이미지들 가져오기", tags = "capture-controller", notes = CaptureNotes.GET_CAPTURE_NOTES)
+    @ApiOperation(value = "그룹 이미지들 가져오기", tags = "그룹_관련_사진", notes = CaptureNotes.GET_CAPTURE_NOTES)
     @GetMapping("/org/{organizationId}")
     public CaptureListResponseMessage getOrganizationImages(@PathVariable Long organizationId,
                                                          @RequestParam int page,@RequestParam int size,@RequestParam Integer recent){
