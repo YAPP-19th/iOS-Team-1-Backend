@@ -28,8 +28,6 @@ public class WeekReportDTO {
 
         private List<String> retrospectDays = new ArrayList<>();
 
-        private Double rate;
-
         @Builder
         public ReportRoutineDTO(Long routineId, String title, List<String> days, String category) {
             this.routineId = routineId;
@@ -54,5 +52,6 @@ public class WeekReportDTO {
         private Integer fullyDone;
         private Integer partiallyDone;
         private Integer notDone;
+        private String rate;
     }
 }
