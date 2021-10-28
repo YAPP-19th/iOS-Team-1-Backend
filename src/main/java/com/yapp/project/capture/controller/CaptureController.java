@@ -20,7 +20,7 @@ public class CaptureController {
     private final CaptureService captureService;
 
     @ApiOperation(value = "오늘의 미션 인증 처리", tags = "capture-controller")
-    @PostMapping("/today")
+    @PostMapping
     public CaptureResponseMessage captureTodayMission(CaptureRequest request) throws IOException {
         MultipartFile image = request.getImage();
         Long missionId = request.getMissionId();
@@ -34,13 +34,13 @@ public class CaptureController {
     }
 
     @ApiOperation(value = "끝난 미션 관련 나의 이미지들 삭제하기", tags = "capture-controller")
-    @DeleteMapping("/delete")
+    @DeleteMapping
     public CaptureResponseMessage deleteCaptureImages(DeleteIdListRequest request){
         return captureService.deleteCaptureImages(request);
     }
 
     @ApiOperation(value = "미션 관련 나의 이미지들 가져오기", tags = "capture-controller", notes = CaptureNotes.GET_CAPTURE_NOTES)
-    @GetMapping("/{missionId}")
+    @GetMapping("/mission/{missionId}")
     public CaptureListResponseMessage getMyMissionImages(@PathVariable Long missionId,
                                                      @RequestParam int page,@RequestParam int size,@RequestParam Integer recent){
         if (recent==null){
@@ -51,7 +51,7 @@ public class CaptureController {
 
 
     @ApiOperation(value = "그룹 이미지들 가져오기", tags = "capture-controller", notes = CaptureNotes.GET_CAPTURE_NOTES)
-    @GetMapping("/{organizationId}")
+    @GetMapping("/org/{organizationId}")
     public CaptureListResponseMessage getOrganizationImages(@PathVariable Long organizationId,
                                                          @RequestParam int page,@RequestParam int size,@RequestParam Integer recent){
         if (recent==null){
