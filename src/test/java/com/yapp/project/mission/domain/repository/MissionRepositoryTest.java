@@ -46,9 +46,9 @@ class MissionRepositoryTest {
         ArrayList<MissionOrganization> list = missionRepository.findMissionByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(dbAccount);
         //then
         Organization response = list.get(0).getOrganization();
-        assertThat(organization.getId()).isEqualTo(response.getId());
-        assertThat(organization.getCategory()).isEqualTo(response.getCategory());
-        assertThat(organization.getRecommend()).isEqualTo(response.getRecommend());
+        assertThat(dbOrganization.getId()).isEqualTo(response.getId());
+        assertThat(dbOrganization.getCategory()).isEqualTo(response.getCategory());
+        assertThat(dbOrganization.getRecommend()).isEqualTo(response.getRecommend());
     }
 
     @Test
@@ -65,10 +65,10 @@ class MissionRepositoryTest {
         List<Mission> list = missionRepository.findAllByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(dbAccount);
         Mission response = list.get(0);
         //then
-        assertThat(response.getOrganization().getTitle()).isEqualTo(organization.getTitle());
-        assertThat(response.getOrganization().getCategory()).isEqualTo(organization.getCategory());
-        assertThat(response.getOrganization().getRecommend()).isEqualTo(organization.getRecommend());
-        assertThat(response.getOrganization().getSummary()).isEqualTo(organization.getSummary());
+        assertThat(response.getOrganization().getTitle()).isEqualTo(dbOrganization.getTitle());
+        assertThat(response.getOrganization().getCategory()).isEqualTo(dbOrganization.getCategory());
+        assertThat(response.getOrganization().getRecommend()).isEqualTo(dbOrganization.getRecommend());
+        assertThat(response.getOrganization().getSummary()).isEqualTo(dbOrganization.getSummary());
         assertThat(response.getSuccessCount()).isZero();
         assertThat(response.getFailureCount()).isZero();
         assertThat(response.getIsDelete()).isFalse();
