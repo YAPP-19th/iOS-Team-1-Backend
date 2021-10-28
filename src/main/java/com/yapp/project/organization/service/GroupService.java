@@ -56,7 +56,7 @@ public class GroupService {
     }
 
     private ArrayList<Long> getMyOrganizationId(Account account){
-        ArrayList<MissionOrganization> missions = missionRepository.findMissionByAccountAndIsFinishIsFalse(account);
+        ArrayList<MissionOrganization> missions = missionRepository.findMissionByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(account);
         return (ArrayList<Long>) missions.stream().map(x -> x.getOrganization().getId()).collect(Collectors.toList());
     }
 

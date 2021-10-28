@@ -4,6 +4,9 @@ import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.aux.content.MissionContent;
+import com.yapp.project.capture.domain.Capture;
+import com.yapp.project.capture.domain.CaptureImage;
+import com.yapp.project.capture.domain.repository.CaptureImageRepository;
 import com.yapp.project.config.exception.mission.AlreadyMissionExistException;
 import com.yapp.project.config.exception.mission.MissionNotFoundException;
 import com.yapp.project.mission.domain.Cron;
@@ -27,10 +30,11 @@ import java.util.stream.Collectors;
 public class MissionService {
     private final MissionRepository missionRepository;
     private final OrganizationRepository organizationRepository;
+    private final CaptureImageRepository captureImageRepository;
 
     @Transactional
     public Message createMission(MissionRequest request, Account account){
-        if (missionRepository.findMissionByAccountAndOrganization_IdAndIsFinishIsFalse(account, request.getId()).isPresent()){
+        if (missionRepository.findMissionByAccountAndOrganization_IdAndIsFinishIsFalseAndIsDeleteIsFalse(account, request.getId()).isPresent()){
             throw new AlreadyMissionExistException();
         }
         Organization organization = organizationRepository.getById(request.getId());
@@ -49,7 +53,7 @@ public class MissionService {
     @Transactional(readOnly = true)
     public MissionResponseMessage findAllIsDoing(Account account) {
         List<MissionResponse> responses = new ArrayList<>();
-        for (Mission mission : missionRepository.findAllByAccountAndIsFinishIsFalse(account)) {
+        for (Mission mission : missionRepository.findAllByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(account)) {
             responses.add(mission.toMissionResponse());
         }
         return MissionResponseMessage.of(StatusEnum.MISSION_OK, MissionContent.FIND_MY_MISSION_LISTS_ING, responses);
@@ -61,6 +65,19 @@ public class MissionService {
                 .orElseThrow(MissionNotFoundException::new);
         MissionDetailResponse response = mission.toMissionDetailResponse();
         return MissionDetailResponseMessage.of(StatusEnum.MISSION_OK, MissionContent.FIND_MY_MISSION_DETAIL, response);
+    }
+
+    @Transactional
+    public Message deleteMyMission(Long missionId){
+        Mission mission = missionRepository.findById(missionId).orElseThrow(MissionNotFoundException::new);
+        List<Capture> captures = mission.getCaptures();
+        for (Capture capture : captures){
+            List<CaptureImage> captureImage = capture.getCaptureImage();
+            captureImageRepository.deleteAllInBatch(captureImage);
+            capture.removeCapture();
+        }
+        mission.remove();
+        return Message.of(StatusEnum.MISSION_OK, MissionContent.MISSION_DELETE_SUCCESS);
     }
 }
 

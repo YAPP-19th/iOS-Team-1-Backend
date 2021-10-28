@@ -6,6 +6,7 @@ import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.aux.test.account.AccountTemplate;
 import com.yapp.project.aux.test.mission.MissionTemplate;
 import com.yapp.project.aux.test.organization.OrganizationTemplate;
+import com.yapp.project.capture.domain.repository.CaptureImageRepository;
 import com.yapp.project.config.exception.mission.AlreadyMissionExistException;
 import com.yapp.project.aux.content.MissionContent;
 import com.yapp.project.config.exception.mission.MissionNotFoundException;
@@ -32,6 +33,8 @@ class MissionServiceTest {
     @Mock
     private MissionRepository missionRepository;
 
+    @Mock
+    private CaptureImageRepository captureImageRepository;
 
     @Mock
     private OrganizationRepository organizationRepository;
@@ -57,7 +60,7 @@ class MissionServiceTest {
         MissionDto.MissionRequest request = MissionTemplate.makeMissionRequest();
 
         Mission mission = request.toMission(account,organization);
-        given(missionRepository.findMissionByAccountAndOrganization_IdAndIsFinishIsFalse(account, request.getId()))
+        given(missionRepository.findMissionByAccountAndOrganization_IdAndIsFinishIsFalseAndIsDeleteIsFalse(account, request.getId()))
                 .willReturn(Optional.of(mission));
 
         assertThatThrownBy(() -> missionService.createMission(request, account)).isInstanceOf(AlreadyMissionExistException.class)
@@ -78,7 +81,7 @@ class MissionServiceTest {
         missions.add(MissionTemplate.makeMissionRequest().toMission(account,organizations.get(1)));
         missions.add(MissionTemplate.makeMissionRequest().toMission(account,organizations.get(2)));
 
-        given(missionRepository.findAllByAccountAndIsFinishIsFalse(account)).willReturn(missions);
+        given(missionRepository.findAllByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(account)).willReturn(missions);
 
         MissionDto.MissionResponseMessage message = missionService.findAllIsDoing(account);
 
@@ -107,6 +110,20 @@ class MissionServiceTest {
         given(missionRepository.findMissionByAccountAndId(account,1L)).willReturn(Optional.empty());
         assertThatThrownBy(() ->missionService.findDetailMyMission(account,1L)).isInstanceOf(MissionNotFoundException.class)
                 .hasMessage(MissionContent.MISSION_NOT_FOUND);
+    }
+
+    @Test
+    void test_내_미션_삭제_했을_때(){
+        //given
+        Account account = AccountTemplate.makeTestAccount();
+        Organization organization = OrganizationTemplate.makeTestOrganization();
+        Mission mission = MissionTemplate.makeMission(account, organization);
+        given(missionRepository.findById(mission.getId())).willReturn(Optional.of(mission));
+        //when
+        Message message = missionService.deleteMyMission(mission.getId());
+        //then
+        assertThat(message.getStatus()).isEqualTo(StatusEnum.MISSION_OK);
+        assertThat(message.getMsg()).isEqualTo(MissionContent.MISSION_DELETE_SUCCESS);
     }
 
 }
