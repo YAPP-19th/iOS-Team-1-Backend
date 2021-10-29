@@ -27,7 +27,7 @@ public class WeekReportService {
     private final WeekReportRepository weekReportRepository;
 
     @Transactional
-    public void mackReport(Account account) {
+    public void makeReport(Account account) {
         checkIsReported(account);
         /** index 0 : Total, 1 : fullyDone, 2 : particularlyDone */
         int result [] = new int[]{0, 0, 0};
@@ -62,7 +62,7 @@ public class WeekReportService {
                         result[2]++;
                         RetrospectReportDay.builder().routineResult(x).day(day).result(y.getResult()).build();
                     }
-                    y.updateIsReport(); // TODO OPen
+                    y.updateIsReport();
                 }
             });
             x.addWeekReport(weekReport);

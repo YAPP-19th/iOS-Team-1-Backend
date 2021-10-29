@@ -80,5 +80,4 @@ public class Retrospect {
         this.isReport = true;
     }
 
-
 }
