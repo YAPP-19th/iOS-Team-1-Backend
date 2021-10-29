@@ -84,7 +84,7 @@ public class CaptureService {
     private void removeCaptureImageLists(List<Capture> captures){
         if (captures!=null){
             for (Capture capture : captures){
-                capture.removeCapture();
+                capture.remove();
                 List<CaptureImage> images = capture.getCaptureImage();
                 captureImageRepository.deleteAllInBatch(images);
             }

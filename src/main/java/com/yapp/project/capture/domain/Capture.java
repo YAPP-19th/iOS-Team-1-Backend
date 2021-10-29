@@ -63,7 +63,7 @@ public class Capture {
                 .build();
     }
 
-    public void removeCapture(){
+    public void remove(){
         isDelete=true;
     }
 
