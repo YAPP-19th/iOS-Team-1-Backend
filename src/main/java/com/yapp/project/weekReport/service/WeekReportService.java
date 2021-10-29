@@ -1,6 +1,7 @@
 package com.yapp.project.weekReport.service;
 
 import com.yapp.project.account.domain.Account;
+import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.config.exception.weekReport.AlreadyWeekReportFoundException;
 import com.yapp.project.retrospect.domain.Result;
 import com.yapp.project.retrospect.domain.Retrospect;
@@ -42,7 +43,7 @@ public class WeekReportService {
     }
 
     private void checkIsReported(Account account) {
-        LocalDate lastMon = LocalDate.now().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)); // 가장 최근 월요일
+        LocalDate lastMon = DateUtil.KST_LOCAL_DATE_NOW().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)); // 가장 최근 월요일
         Boolean isReported = weekReportRepository.existsByAccountAndLastDate(account, lastMon.minusDays(1));
         if(isReported){
             throw new AlreadyWeekReportFoundException();
@@ -50,7 +51,7 @@ public class WeekReportService {
     }
 
     private void statisticsRetrospect(int[] result, List<RoutineResult> routineResultList, List<Retrospect> retrospectList, WeekReport weekReport) {
-        LocalDate lastMon = LocalDate.now().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)); // 가장 최근 월요일
+        LocalDate lastMon = DateUtil.KST_LOCAL_DATE_NOW().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)); // 가장 최근 월요일
         routineResultList.forEach(x -> {
             retrospectList.forEach(y -> {
                 if(y.getRoutine().getId() == x.getRoutineId() && y.getDate().isBefore(lastMon)) {
@@ -70,7 +71,7 @@ public class WeekReportService {
     }
 
     private List<RoutineResult> getRoutineResults(int[] result, List<Routine> routineList) {
-        LocalDate lastMon = LocalDate.now().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)); // 가장 최근 월요일
+        LocalDate lastMon = DateUtil.KST_LOCAL_DATE_NOW().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)); // 가장 최근 월요일
         List<RoutineResult> routineResultList = routineList.stream().map(x -> {
             LocalDate startDate = x.getCreatedAt().toLocalDate();
             List<String> days = x.getDays().stream().map(y -> y.getDay().toString()).collect(Collectors.toList());

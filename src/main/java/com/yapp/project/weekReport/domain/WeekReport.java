@@ -1,6 +1,7 @@
 package com.yapp.project.weekReport.domain;
 
 import com.yapp.project.account.domain.Account;
+import com.yapp.project.aux.common.DateUtil;
 import lombok.Builder;
 import lombok.Getter;
 import javax.persistence.*;
@@ -26,25 +27,25 @@ public class WeekReport {
 
     private String rate;
 
-    private int fullyDone;
+    private int fullyDoneCount;
 
-    private int partiallyDone;
+    private int partiallyDoneCount;
 
-    private int notDone;
+    private int notDoneCount;
 
     private LocalDate lastDate;
 
     @Builder
     public WeekReport() {
-        this.lastDate = LocalDate.now().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)).minusDays(1); // 가장 최근 월요일
+        this.lastDate = DateUtil.KST_LOCAL_DATE_NOW().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)).minusDays(1); // 가장 최근 월요일
     }
 
-    public void addBasicData(Account account, String rate, int fullyDone, int partiallyDone, int notDone) {
+    public void addBasicData(Account account, String rate, int fullyDoneCount, int partiallyDoneCount, int notDoneCount) {
         this.account = account;
         this.rate = rate;
-        this.fullyDone = fullyDone;
-        this.partiallyDone = partiallyDone;
-        this.notDone = notDone;
+        this.fullyDoneCount = fullyDoneCount;
+        this.partiallyDoneCount = partiallyDoneCount;
+        this.notDoneCount = notDoneCount;
     }
 
     public void addRoutineResult(RoutineResult routineResult) {
