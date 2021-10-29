@@ -76,5 +76,9 @@ public class Retrospect {
         this.result = result;
     }
 
+    public void updateIsReport() {
+        this.isReport = true;
+    }
+
 
 }

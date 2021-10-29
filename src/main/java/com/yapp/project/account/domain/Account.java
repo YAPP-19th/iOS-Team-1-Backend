@@ -52,7 +52,7 @@ public class Account {
 
     private String fcmToken;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WeekReport> weekReportList = new ArrayList<>();
 
     public void updateLastLoginAccount(){
@@ -66,5 +66,4 @@ public class Account {
     public void resetPassword(PasswordEncoder passwordEncoder, String newPassword){
         this.password = passwordEncoder.encode(newPassword);
     }
-
 }

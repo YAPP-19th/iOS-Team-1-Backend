@@ -1,7 +1,7 @@
 package com.yapp.project.weekReport.controller;
 
 import com.yapp.project.aux.common.AccountUtil;
-import com.yapp.project.weekReport.domain.dto.WeekReportDTO;
+import com.yapp.project.weekReport.domain.WeekReport;
 import com.yapp.project.weekReport.service.WeekReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +16,7 @@ public class WeekReportController {
     private final WeekReportService weekReportService;
 
     @GetMapping("/test")
-    public WeekReportDTO.ResponseTest testMethod() {
-       return weekReportService.makeWeekReport(AccountUtil.getAccount());
+    public WeekReport testMethod() {
+       return weekReportService.test222(AccountUtil.getAccount());
     }
 }

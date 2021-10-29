@@ -6,7 +6,7 @@ import com.yapp.project.retrospect.domain.Retrospect;
 import com.yapp.project.retrospect.domain.RetrospectRepository;
 import com.yapp.project.routine.domain.Routine;
 import com.yapp.project.routine.domain.RoutineRepository;
-import com.yapp.project.weekReport.domain.dto.WeekReportDTO;
+import com.yapp.project.weekReport.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,10 +23,11 @@ public class WeekReportService {
 
     private final RetrospectRepository retrospectRepository;
     private final RoutineRepository routineRepository;
+    private final WeekReportRepository weekReportRepository;
 
-    public WeekReportDTO.ResponseTest makeWeekReport(Account account) {
+    public WeekReport test222(Account account) {
 
-        int result [] = new int[]{0, 0, 0};
+        Long result [] = new Long[]{0L, 0L, 0L};
 //        int all = 0
 //        int fullyDone = 0;
 //        int partiallyDone = 0;
@@ -37,7 +38,7 @@ public class WeekReportService {
         List<Routine> routineList = routineRepository.findAllByIsDeleteIsFalseAndAccount(account);
         routineList.stream().forEach(x -> result[0] += x.getDays().size());
 
-        List<WeekReportDTO.ReportRoutineDTO> reportRoutineDTOList = routineList.stream().map(x -> {
+        List<RoutineResult> routineResultList = routineList.stream().map(x -> {
             LocalDate startDate = x.getCreatedAt().toLocalDate();
             List<String> days = x.getDays().stream().map(y -> y.getDay().toString()).collect(Collectors.toList());
             if (startDate.plusDays(7).isAfter(lastMon)) {
@@ -48,47 +49,49 @@ public class WeekReportService {
                 while (!startDate.plusDays(i).isEqual(lastMon)) {
                     newDays.add(startDate.plusDays(i++).getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase());
                 }
-//                mockDays.forEach(z -> System.out.print(z + " "));
-//                System.out.println();
-//                newDays.forEach(z -> System.out.print(z + " "));
-//                System.out.println();
                 mockDays.removeAll(newDays);
-//                mockDays.forEach(z -> System.out.print(z + " "));
-//                System.out.println("\n---");
                 result[0] -= mockDays.size();
-                System.out.println(result[0]);
             }
-            return WeekReportDTO.ReportRoutineDTO.builder()
-                    .routineId(x.getId()).
-                    title(x.getTitle())
-                    .days(days)
+            RoutineResult routineResult = RoutineResult.builder()
+                    .title(x.getTitle())
                     .category(x.getCategory())
-                    .build();
+                    .routineId(x.getId()).build();
+            x.getDays().stream().map(y -> RoutineReportDay.builder().day(y.getDay()).routineResult(routineResult).build()).collect(Collectors.toList());
+            return routineResult;
         }).collect(Collectors.toList());
 
         // 리포트 되지 않은 회고 전체
         List<Retrospect> retrospectList = retrospectRepository.findAllByIsReportIsFalseAndRoutineAccount(account);
 
-        reportRoutineDTOList.forEach( x -> {
+        WeekReport weekReport = WeekReport.builder()
+                .mon(lastMon)
+                .build();
+
+        routineResultList.forEach( x -> {
             retrospectList.forEach( y -> {
                 if(y.getRoutine().getId() == x.getRoutineId() && y.getDate().isBefore(lastMon)) {
                     String day = y.getDate().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase();
                     if(y.getResult() == Result.DONE){
                         result[1]++;
-                        x.addRetrospectDay(WeekReportDTO.RetrospectResult.builder().day(day).result(y.getResult()).build());
+                        RetrospectResultDay.builder().routineResult(x).day(day).result(y.getResult()).build();
+//                        x.addRetrospectDay(RetrospectResultDay.builder().day(day).result(y.getResult()).build());
                     } else if(y.getResult() == Result.TRY){
                         result[2]++;
-                        x.addRetrospectDay(WeekReportDTO.RetrospectResult.builder().day(day).result(y.getResult()).build());
+                        RetrospectResultDay.builder().routineResult(x).day(day).result(y.getResult()).build();
+//                        x.addRetrospectDay(RetrospectResultDay.builder().day(day).result(y.getResult()).build());
                     }
+//                    y.updateIsReport(); // TODO OPen
                 }
             });
+            x.addWeekReport(weekReport);
         });
-        return WeekReportDTO.ResponseTest.builder()
-                .data(reportRoutineDTOList)
-                .fullyDone(result[1])
-                .partiallyDone(result[2])
-                .notDone(result[0] - (result[1] + result[2]))
-                .rate(((result[1] + (result[2] * 0.5)) / result[0]) * 100 + "%")
-                .build();
+        weekReport.updateBasicData(
+                account,
+                (int) (((result[1] + (result[2] * 0.5)) / result[0]) * 100) + "%",
+                result[1],
+                result[2],
+                result[0] - (result[1] + result[2])
+                );
+        return weekReportRepository.save(weekReport);
     }
 }

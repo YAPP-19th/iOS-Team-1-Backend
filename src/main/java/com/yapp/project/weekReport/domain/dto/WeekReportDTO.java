@@ -4,6 +4,7 @@ import com.yapp.project.aux.Message;
 
 import com.yapp.project.retrospect.domain.Result;
 import com.yapp.project.routine.domain.RoutineDay;
+import com.yapp.project.weekReport.domain.RoutineResult;
 import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,10 +50,10 @@ public class WeekReportDTO {
     @Builder
     public static class ResponseTest {
         private Message message;
-        private List<ReportRoutineDTO> data;
-        private Integer fullyDone;
-        private Integer partiallyDone;
-        private Integer notDone;
+        private List<RoutineResult> data;
+        private Long fullyDone;
+        private Long partiallyDone;
+        private Long notDone;
         private String rate;
     }
 

@@ -1,9 +1,16 @@
 package com.yapp.project.weekReport.domain;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
+@NoArgsConstructor
 public class RoutineResult {
 
     @Id
@@ -13,10 +20,35 @@ public class RoutineResult {
     @ManyToOne
     private WeekReport weekReport;
 
-    @OneToMany(mappedBy = "routineResult")
-    private List<RoutineResultDay> routineResultDayList;
+    @OneToMany(mappedBy = "routineResult", cascade = CascadeType.ALL)
+    private List<RoutineReportDay> routineReportDayList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "routineResult", cascade = CascadeType.ALL)
+    private List<RetrospectResultDay> retrospectResultDayList = new ArrayList<>();
 
     private String title;
 
     private String category;
+
+    private Long routineId;
+
+    @Builder
+    public RoutineResult(String title, String category, Long routineId) {
+        this.title = title;
+        this.category = category;
+        this.routineId = routineId;
+    }
+
+    public void addRetrospectDay(RetrospectResultDay retrospectResultDay) {
+        this.retrospectResultDayList.add(retrospectResultDay);
+    }
+
+    public void addRoutineReportDay(RoutineReportDay routineReportDay) {
+        this.routineReportDayList.add(routineReportDay);
+    }
+
+    public void addWeekReport(WeekReport weekReport) {
+        this.weekReport = weekReport;
+        weekReport.addRoutineResult(this);
+    }
 }
