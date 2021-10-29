@@ -15,8 +15,9 @@ public class WeekReportController {
 
     private final WeekReportService weekReportService;
 
+    /** Todo change Schedule - Batch*/
     @GetMapping("/test")
-    public WeekReport testMethod() {
-       return weekReportService.test222(AccountUtil.getAccount());
+    public void testMethod() {
+       weekReportService.mackReport(AccountUtil.getAccount());
     }
 }

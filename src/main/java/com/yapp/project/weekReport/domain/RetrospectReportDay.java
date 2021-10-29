@@ -1,18 +1,16 @@
 package com.yapp.project.weekReport.domain;
 
 import com.yapp.project.retrospect.domain.Result;
-import com.yapp.project.routine.domain.Week;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-
 @Entity
 @Getter
 @NoArgsConstructor
-public class RetrospectResultDay {
+public class RetrospectReportDay {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +25,7 @@ public class RetrospectResultDay {
     private Result result;
 
     @Builder
-    public RetrospectResultDay(String day, Result result, RoutineResult routineResult) {
+    public RetrospectReportDay(String day, Result result, RoutineResult routineResult) {
         this.day = day;
         this.result = result;
         this.routineResult = routineResult;

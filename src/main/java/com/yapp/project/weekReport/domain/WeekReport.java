@@ -3,16 +3,15 @@ package com.yapp.project.weekReport.domain;
 import com.yapp.project.account.domain.Account;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor
 public class WeekReport {
 
     @Id
@@ -22,25 +21,25 @@ public class WeekReport {
     @ManyToOne
     private Account account;
 
-    @OneToMany(mappedBy = "weekReport", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "weekReport", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<RoutineResult> routineResults = new ArrayList<>();
 
     private String rate;
 
-    private Long fullyDone;
+    private int fullyDone;
 
-    private Long partiallyDone;
+    private int partiallyDone;
 
-    private Long notDone;
+    private int notDone;
 
     private LocalDate lastDate;
 
     @Builder
-    public WeekReport( LocalDate mon) {
-        this.lastDate = mon.minusDays(1);
+    public WeekReport() {
+        this.lastDate = LocalDate.now().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)).minusDays(1); // 가장 최근 월요일
     }
 
-    public void updateBasicData(Account account, String rate, Long fullyDone, Long partiallyDone, Long notDone) {
+    public void addBasicData(Account account, String rate, int fullyDone, int partiallyDone, int notDone) {
         this.account = account;
         this.rate = rate;
         this.fullyDone = fullyDone;
@@ -51,5 +50,4 @@ public class WeekReport {
     public void addRoutineResult(RoutineResult routineResult) {
         this.routineResults.add(routineResult);
     }
-
 }

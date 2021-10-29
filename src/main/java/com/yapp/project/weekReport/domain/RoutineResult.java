@@ -3,7 +3,6 @@ package com.yapp.project.weekReport.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-public class RoutineResult {
+public class RoutineResult{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +23,7 @@ public class RoutineResult {
     private List<RoutineReportDay> routineReportDayList = new ArrayList<>();
 
     @OneToMany(mappedBy = "routineResult", cascade = CascadeType.ALL)
-    private List<RetrospectResultDay> retrospectResultDayList = new ArrayList<>();
+    private List<RetrospectReportDay> retrospectReportDays = new ArrayList<>();
 
     private String title;
 
@@ -39,8 +38,8 @@ public class RoutineResult {
         this.routineId = routineId;
     }
 
-    public void addRetrospectDay(RetrospectResultDay retrospectResultDay) {
-        this.retrospectResultDayList.add(retrospectResultDay);
+    public void addRetrospectDay(RetrospectReportDay retrospectReportDay) {
+        this.retrospectReportDays.add(retrospectReportDay);
     }
 
     public void addRoutineReportDay(RoutineReportDay routineReportDay) {
