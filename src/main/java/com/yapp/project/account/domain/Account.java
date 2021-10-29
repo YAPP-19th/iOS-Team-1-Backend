@@ -2,10 +2,12 @@ package com.yapp.project.account.domain;
 
 import com.yapp.project.account.domain.dto.AccountDto.*;
 import com.yapp.project.weekReport.domain.WeekReport;
+import com.yapp.project.aux.common.AccountUtil;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,5 +67,10 @@ public class Account {
 
     public void resetPassword(PasswordEncoder passwordEncoder, String newPassword){
         this.password = passwordEncoder.encode(newPassword);
+    }
+  
+    public void remove() throws NoSuchAlgorithmException {
+        this.email = AccountUtil.generateMD5(this.email);
+        this.isDelete=true;
     }
 }

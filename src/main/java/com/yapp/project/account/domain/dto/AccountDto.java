@@ -113,4 +113,12 @@ public class AccountDto {
         @ApiModelProperty(value = "비밀번호", example = "Test!23$")
         private String password;
     }
+
+    @Getter
+    @AllArgsConstructor
+    public static class ProfilePasswordRequest{
+        @ApiModelProperty(value = "비밀번호", example = "test12$#@")
+        private String password;
+
+    }
 }
