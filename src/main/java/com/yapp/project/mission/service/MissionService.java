@@ -74,7 +74,7 @@ public class MissionService {
         for (Capture capture : captures){
             List<CaptureImage> captureImage = capture.getCaptureImage();
             captureImageRepository.deleteAllInBatch(captureImage);
-            capture.removeCapture();
+            capture.remove();
         }
         mission.remove();
         return Message.of(StatusEnum.MISSION_OK, MissionContent.MISSION_DELETE_SUCCESS);
