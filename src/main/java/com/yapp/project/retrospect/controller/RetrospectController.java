@@ -4,7 +4,6 @@ import com.yapp.project.aux.Message;
 import com.yapp.project.aux.common.AccountUtil;
 import com.yapp.project.retrospect.domain.dto.RetrospectDTO;
 import com.yapp.project.retrospect.service.RetrospectService;
-import com.yapp.project.routine.domain.Week;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
