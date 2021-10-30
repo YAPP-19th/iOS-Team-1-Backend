@@ -12,6 +12,7 @@ import java.util.Optional;
 public interface MissionRepository extends JpaRepository<Mission,Long> {
     ArrayList<MissionOrganization> findMissionByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(Account account);
     List<Mission> findAllByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(Account account);
+    List<Mission> findAllByAccountAndIsDeleteIsFalseAndIsFinishIsTrue(Account account);
     List<Mission> findAllByIsDeleteIsFalse();
     Optional<Mission> findMissionByAccountAndId(Account account, Long missionId);
     Optional<Mission> findMissionByAccountAndOrganization_IdAndIsFinishIsFalseAndIsDeleteIsFalse(Account account, Long organizationId);

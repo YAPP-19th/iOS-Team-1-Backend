@@ -1,6 +1,7 @@
 package com.yapp.project.mission.domain;
 
 import com.yapp.project.account.domain.Account;
+import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.aux.common.Utils;
 import com.yapp.project.capture.domain.Capture;
 import com.yapp.project.mission.domain.dto.MissionDto;
@@ -94,7 +95,9 @@ public class Mission {
     }
 
     public Integer getPeriod(){
-        return Period.between(this.startDate,this.finishDate).getDays();
+        LocalDate today = DateUtil.KST_LOCAL_DATE_NOW();
+        int period = Period.between(today,this.finishDate).getDays();
+        return Math.max(period, 0);
     }
 
     public void updateSuccessCount(){
