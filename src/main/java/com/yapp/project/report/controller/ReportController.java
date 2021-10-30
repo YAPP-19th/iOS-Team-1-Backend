@@ -26,7 +26,7 @@ public class ReportController {
     /** Todo change Schedule - Batch
      * @return*/
     @GetMapping("/month/test")
-    public List<MonthRoutineReport> testMonthMethod() {
-        return reportService.makeMonthReport(AccountUtil.getAccount());
+    public void testMonthMethod() {
+        reportService.makeMonthReport(AccountUtil.getAccount());
     }
 }

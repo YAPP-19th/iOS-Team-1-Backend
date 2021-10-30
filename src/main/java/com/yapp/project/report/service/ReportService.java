@@ -28,31 +28,14 @@ public class ReportService {
     private final WeekReportRepository weekReportRepository;
     private final MonthRoutineReportRepository monthRoutineReportRepository;
 
-    public List<MonthRoutineReport> makeMonthReport(Account account) {
+    @Transactional
+    public void makeMonthReport(Account account) {
         List<WeekReport> weekReportList = weekReportRepository.findAllByAccountAndIsReportIsFalseOrderByLastDate(account);
-
         HashSet<Long> routineIdHashSet = new HashSet();
-
-        List<RoutineResult> routineResultList = new ArrayList<>();
-        weekReportList.forEach( x -> {
-            x.getRoutineResults().forEach( y -> routineIdHashSet.add(y.getRoutineId()));
-            routineResultList.addAll(x.getRoutineResults());
-        });
-
-        List<MonthRoutineReport> monthRoutineReportList = routineIdHashSet.stream().map(x ->
-                MonthRoutineReport.builder().account(account).routineId(x).build()
-        ).collect(Collectors.toList());
-
-        monthRoutineReportList.forEach( x -> {
-            routineResultList.forEach( y -> {
-                if(x.getRoutineId() == y.getRoutineId()) {
-                    x.updateMonthRoutineResultCount(y.getFullyDoneCount(), y.getPartiallyDoneCount(), y.getNotDoneCount());
-                    x.updateRoutineTitleAndCategory(y.getTitle(), y.getCategory());
-                }
-            });
-        });
-
-        return monthRoutineReportRepository.saveAll(monthRoutineReportList);
+        List<RoutineResult> routineResultList = getRoutineResultList(weekReportList, routineIdHashSet);
+        List<MonthRoutineReport> monthRoutineReportList = getMonthRoutineReportList(account, routineIdHashSet);
+        statisticsRoutineDuringMonth(routineResultList, monthRoutineReportList);
+        monthRoutineReportRepository.saveAll(monthRoutineReportList);
     }
 
     @Transactional
@@ -68,6 +51,33 @@ public class ReportService {
         statisticsRetrospect(result, routineResultList, retrospectList, weekReport);
         setRetrospectBasicData(account, result, weekReport);
         weekReportRepository.save(weekReport);
+    }
+
+    private void statisticsRoutineDuringMonth(List<RoutineResult> routineResultList, List<MonthRoutineReport> monthRoutineReportList) {
+        monthRoutineReportList.forEach( x -> {
+            routineResultList.forEach( y -> {
+                if(x.getRoutineId() == y.getRoutineId()) {
+                    x.updateMonthRoutineResultCount(y.getFullyDoneCount(), y.getPartiallyDoneCount(), y.getNotDoneCount());
+                    x.updateRoutineTitleAndCategory(y.getTitle(), y.getCategory());
+                }
+            });
+        });
+    }
+
+    private List<MonthRoutineReport> getMonthRoutineReportList(Account account, HashSet<Long> routineIdHashSet) {
+        List<MonthRoutineReport> monthRoutineReportList = routineIdHashSet.stream().map(x ->
+                MonthRoutineReport.builder().account(account).routineId(x).build()
+        ).collect(Collectors.toList());
+        return monthRoutineReportList;
+    }
+
+    private List<RoutineResult> getRoutineResultList(List<WeekReport> weekReportList, HashSet<Long> routineIdHashSet) {
+        List<RoutineResult> routineResultList = new ArrayList<>();
+        weekReportList.forEach(x -> {
+            x.getRoutineResults().forEach( y -> routineIdHashSet.add(y.getRoutineId()));
+            routineResultList.addAll(x.getRoutineResults());
+        });
+        return routineResultList;
     }
 
     private void checkIsReported(Account account) {
