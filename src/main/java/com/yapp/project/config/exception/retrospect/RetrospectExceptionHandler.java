@@ -24,4 +24,10 @@ public class RetrospectExceptionHandler {
         final Message message = Message.of(e.getStatus(), e.getMessage());
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(InvalidRetrospectUpdateException.class)
+    public ResponseEntity<Message> handle(InvalidRetrospectUpdateException e) {
+        final Message message = Message.of(e.getStatus(), e.getMessage());
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
 }
