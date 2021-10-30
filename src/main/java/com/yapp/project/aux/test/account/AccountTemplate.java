@@ -16,7 +16,7 @@ public class AccountTemplate {
     }
 
     private static final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-    private static Long id = 1L;
+    private static Long id = 1000L;
     public static final String PASSWORD = "Test1234!$";
     public static final String USERNAME = "스프링";
     public static final String EMAIL = "springboot@example.com";

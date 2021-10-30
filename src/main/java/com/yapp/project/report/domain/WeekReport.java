@@ -67,4 +67,10 @@ public class WeekReport {
         this.monthReportYear = DateUtil.KST_LOCAL_DATE_NOW().getYear();
         this.monthReportMonth = DateUtil.KST_LOCAL_DATE_NOW().getMonth().getValue() - 1;
     }
+
+    /** Test용 */
+    public void addIdAndLastDate(Long id, String lastDate) {
+        this.id = id;
+        this.lastDate = LocalDate.parse(lastDate);
+    }
 }

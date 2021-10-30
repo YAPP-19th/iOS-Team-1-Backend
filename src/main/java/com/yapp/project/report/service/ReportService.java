@@ -14,7 +14,6 @@ import com.yapp.project.report.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -91,6 +90,7 @@ public class ReportService {
     private List<RoutineResult> getRoutineResultList(List<WeekReport> weekReportList, HashSet<Long> routineIdHashSet) {
         List<RoutineResult> routineResultList = new ArrayList<>();
         weekReportList.forEach(x -> {
+            x.updateIsReport();
             x.getRoutineResults().forEach( y -> routineIdHashSet.add(y.getRoutineId()));
             routineResultList.addAll(x.getRoutineResults());
         });

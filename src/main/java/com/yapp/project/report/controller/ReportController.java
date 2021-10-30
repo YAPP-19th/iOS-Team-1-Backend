@@ -26,4 +26,9 @@ public class ReportController {
     public ReportDTO.ResponseRetrospectMessage getMonthReportByYearAndMonth(@PathVariable Integer year, @PathVariable Integer month) {
         return reportService.getMonthReportByYearAndMonth(AccountUtil.getAccount(), year, month);
     }
+
+    @GetMapping("/month/test")
+    public void asdgetMonthReportByYearAndMonth() {
+        reportService.makeMonthReport(AccountUtil.getAccount());
+    }
 }
