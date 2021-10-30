@@ -75,6 +75,7 @@ public class WeekReportService {
         List<RoutineResult> routineResultList = routineList.stream().map(x -> {
             LocalDate startDate = x.getCreatedAt().toLocalDate();
             List<String> days = x.getDays().stream().map(y -> y.getDay().toString()).collect(Collectors.toList());
+            Long passDaysCount = 0L;
             if (startDate.plusDays(7).isAfter(lastMon)) {
                 List<String> mockDays = new ArrayList<>();
                 mockDays.addAll(days);
@@ -84,9 +85,10 @@ public class WeekReportService {
                     newDays.add(startDate.plusDays(i++).getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase());
                 }
                 mockDays.removeAll(newDays);
+                passDaysCount = Long.valueOf(mockDays.size());
                 result[0] -= mockDays.size();
             }
-            RoutineResult routineResult = RoutineResult.builder().title(x.getTitle()).category(x.getCategory()).routineId(x.getId()).build();
+            RoutineResult routineResult = RoutineResult.builder().title(x.getTitle()).category(x.getCategory()).routineId(x.getId()).passDaysCount(passDaysCount).build();
             x.getDays().stream().map(y -> RoutineReportDay.builder().day(y.getDay()).routineResult(routineResult).build()).collect(Collectors.toList());
             return routineResult;
         }).collect(Collectors.toList());

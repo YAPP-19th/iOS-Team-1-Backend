@@ -31,11 +31,14 @@ public class RoutineResult{
 
     private Long routineId;
 
+    private Long passDaysCount;
+
     @Builder
-    public RoutineResult(String title, String category, Long routineId) {
+    public RoutineResult(String title, String category, Long routineId, Long passDaysCount) {
         this.title = title;
         this.category = category;
         this.routineId = routineId;
+        this.passDaysCount = passDaysCount;
     }
 
     public void addRetrospectDay(RetrospectReportDay retrospectReportDay) {
