@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.*;
 class OrganizationRepositoryTest {
 
     @Autowired
-    OrganizationRepository organizationRepository;
+    private OrganizationRepository organizationRepository;
 
     @Test
     void test_카테고리로_그룹_조회(){

@@ -23,16 +23,16 @@ import static org.assertj.core.api.Assertions.*;
 class AccountServiceTest {
 
     @Autowired
-    AccountService accountService;
+    private AccountService accountService;
 
     @Autowired
-    AccountRepository accountRepository;
+    private AccountRepository accountRepository;
 
     @Autowired
-    MissionRepository missionRepository;
+    private MissionRepository missionRepository;
 
     @Autowired
-    CaptureImageRepository captureImageRepository;
+    private CaptureImageRepository captureImageRepository;
 
 
     @Test

@@ -1,11 +1,13 @@
 package com.yapp.project.organization.domain;
 
+import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.capture.domain.Capture;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.organization.domain.dto.OrgDto;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +28,14 @@ public class Organization {
         this.shoot = clause.getShoot();
         this.promise = clause.getPromise();
         this.summary = clause.getSummary();
+        this.updatedAt = DateUtil.KST_LOCAL_DATE_NOW();
     }
 
     @PrePersist
     public void prePersist(){
         this.count = this.count == null ? 0 : this.count;
+        this.groupSuccessCount = this.groupSuccessCount == null ? 0 : this.groupSuccessCount;
+        this.groupFailCount = this.groupFailCount == null ? 0 : this.groupFailCount;
     }
 
 
@@ -64,6 +69,12 @@ public class Organization {
 
     private Integer count;
 
+    private Integer groupSuccessCount;
+
+    private Integer groupFailCount;
+
+    private LocalDate updatedAt;
+
     public void setCaptures(List<Capture> captures) {
         this.captures = captures;
     }
@@ -93,5 +104,31 @@ public class Organization {
 
     public Integer getCount(){
         return count!=null?count:0;
+    }
+
+    public void beforeBatchInitAboutRate(){
+        this.groupSuccessCount = 0;
+        this.groupFailCount = 0;
+    }
+
+    public void addMissionRateOnGroup(Integer successCount, Integer failCount){
+        if (this.groupSuccessCount==null){
+            this.groupSuccessCount = 0;
+        }
+        if (this.groupFailCount==null){
+            this.groupFailCount = 0;
+        }
+        this.groupSuccessCount += successCount;
+        this.groupFailCount += failCount;
+    }
+
+    public void updateRate(){
+        double decimal = (double) this.groupSuccessCount/(this.groupSuccessCount+this.groupFailCount);
+        this.rate = (int)(100 * decimal);
+    }
+
+    public void updateUpdatedAtAndCountZero(){
+        this.updatedAt = DateUtil.KST_LOCAL_DATE_NOW();
+        this.count=0;
     }
 }
