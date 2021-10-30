@@ -16,10 +16,12 @@ public class AccountTemplate {
     }
 
     private static final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-    private static Long id = 1L;
+    private static Long id = 100000L;
     public static final String PASSWORD = "Test1234!$";
     public static final String USERNAME = "스프링";
+    public static final String ANOTHER_USERNAME = "장고";
     public static final String EMAIL = "springboot@example.com";
+    public static final String ANOTHER_EMAIL = "django@example.com";
     public static final SocialType SOCIAL_TYPE = SocialType.NORMAL;
 
 
@@ -31,6 +33,10 @@ public class AccountTemplate {
 
     public static Account makeTestAccount(){
         return makeTestAccount(USERNAME,EMAIL,Authority.ROLE_USER, SOCIAL_TYPE);
+    }
+
+    public static Account makeTestAccount2(){
+        return makeTestAccount(ANOTHER_USERNAME,ANOTHER_EMAIL,Authority.ROLE_USER, SOCIAL_TYPE);
     }
 
     public static Account makeTestAccount(String username){
