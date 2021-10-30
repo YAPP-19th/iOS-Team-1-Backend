@@ -1,15 +1,14 @@
-package com.yapp.project.config.exception.weekReport;
+package com.yapp.project.config.exception.report;
 
 import com.yapp.project.aux.StatusEnum;
-import com.yapp.project.aux.content.SayingContent;
-import com.yapp.project.aux.content.WeekReportContent;
+import com.yapp.project.aux.content.ReportContent;
 import lombok.Getter;
 
 @Getter
 public class AlreadyWeekReportFoundException extends RuntimeException{
     private final StatusEnum status;
     public AlreadyWeekReportFoundException(){
-        super(WeekReportContent.WEEK_REPORT_IS_EXIST);
+        super(ReportContent.WEEK_REPORT_IS_EXIST);
         this.status = StatusEnum.WEEK_REPORT_BAD_REQUEST;
     }
 }

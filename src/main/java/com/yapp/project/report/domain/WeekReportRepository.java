@@ -10,4 +10,6 @@ public interface WeekReportRepository extends JpaRepository<WeekReport, Long> {
     Boolean existsByAccountAndLastDate(Account account, LocalDate minusDays);
 
     List<WeekReport> findAllByAccountAndIsReportIsFalseOrderByLastDate(Account account);
+
+    List<WeekReport> findAllByAccountAndMonthReportYearAndMonthReportMonthOrderByLastDate(Account account, Integer monthReportYear, Integer monthReportMonth);
 }

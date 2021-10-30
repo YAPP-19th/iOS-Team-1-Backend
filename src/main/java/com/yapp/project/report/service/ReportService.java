@@ -2,7 +2,9 @@ package com.yapp.project.report.service;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.common.DateUtil;
-import com.yapp.project.config.exception.weekReport.AlreadyWeekReportFoundException;
+import com.yapp.project.config.exception.report.AlreadyWeekReportFoundException;
+import com.yapp.project.config.exception.report.MonthReportNotFoundMonthException;
+import com.yapp.project.report.domain.dto.ReportDTO;
 import com.yapp.project.retrospect.domain.Result;
 import com.yapp.project.retrospect.domain.Retrospect;
 import com.yapp.project.retrospect.domain.RetrospectRepository;
@@ -11,7 +13,8 @@ import com.yapp.project.routine.domain.RoutineRepository;
 import com.yapp.project.report.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -28,6 +31,18 @@ public class ReportService {
     private final WeekReportRepository weekReportRepository;
     private final MonthRoutineReportRepository monthRoutineReportRepository;
 
+    @Transactional(readOnly = true)
+    public ReportDTO.ResponseRetrospectMessage getMonthReportByYearAndMonth(Account account, Integer year, Integer month) {
+        List<MonthRoutineReport> monthReportList = monthRoutineReportRepository.findAllByAccountAndYearAndMonth(account, year, month);
+        if(monthReportList.size() == 0) {
+            throw new MonthReportNotFoundMonthException();
+        }
+        List<WeekReport> weekReportList =
+                weekReportRepository.findAllByAccountAndMonthReportYearAndMonthReportMonthOrderByLastDate(account, year, month);
+        List<String> weekRateList = weekReportList.stream().map(x -> x.getRate()).collect(Collectors.toList());
+        return ReportDTO.ResponseRetrospectMessage.of(monthReportList, weekRateList);
+    }
+
     @Transactional
     public void makeMonthReport(Account account) {
         List<WeekReport> weekReportList = weekReportRepository.findAllByAccountAndIsReportIsFalseOrderByLastDate(account);
@@ -35,6 +50,8 @@ public class ReportService {
         List<RoutineResult> routineResultList = getRoutineResultList(weekReportList, routineIdHashSet);
         List<MonthRoutineReport> monthRoutineReportList = getMonthRoutineReportList(account, routineIdHashSet);
         statisticsRoutineDuringMonth(routineResultList, monthRoutineReportList);
+        weekReportList.forEach(x -> x.updateMonthReportYearAndMonth());
+        weekReportRepository.saveAll(weekReportList);
         monthRoutineReportRepository.saveAll(monthRoutineReportList);
     }
 
@@ -148,4 +165,5 @@ public class ReportService {
                 result[0] - (result[1] + result[2])
         );
     }
+
 }

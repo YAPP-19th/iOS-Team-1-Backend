@@ -37,6 +37,10 @@ public class WeekReport {
 
     private Boolean isReport;
 
+    private Integer monthReportYear;
+
+    private Integer monthReportMonth;
+
     @Builder
     public WeekReport() {
         this.lastDate = DateUtil.KST_LOCAL_DATE_NOW().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)).minusDays(1); // 가장 최근 월요일
@@ -57,5 +61,10 @@ public class WeekReport {
 
     public void updateIsReport() {
         this.isReport = true;
+    }
+
+    public void updateMonthReportYearAndMonth() {
+        this.monthReportYear = DateUtil.KST_LOCAL_DATE_NOW().getYear();
+        this.monthReportMonth = DateUtil.KST_LOCAL_DATE_NOW().getMonth().getValue() - 1;
     }
 }
