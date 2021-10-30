@@ -32,19 +32,19 @@ import static org.assertj.core.api.Assertions.*;
 class AuthControllerTest {
 
     @Autowired
-    AuthService authService;
+    private AuthService authService;
 
     @Autowired
-    TokenProvider tokenProvider;
+    private TokenProvider tokenProvider;
 
     @Autowired
-    AuthController authController;
+    private AuthController authController;
 
     @Autowired
-    AccountRepository accountRepository;
+    private AccountRepository accountRepository;
 
     @Autowired
-    RedisTemplate<String,String> redisTemplate;
+    private RedisTemplate<String,String> redisTemplate;
 
     @Test
     @Transactional
