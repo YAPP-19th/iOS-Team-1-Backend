@@ -28,6 +28,12 @@ public class MissionController {
         return missionService.findAllIsDoing(AccountUtil.getAccount());
     }
 
+    @ApiOperation(value="종료된 내 미션 리스트")
+    @GetMapping("/finish")
+    public MissionDto.MissionResponseMessage findAllAlreadyFinish(){
+        return missionService.findAllAlreadyFinish(AccountUtil.getAccount());
+    }
+
     @ApiOperation(value = "미션 디테일 페이지")
     @GetMapping("/{id}")
     public MissionDto.MissionDetailResponseMessage findDetailMyMission(@PathVariable Long id){

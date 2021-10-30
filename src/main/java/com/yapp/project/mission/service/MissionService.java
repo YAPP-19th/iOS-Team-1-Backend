@@ -44,12 +44,6 @@ public class MissionService {
         return Message.of(StatusEnum.MISSION_OK, MissionContent.MISSION_CREATE_SUCCESS);
     }
 
-    private void setDays(List<Week> days, Mission mission){
-        List<Cron> missionDays = days.stream()
-                .map(day -> Cron.builder().week(day).mission(mission).build()).collect(Collectors.toList());
-        mission.addDays(missionDays);
-    }
-
     @Transactional(readOnly = true)
     public MissionResponseMessage findAllIsDoing(Account account) {
         List<MissionResponse> responses = new ArrayList<>();
@@ -57,6 +51,15 @@ public class MissionService {
             responses.add(mission.toMissionResponse());
         }
         return MissionResponseMessage.of(StatusEnum.MISSION_OK, MissionContent.FIND_MY_MISSION_LISTS_ING, responses);
+    }
+
+    @Transactional(readOnly = true)
+    public MissionResponseMessage findAllAlreadyFinish(Account account){
+        List<MissionResponse> responses = new ArrayList<>();
+        for (Mission mission : missionRepository.findAllByAccountAndIsDeleteIsFalseAndIsFinishIsTrue(account)){
+            responses.add(mission.toMissionResponse());
+        }
+        return MissionResponseMessage.of(StatusEnum.MISSION_OK, MissionContent.FIND_MY_MISSION_LISTS_FINISH, responses);
     }
 
     @Transactional(readOnly = true)
@@ -78,6 +81,12 @@ public class MissionService {
         }
         mission.remove();
         return Message.of(StatusEnum.MISSION_OK, MissionContent.MISSION_DELETE_SUCCESS);
+    }
+
+    private void setDays(List<Week> days, Mission mission){
+        List<Cron> missionDays = days.stream()
+                .map(day -> Cron.builder().week(day).mission(mission).build()).collect(Collectors.toList());
+        mission.addDays(missionDays);
     }
 }
 

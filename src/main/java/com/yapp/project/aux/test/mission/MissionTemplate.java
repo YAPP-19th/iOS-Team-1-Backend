@@ -15,7 +15,7 @@ import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATE_NOW;
 public class MissionTemplate {
     private MissionTemplate(){
     }
-    private static final Long MISSION_ID = 1000L;
+    private static Long missionId = 1000L;
     public static final LocalDate START_DATE = KST_LOCAL_DATE_NOW();
     public static final String STR_START_DATE = START_DATE.toString();
     public static final String STR_FINISH_DATE = START_DATE.plusDays(7L).toString();
@@ -30,7 +30,7 @@ public class MissionTemplate {
 
     public static Mission makeMission(Account account, Organization organization,
                                       LocalDate startDate, LocalDate finishDate){
-        Mission mission = Mission.builder().id(MISSION_ID).account(account).organization(organization).startDate(startDate).finishDate(finishDate).build();
+        Mission mission = Mission.builder().id(missionId++).account(account).organization(organization).startDate(startDate).finishDate(finishDate).build();
         mission.defaultSetting();
         return mission;
     }
@@ -40,7 +40,11 @@ public class MissionTemplate {
     }
 
     public static MissionDto.MissionRequest makeMissionRequest(){
-        return MissionDto.MissionRequest.builder().id(MISSION_ID).startDate(STR_START_DATE).finishDate(STR_FINISH_DATE).weeks(WEEKS).build();
+        return makeMissionRequest(STR_START_DATE,STR_FINISH_DATE);
+    }
+
+    public static MissionDto.MissionRequest makeMissionRequest(String startDate, String finishDate){
+        return MissionDto.MissionRequest.builder().id(missionId++).startDate(startDate).finishDate(finishDate).weeks(WEEKS).build();
     }
 
 }

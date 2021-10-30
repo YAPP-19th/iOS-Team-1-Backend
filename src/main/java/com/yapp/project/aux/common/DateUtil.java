@@ -1,6 +1,7 @@
 package com.yapp.project.aux.common;
 
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 
 public class DateUtil {
     private DateUtil(){
@@ -25,4 +26,8 @@ public class DateUtil {
     }
 
     public static final int TEMP_NUMBER_SECONDS = 1000*60*3;
+
+    public static LocalDate convertStr2LocalDate(String yyyymmdd){
+        return LocalDate.parse(yyyymmdd, DateTimeFormatter.ISO_DATE);
+    }
 }
