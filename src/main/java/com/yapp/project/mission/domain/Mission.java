@@ -1,6 +1,7 @@
 package com.yapp.project.mission.domain;
 
 import com.yapp.project.account.domain.Account;
+import com.yapp.project.aux.common.Utils;
 import com.yapp.project.capture.domain.Capture;
 import com.yapp.project.mission.domain.dto.MissionDto;
 import com.yapp.project.organization.domain.Organization;
@@ -79,6 +80,47 @@ public class Mission {
         this.weeks.addAll(days);
     }
 
+    public Integer getAchievementRate(){
+        if (this.successCount == null){
+            this.successCount = 0;
+            return 0;
+        } else if (this.failureCount == null){
+            this.failureCount = 0;
+            return 0;
+        } else if (this.successCount + this.failureCount == 0){
+            return 0;
+        }
+        return (this.successCount/(this.failureCount+this.successCount))*100;
+    }
+
+    public Integer getPeriod(){
+        return Period.between(this.startDate,this.finishDate).getDays();
+    }
+
+    public void updateSuccessCount(){
+        this.successCount+=1;
+    }
+
+    public void remove(){
+        this.isDelete=true;
+    }
+
+    public void finishMission(){
+        this.isFinish=true;
+    }
+
+    public void defaultSetting(){
+        this.successCount = 0;
+        this.failureCount = 0;
+        this.isFinish = false;
+    }
+
+    public void setCountForTest(){
+        // 환경이 테스트임을 확인하는 assertion 이 필요
+        this.successCount = Utils.randomNumber();
+        this.failureCount = Utils.randomNumber();
+    }
+
     public MissionDto.MissionResponse toMissionResponse(){
         return MissionDto.MissionResponse.builder().image(organization.getImage()).title(organization.getTitle())
                 .achievementRate(this.getAchievementRate()).period(this.getPeriod())
@@ -99,36 +141,5 @@ public class Mission {
                 .promise(this.organization.getPromise())
                 .nowPeople(this.organization.getCount())
                 .build();
-    }
-
-    public Integer getPeriod(){
-        return Period.between(this.startDate,this.finishDate).getDays();
-    }
-
-    public Integer getAchievementRate(){
-        if (this.successCount == null){
-            this.successCount = 0;
-            return 0;
-        } else if (this.failureCount == null){
-            this.failureCount = 0;
-            return 0;
-        } else if (this.successCount + this.failureCount == 0){
-            return 0;
-        }
-        return (this.successCount/(this.failureCount+this.successCount))*100;
-    }
-
-    public void updateSuccessCount(){
-        this.successCount+=1;
-    }
-
-    public void remove(){
-        this.isDelete=true;
-    }
-
-    public void defaultSetting(){
-        this.successCount = 0;
-        this.failureCount = 0;
-        this.isFinish = false;
     }
 }
