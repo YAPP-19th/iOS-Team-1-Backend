@@ -1,4 +1,4 @@
-package com.yapp.project.weekReport.service;
+package com.yapp.project.report.service;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.common.DateUtil;
@@ -8,7 +8,7 @@ import com.yapp.project.retrospect.domain.Retrospect;
 import com.yapp.project.retrospect.domain.RetrospectRepository;
 import com.yapp.project.routine.domain.Routine;
 import com.yapp.project.routine.domain.RoutineRepository;
-import com.yapp.project.weekReport.domain.*;
+import com.yapp.project.report.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
@@ -21,14 +21,42 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class WeekReportService {
+public class ReportService {
 
     private final RetrospectRepository retrospectRepository;
     private final RoutineRepository routineRepository;
     private final WeekReportRepository weekReportRepository;
+    private final MonthRoutineReportRepository monthRoutineReportRepository;
+
+    public List<MonthRoutineReport> makeMonthReport(Account account) {
+        List<WeekReport> weekReportList = weekReportRepository.findAllByAccountAndIsReportIsFalseOrderByLastDate(account);
+
+        HashSet<Long> routineIdHashSet = new HashSet();
+
+        List<RoutineResult> routineResultList = new ArrayList<>();
+        weekReportList.forEach( x -> {
+            x.getRoutineResults().forEach( y -> routineIdHashSet.add(y.getRoutineId()));
+            routineResultList.addAll(x.getRoutineResults());
+        });
+
+        List<MonthRoutineReport> monthRoutineReportList = routineIdHashSet.stream().map(x ->
+                MonthRoutineReport.builder().account(account).routineId(x).build()
+        ).collect(Collectors.toList());
+
+        monthRoutineReportList.forEach( x -> {
+            routineResultList.forEach( y -> {
+                if(x.getRoutineId() == y.getRoutineId()) {
+                    x.updateMonthRoutineResultCount(y.getFullyDoneCount(), y.getPartiallyDoneCount(), y.getNotDoneCount());
+                    x.updateRoutineTitleAndCategory(y.getTitle(), y.getCategory());
+                }
+            });
+        });
+
+        return monthRoutineReportRepository.saveAll(monthRoutineReportList);
+    }
 
     @Transactional
-    public void makeReport(Account account) {
+    public void makeWeekReport(Account account) {
         checkIsReported(account);
         /** index 0 : Total, 1 : fullyDone, 2 : particularlyDone */
         int result [] = new int[]{0, 0, 0};
@@ -53,19 +81,23 @@ public class WeekReportService {
     private void statisticsRetrospect(int[] result, List<RoutineResult> routineResultList, List<Retrospect> retrospectList, WeekReport weekReport) {
         LocalDate lastMon = DateUtil.KST_LOCAL_DATE_NOW().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)); // 가장 최근 월요일
         routineResultList.forEach(x -> {
+            int tempResult[] = new int[] {0, 0}; /** index 0 : fullyDone, 1 : particularlyDone */
             retrospectList.forEach(y -> {
                 if(y.getRoutine().getId() == x.getRoutineId() && y.getDate().isBefore(lastMon)) {
                     String day = y.getDate().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase();
                     if(y.getResult() == Result.DONE){
+                        tempResult[0]++;
                         result[1]++;
                         RetrospectReportDay.builder().routineResult(x).day(day).result(y.getResult()).build();
                     } else if(y.getResult() == Result.TRY){
+                        tempResult[1]++;
                         result[2]++;
                         RetrospectReportDay.builder().routineResult(x).day(day).result(y.getResult()).build();
                     }
                     y.updateIsReport();
                 }
             });
+            x.addRoutineResultDoneCount(tempResult);
             x.addWeekReport(weekReport);
         });
     }
@@ -75,7 +107,8 @@ public class WeekReportService {
         List<RoutineResult> routineResultList = routineList.stream().map(x -> {
             LocalDate startDate = x.getCreatedAt().toLocalDate();
             List<String> days = x.getDays().stream().map(y -> y.getDay().toString()).collect(Collectors.toList());
-            Long passDaysCount = 0L;
+            int passDaysCount = 0;
+            int allCount = days.size();
             if (startDate.plusDays(7).isAfter(lastMon)) {
                 List<String> mockDays = new ArrayList<>();
                 mockDays.addAll(days);
@@ -85,10 +118,11 @@ public class WeekReportService {
                     newDays.add(startDate.plusDays(i++).getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase());
                 }
                 mockDays.removeAll(newDays);
-                passDaysCount = Long.valueOf(mockDays.size());
+                passDaysCount = mockDays.size();
+                allCount = days.size() - passDaysCount;
                 result[0] -= mockDays.size();
             }
-            RoutineResult routineResult = RoutineResult.builder().title(x.getTitle()).category(x.getCategory()).routineId(x.getId()).passDaysCount(passDaysCount).build();
+            RoutineResult routineResult = RoutineResult.builder().title(x.getTitle()).category(x.getCategory()).routineId(x.getId()).passDaysCount(passDaysCount).allCount(allCount).build();
             x.getDays().stream().map(y -> RoutineReportDay.builder().day(y.getDay()).routineResult(routineResult).build()).collect(Collectors.toList());
             return routineResult;
         }).collect(Collectors.toList());

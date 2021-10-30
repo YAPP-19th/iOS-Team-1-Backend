@@ -1,4 +1,4 @@
-package com.yapp.project.weekReport.domain;
+package com.yapp.project.report.domain;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -31,14 +31,23 @@ public class RoutineResult{
 
     private Long routineId;
 
+    private Long allCount;
+
+    private Long fullyDoneCount;
+
+    private Long partiallyDoneCount;
+
+    private Long notDoneCount;
+
     private Long passDaysCount;
 
     @Builder
-    public RoutineResult(String title, String category, Long routineId, Long passDaysCount) {
+    public RoutineResult(String title, String category, Long routineId, int passDaysCount, int allCount) {
         this.title = title;
         this.category = category;
         this.routineId = routineId;
-        this.passDaysCount = passDaysCount;
+        this.passDaysCount = Long.valueOf(passDaysCount);
+        this.allCount = Long.valueOf(allCount);
     }
 
     public void addRetrospectDay(RetrospectReportDay retrospectReportDay) {
@@ -52,5 +61,11 @@ public class RoutineResult{
     public void addWeekReport(WeekReport weekReport) {
         this.weekReport = weekReport;
         weekReport.addRoutineResult(this);
+    }
+
+    public void addRoutineResultDoneCount(int[] routineResultCount) {
+        this.fullyDoneCount = Long.valueOf(routineResultCount[0]);
+        this.partiallyDoneCount = Long.valueOf(routineResultCount[1]);
+        this.notDoneCount = allCount - (fullyDoneCount + partiallyDoneCount);
     }
 }

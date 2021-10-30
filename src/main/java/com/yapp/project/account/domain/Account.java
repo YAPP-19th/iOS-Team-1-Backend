@@ -1,7 +1,8 @@
 package com.yapp.project.account.domain;
 
 import com.yapp.project.account.domain.dto.AccountDto.*;
-import com.yapp.project.weekReport.domain.WeekReport;
+import com.yapp.project.report.domain.MonthRoutineReport;
+import com.yapp.project.report.domain.WeekReport;
 import com.yapp.project.aux.common.AccountUtil;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -56,6 +57,9 @@ public class Account {
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WeekReport> weekReportList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MonthRoutineReport> monthRoutineReportList = new ArrayList<>();
 
     public void updateLastLoginAccount(){
         this.lastLogin = KST_LOCAL_DATETIME_NOW();
