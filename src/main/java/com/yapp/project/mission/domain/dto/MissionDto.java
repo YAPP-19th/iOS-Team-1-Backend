@@ -3,8 +3,8 @@ package com.yapp.project.mission.domain.dto;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.mission.domain.Mission;
-import com.yapp.project.mission.utils.DateUtils;
 import com.yapp.project.organization.domain.Organization;
 import com.yapp.project.routine.domain.Week;
 import io.swagger.annotations.ApiModelProperty;
@@ -35,8 +35,8 @@ public class MissionDto {
         private List<Week> weeks;
 
         public Mission toMission(Account account, Organization organization){
-            LocalDate sDate = DateUtils.convertStr2LocalDate(startDate);
-            LocalDate fDate = DateUtils.convertStr2LocalDate(finishDate);
+            LocalDate sDate = DateUtil.convertStr2LocalDate(startDate);
+            LocalDate fDate = DateUtil.convertStr2LocalDate(finishDate);
             return Mission.builder().account(account).startDate(sDate).finishDate(fDate)
                     .organization(organization).build();
         }
@@ -104,6 +104,7 @@ public class MissionDto {
     @Getter
     @AllArgsConstructor
     @Builder
+    @ToString
     public static class MissionResponseMessage{
         private Message message;
         private List<MissionResponse> data;
