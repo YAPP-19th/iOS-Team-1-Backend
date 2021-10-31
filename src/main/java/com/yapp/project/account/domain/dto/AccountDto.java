@@ -79,14 +79,6 @@ public class AccountDto {
         }
     }
 
-
-    @Getter
-    @AllArgsConstructor
-    public static class NicknameRequest{
-        @ApiModelProperty(value = "닉네임",example = "미닝")
-        private String nickname;
-    }
-
     @Getter
     @AllArgsConstructor
     public static class EmailRequest{

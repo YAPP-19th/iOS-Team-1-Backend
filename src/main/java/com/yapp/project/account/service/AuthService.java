@@ -111,15 +111,6 @@ public class AuthService {
         return Message.of(StatusEnum.ACCOUNT_OK,AccountContent.LOGOUT_SUCCESS);
     }
 
-
-    @Transactional(readOnly = true)
-    public Message existByNickname(String nickname){
-        if (accountRepository.existsByNickname(nickname))
-            throw new NicknameDuplicateException();
-        return Message.of(AccountContent.DOES_NOT_EXISTS_DUPLICATE_NICKNAME);
-    }
-
-
     @Transactional
     public TokenMessage reissue(TokenRequestDto tokenRequestDto){
         ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
@@ -214,9 +205,9 @@ public class AuthService {
          if (accountRepository.existsByEmail(email)){
             throw new EmailDuplicateException();
         }
-        if (accountRepository.existsByNickname(nickname)){
-            throw new NicknameDuplicateException();
-        }
+         if (nickname.length()>6){
+             throw new NicknameLengthOverException();
+         }
     }
 
 

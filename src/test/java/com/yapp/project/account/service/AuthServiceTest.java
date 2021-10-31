@@ -154,30 +154,6 @@ class AuthServiceTest {
 
     @Test
     @Transactional
-    void test_닉네임_이미_존재할_때(){
-        //given
-        Account account = AccountTemplate.makeTestAccount();
-        accountRepository.save(account);
-        String nickname = account.getNickname();
-        //when -> then
-        assertThatThrownBy(() -> authService.existByNickname(nickname)).isInstanceOf(NicknameDuplicateException.class)
-                .hasMessage(AccountContent.NICKNAME_DUPLICATE);
-    }
-
-    @Test
-    @Transactional
-    void test_닉네임_존재하지_않을_때(){
-        //given
-        Account account = AccountTemplate.makeTestAccount("hello");
-        accountRepository.save(account);
-        String nickname = account.getNickname();
-        //when -> then
-        assertThatThrownBy(() -> authService.existByNickname(nickname)).isInstanceOf(NicknameDuplicateException.class)
-                .hasMessage(AccountContent.NICKNAME_DUPLICATE);
-    }
-
-    @Test
-    @Transactional
     void test_인증번호_서버에서_보냈을_때(){
         //given
         Account account = AccountTemplate.makeTestAccount();

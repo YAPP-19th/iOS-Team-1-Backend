@@ -5,10 +5,10 @@ import com.yapp.project.aux.content.AccountContent;
 import lombok.Getter;
 
 @Getter
-public class NicknameDuplicateException extends RuntimeException{
+public class NicknameLengthOverException extends RuntimeException{
     private final StatusEnum status;
-    public NicknameDuplicateException(){
-        super(AccountContent.NICKNAME_DUPLICATE);
+    public NicknameLengthOverException(){
+        super(AccountContent.ACCOUNT_NICKNAME_LENGTH_LIMIT);
         this.status = StatusEnum.NICKNAME_BAD_REQUEST;
     }
 }
