@@ -6,6 +6,7 @@ import com.yapp.project.config.exception.capture.InvalidCaptureException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +22,9 @@ import static com.yapp.project.capture.domain.dto.CaptureDto.*;
 public class CaptureController {
     private final CaptureService captureService;
 
+    @Value("${property.image.path}")
+    private String path;
+
     @ApiOperation(value = "오늘의 미션 인증 처리", tags = "미션_관련_사진")
     @PostMapping
     public CaptureResponseMessage captureTodayMission(CaptureRequest request) throws IOException {
@@ -30,7 +34,7 @@ public class CaptureController {
         if(image == null) {
             throw new InvalidCaptureException();
         } else{
-            imagePath = saveImages(image, missionId,  "/home/image/capture/");
+            imagePath = saveImages(image, missionId,  path+"capture/");
         }
         return captureService.captureTodayMission(imagePath, missionId);
     }

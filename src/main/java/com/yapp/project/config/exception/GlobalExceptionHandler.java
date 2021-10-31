@@ -1,6 +1,7 @@
 package com.yapp.project.config.exception;
 
 import com.yapp.project.aux.Message;
+import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IOException.class)
     public ResponseEntity<Message> handle(IOException e){
         final Message message = Message.of(e.getMessage());
+        Sentry.captureException(e);
         return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
