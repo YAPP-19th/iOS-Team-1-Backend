@@ -54,12 +54,6 @@ public class AuthController {
         return ResponseEntity.ok(authService.reissue(tokenRequestDto));
     }
 
-    @ApiOperation(value = "닉네임 중복 확인", tags = "기타 유저 관련")
-    @GetMapping("/check/{name}")
-    public ResponseEntity<Message> existByNickname(@PathVariable("name") String nickname ){
-        return ResponseEntity.ok(authService.existByNickname(nickname));
-    }
-
     @ApiOperation(value = "이메일이 실제로 존재하는 지 확인 후 인증번호 보내기", tags = "비밀번호 재설정 관련")
     @PostMapping("/send")
     public Message sendAuthenticationNumber(AccountDto.EmailRequest request){

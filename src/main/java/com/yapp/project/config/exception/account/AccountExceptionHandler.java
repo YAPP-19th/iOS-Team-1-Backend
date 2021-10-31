@@ -22,13 +22,6 @@ public class AccountExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NicknameDuplicateException.class)
-    public ResponseEntity<Message> handle(NicknameDuplicateException e){
-        final Message message = Message.of(e.getStatus(), e.getMessage());
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
-    }
-
-
     @ExceptionHandler(NotFoundUserInformationException.class)
     public ResponseEntity<Message> handle(NotFoundUserInformationException e){
         final Message message = Message.of(e.getStatus() ,e.getMessage());
@@ -55,6 +48,12 @@ public class AccountExceptionHandler {
 
     @ExceptionHandler(NotEqualAuthenticationNumberException.class)
     public ResponseEntity<Message> handle(NotEqualAuthenticationNumberException e){
+        final Message message = Message.of(e.getStatus() ,e.getMessage());
+        return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NicknameLengthOverException.class)
+    public ResponseEntity<Message> handle(NicknameLengthOverException e){
         final Message message = Message.of(e.getStatus() ,e.getMessage());
         return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
     }
