@@ -55,7 +55,7 @@ public class Account {
     private String fcmToken;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<WeekReport> weekReportList = new ArrayList<>();
+    private final List<WeekReport> weekReportList = new ArrayList<>();
 
     public void updateLastLoginAccount(){
         this.lastLogin = KST_LOCAL_DATETIME_NOW();
