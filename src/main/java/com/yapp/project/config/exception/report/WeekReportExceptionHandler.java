@@ -22,8 +22,8 @@ public class WeekReportExceptionHandler {
         return new ResponseEntity<>(message,HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ReportStartDayBadRequestException.class)
-    public ResponseEntity<Message> handle(ReportStartDayBadRequestException e){
+    @ExceptionHandler(RoutineStartDayBadRequestException.class)
+    public ResponseEntity<Message> handle(RoutineStartDayBadRequestException e){
         final Message message = Message.of(e.getStatus() ,e.getMessage());
         return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
     }

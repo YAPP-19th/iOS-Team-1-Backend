@@ -80,4 +80,10 @@ public class Retrospect {
         this.isReport = true;
     }
 
+    /** Test */
+    public void updateTestData(Long id, LocalDate date) {
+        this.id = id;
+        this.date = date;
+    }
+
 }

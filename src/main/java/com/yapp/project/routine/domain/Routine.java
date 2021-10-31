@@ -78,4 +78,9 @@ public class Routine {
     public void deleteRoutine() {
         this.isDelete = true;
     }
+
+    /** Test */
+    public void updateCreateAt(LocalDateTime localDateTime) {
+        this.createdAt = localDateTime;
+    }
 }

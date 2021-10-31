@@ -3,7 +3,7 @@ package com.yapp.project.routine.service;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
-import com.yapp.project.config.exception.report.ReportStartDayBadRequestException;
+import com.yapp.project.config.exception.report.RoutineStartDayBadRequestException;
 import com.yapp.project.config.exception.routine.BadRequestRoutineException;
 import com.yapp.project.retrospect.domain.Result;
 import com.yapp.project.retrospect.domain.Retrospect;
@@ -40,7 +40,7 @@ public class RoutineService {
             daysRateList.add(RoutineDTO.ResponseRoutineDaysRate.builder().date(
                     start.plusDays(i)).build());
         }
-        CalculateDayRoutineAllCount(routineList, daysRateList);
+        calculateDayRoutineAllCount(routineList, daysRateList);
         statisticsDayRoutine(retrospectList, daysRateList);
         return RoutineDTO.ResponseDaysRoutineRateMessageDto.of(daysRateList);
     }
@@ -169,7 +169,7 @@ public class RoutineService {
         });
     }
 
-    private void CalculateDayRoutineAllCount(List<Routine> routineList, List<RoutineDTO.ResponseRoutineDaysRate> daysRateList) {
+    private void calculateDayRoutineAllCount(List<Routine> routineList, List<RoutineDTO.ResponseRoutineDaysRate> daysRateList) {
         routineList.forEach(routine -> {
             LocalDate routineCreate = routine.getCreatedAt().toLocalDate();
             routine.getDays().forEach( routineDay -> {
@@ -206,7 +206,7 @@ public class RoutineService {
     private void checkIsMonDay(LocalDate start) {
         Week isMon = Week.valueOf(start.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase());
         if(!isMon.equals(Week.MON)){
-            throw new ReportStartDayBadRequestException();
+            throw new RoutineStartDayBadRequestException();
         }
     }
 }
