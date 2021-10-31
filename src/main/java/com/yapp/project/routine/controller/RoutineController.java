@@ -59,4 +59,9 @@ public class RoutineController {
             @PathVariable Week day, @RequestBody RoutineDTO.RequestRoutineSequence sequence) {
         return routineService.updateRoutineSequence(day, sequence.getSequence(), AccountUtil.getAccount());
     }
+
+    @GetMapping("/days/rate")
+    public void getDaysRoutineRate() {
+        routineService.getRoutineDaysRate(AccountUtil.getAccount());
+    }
 }

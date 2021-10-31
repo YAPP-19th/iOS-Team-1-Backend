@@ -1,14 +1,43 @@
 package com.yapp.project.routine.domain;
 
 import com.yapp.project.aux.Message;
+import com.yapp.project.report.domain.MonthRoutineReport;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class RoutineDTO {
+
+    @Getter
+    public static class ResponseRoutineDaysRate {
+        private LocalDate date;
+        private Integer fullyDone;
+        private Integer partiallyDone;
+        private Integer totalDate;
+        private String rate;
+
+        @Builder
+        public ResponseRoutineDaysRate(LocalDate date) {
+            this.date = date;
+            this.fullyDone = 0;
+            this.partiallyDone = 0;
+            this.totalDate = 0;
+        }
+        public void updateFullyDone() {
+            this.fullyDone += 1;
+        }
+        public void updatePartiallyDone() {
+            this.partiallyDone += 1;
+        }
+        public void updateTotalDate() {
+            this.totalDate += 1;
+        }
+    }
 
     @Getter
     @Setter
