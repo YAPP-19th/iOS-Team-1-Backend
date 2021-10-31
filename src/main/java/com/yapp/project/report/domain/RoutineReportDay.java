@@ -1,4 +1,4 @@
-package com.yapp.project.weekReport.domain;
+package com.yapp.project.report.domain;
 
 import com.yapp.project.routine.domain.Week;
 import lombok.Builder;

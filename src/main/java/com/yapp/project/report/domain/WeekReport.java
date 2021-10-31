@@ -1,4 +1,4 @@
-package com.yapp.project.weekReport.domain;
+package com.yapp.project.report.domain;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.common.DateUtil;
@@ -35,9 +35,16 @@ public class WeekReport {
 
     private LocalDate lastDate;
 
+    private Boolean isReport;
+
+    private Integer monthReportYear;
+
+    private Integer monthReportMonth;
+
     @Builder
     public WeekReport() {
         this.lastDate = DateUtil.KST_LOCAL_DATE_NOW().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)).minusDays(1); // 가장 최근 월요일
+        this.isReport = false;
     }
 
     public void addBasicData(Account account, String rate, int fullyDoneCount, int partiallyDoneCount, int notDoneCount) {
@@ -50,5 +57,20 @@ public class WeekReport {
 
     public void addRoutineResult(RoutineResult routineResult) {
         this.routineResults.add(routineResult);
+    }
+
+    public void updateIsReport() {
+        this.isReport = true;
+    }
+
+    public void updateMonthReportYearAndMonth() {
+        this.monthReportYear = DateUtil.KST_LOCAL_DATE_NOW().getYear();
+        this.monthReportMonth = DateUtil.KST_LOCAL_DATE_NOW().getMonth().getValue() - 1;
+    }
+
+    /** Test용 */
+    public void addIdAndLastDate(Long id, String lastDate) {
+        this.id = id;
+        this.lastDate = LocalDate.parse(lastDate);
     }
 }

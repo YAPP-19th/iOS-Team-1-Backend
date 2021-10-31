@@ -16,6 +16,7 @@ public class AccountTemplate {
     }
 
     private static final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+  
     private static Long id = 100000L;
     public static final String PASSWORD = "Test1234!$";
     public static final String USERNAME = "스프링";
