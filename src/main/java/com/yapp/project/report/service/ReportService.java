@@ -31,7 +31,7 @@ public class ReportService {
     private final MonthRoutineReportRepository monthRoutineReportRepository;
 
     @Transactional(readOnly = true)
-    public ReportDTO.ResponseRetrospectMessage getMonthReportByYearAndMonth(Account account, Integer year, Integer month) {
+    public ReportDTO.ResponseMonthReportMessage getMonthReportByYearAndMonth(Account account, Integer year, Integer month) {
         List<MonthRoutineReport> monthReportList = monthRoutineReportRepository.findAllByAccountAndYearAndMonth(account, year, month);
         if(monthReportList.size() == 0) {
             throw new MonthReportNotFoundMonthException();
@@ -39,7 +39,7 @@ public class ReportService {
         List<WeekReport> weekReportList =
                 weekReportRepository.findAllByAccountAndMonthReportYearAndMonthReportMonthOrderByLastDate(account, year, month);
         List<String> weekRateList = weekReportList.stream().map(weekRate -> weekRate.getRate()).collect(Collectors.toList());
-        return ReportDTO.ResponseRetrospectMessage.of(monthReportList, weekRateList);
+        return ReportDTO.ResponseMonthReportMessage.of(monthReportList, weekRateList);
     }
 
     @Transactional

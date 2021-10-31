@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.yapp.project.aux.content.ReportContent.MONTH_REPORT_OK;
+
 public class ReportDTO {
 
     @Getter
@@ -49,19 +51,19 @@ public class ReportDTO {
     @Setter
     @AllArgsConstructor
     @Builder
-    public static class ResponseRetrospectMessage {
+    public static class ResponseMonthReportMessage {
         private Message message;
         private ResponseMonthReport data;
 
-        public static ResponseRetrospectMessage of(List<MonthRoutineReport> monthReportList, List<String> weekRateList) {
+        public static ResponseMonthReportMessage of(List<MonthRoutineReport> monthReportList, List<String> weekRateList) {
             List<ResponseMonthRoutineReport> routineReportList = monthReportList.stream().map(monthRoutineReport ->
                     ResponseMonthRoutineReport.builder().report(monthRoutineReport).build()
             ).collect(Collectors.toList());
             ResponseMonthReport responseMonthReport = ResponseMonthReport.builder().weekRateList(weekRateList)
                     .monthRoutineReportList(routineReportList).build();
 
-            return ResponseRetrospectMessage.builder().message(
-                    Message.builder().status(StatusEnum.MONTH_REPORT_OK).msg("월 리포트 발급 성공").build()
+            return ResponseMonthReportMessage.builder().message(
+                    Message.builder().status(StatusEnum.MONTH_REPORT_OK).msg(MONTH_REPORT_OK).build()
             ).data(responseMonthReport).build();
         }
     }

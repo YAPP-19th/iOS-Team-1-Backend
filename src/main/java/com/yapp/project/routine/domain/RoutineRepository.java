@@ -18,4 +18,6 @@ public interface RoutineRepository extends JpaRepository<Routine, Long> {
     List<Routine> findAllByAccountAndDaysDayAndRetrospectsDate(Account account, Week day, LocalDate parse);
 
     List<Routine> findAllByIsDeleteIsFalseAndAccount(Account account);
+
+    List<Routine> findAllByIsDeleteIsFalseAndAccountAndRetrospectsDateBetween(Account account, LocalDate start, LocalDate end);
 }

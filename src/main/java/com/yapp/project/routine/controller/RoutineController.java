@@ -1,20 +1,15 @@
 package com.yapp.project.routine.controller;
 
-import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.common.AccountUtil;
-import com.yapp.project.routine.domain.Routine;
 import com.yapp.project.routine.domain.RoutineDTO;
 import com.yapp.project.routine.domain.Week;
 import com.yapp.project.routine.service.RoutineService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
@@ -60,8 +55,8 @@ public class RoutineController {
         return routineService.updateRoutineSequence(day, sequence.getSequence(), AccountUtil.getAccount());
     }
 
-    @GetMapping("/days/rate")
-    public void getDaysRoutineRate() {
-        routineService.getRoutineDaysRate(AccountUtil.getAccount());
+    @GetMapping("/{start}/rate")
+    public RoutineDTO.ResponseDaysRoutineRateMessageDto getDaysRoutineRate(@PathVariable String start) {
+        return routineService.getRoutineDaysRate(AccountUtil.getAccount(), LocalDate.parse(start));
     }
 }

@@ -1,7 +1,9 @@
 package com.yapp.project.routine.domain;
 
 import com.yapp.project.aux.Message;
+import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.report.domain.MonthRoutineReport;
+import com.yapp.project.report.domain.dto.ReportDTO;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.models.auth.In;
 import lombok.*;
@@ -10,6 +12,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.yapp.project.aux.content.ReportContent.DAY_ROUTINE_RATE_OK;
 
 public class RoutineDTO {
 
@@ -36,6 +40,9 @@ public class RoutineDTO {
         }
         public void updateTotalDate() {
             this.totalDate += 1;
+        }
+        public void updateRate(String rate) {
+            this.rate = rate.equals("NaN%") ? "0%" : rate;
         }
     }
 
@@ -116,5 +123,23 @@ public class RoutineDTO {
     public static class ResponseRoutineListMessageDto {
         private Message message;
         private List<ResponseRoutineDto> data;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @Builder
+    public static class ResponseDaysRoutineRateMessageDto {
+        private Message message;
+        private List<ResponseRoutineDaysRate> data;
+        public static ResponseDaysRoutineRateMessageDto of(List<ResponseRoutineDaysRate> daysRateList) {
+            daysRateList.forEach(x -> {
+                String rate = String.format("%.0f", ((x.getFullyDone() + (x.getPartiallyDone() * 0.5)) / x.getTotalDate()) * 100) + '%';
+                x.updateRate(rate);
+            });
+            return ResponseDaysRoutineRateMessageDto.builder().message(
+                    Message.builder().status(StatusEnum.DAY_ROUTINE_RATE_OK).msg(DAY_ROUTINE_RATE_OK).build()
+            ).data(daysRateList).build();
+        }
     }
 }
