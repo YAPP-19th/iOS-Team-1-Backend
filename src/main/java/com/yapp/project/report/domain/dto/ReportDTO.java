@@ -54,8 +54,8 @@ public class ReportDTO {
         private ResponseMonthReport data;
 
         public static ResponseRetrospectMessage of(List<MonthRoutineReport> monthReportList, List<String> weekRateList) {
-            List<ResponseMonthRoutineReport> routineReportList = monthReportList.stream().map(x ->
-                    ResponseMonthRoutineReport.builder().report(x).build()
+            List<ResponseMonthRoutineReport> routineReportList = monthReportList.stream().map(monthRoutineReport ->
+                    ResponseMonthRoutineReport.builder().report(monthRoutineReport).build()
             ).collect(Collectors.toList());
             ResponseMonthReport responseMonthReport = ResponseMonthReport.builder().weekRateList(weekRateList)
                     .monthRoutineReportList(routineReportList).build();
