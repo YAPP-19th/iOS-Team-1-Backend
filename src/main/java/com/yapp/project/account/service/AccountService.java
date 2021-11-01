@@ -17,6 +17,12 @@ import com.yapp.project.config.exception.account.NotFoundUserInformationExceptio
 import com.yapp.project.config.exception.account.PasswordInvalidException;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.mission.domain.repository.MissionRepository;
+import com.yapp.project.report.domain.MonthRoutineReport;
+import com.yapp.project.report.domain.MonthRoutineReportRepository;
+import com.yapp.project.report.domain.WeekReport;
+import com.yapp.project.report.domain.WeekReportRepository;
+import com.yapp.project.routine.domain.Routine;
+import com.yapp.project.routine.domain.RoutineRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,6 +39,9 @@ public class AccountService {
     private final PasswordEncoder passwordEncoder;
     private final MissionRepository missionRepository;
     private final CaptureImageRepository captureImageRepository;
+    private final RoutineRepository routineRepository;
+    private final WeekReportRepository weekReportRepository;
+    private final MonthRoutineReportRepository monthRoutineReportRepository;
 
     @Transactional(readOnly = true)
     public AccountDto.UserResponse getUserInfo() {
@@ -58,12 +67,17 @@ public class AccountService {
     @Transactional
     public Message removeAccount(Account account) throws NoSuchAlgorithmException {
         List<Mission> list = missionRepository.findAllByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(account);
+        List<Routine> routineList = routineRepository.findAllByIsDeleteIsFalseAndAccount(account);
+        List<WeekReport> weekReportList = weekReportRepository.findAllByAccount(account);
+        List<MonthRoutineReport> monthRoutineReportList = monthRoutineReportRepository.findAllByAccount(account);
         deleteMyMission(list);
-        //루틴, 리포트 관련 isDelete 세팅 필요
+        deleteRoutine(routineList);
+        deleteWeekReport(weekReportList);
+        deleteMonthReport(monthRoutineReportList);
         account.remove();
         return Message.of(StatusEnum.ACCOUNT_OK, AccountContent.ACCOUNT_OK_MSG);
     }
-    
+
     private void deleteMyMission(List<Mission> list){
         for (Mission mission : list){
             List<Capture> basket = mission.getCaptures();
@@ -74,5 +88,20 @@ public class AccountService {
             }
             mission.remove();
         }
+    }
+
+    private void deleteMonthReport(List<MonthRoutineReport> monthRoutineReportList) {
+        monthRoutineReportList.forEach(x -> x.deleteReport());
+        monthRoutineReportRepository.saveAll(monthRoutineReportList);
+    }
+
+    private void deleteWeekReport(List<WeekReport> weekReportList) {
+        weekReportList.forEach(x -> x.deleteReport());
+        weekReportRepository.saveAll(weekReportList);
+    }
+
+    private void deleteRoutine(List<Routine> routineList) {
+        routineList.forEach(x -> x.deleteRoutine());
+        routineRepository.saveAll(routineList);
     }
 }

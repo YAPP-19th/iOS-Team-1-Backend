@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface MonthRoutineReportRepository extends JpaRepository<MonthRoutineReport, Long> {
     List<MonthRoutineReport> findAllByAccountAndYearAndMonth(Account account, Integer year, Integer month);
+
+    List<MonthRoutineReport> findAllByAccount(Account account);
 }
