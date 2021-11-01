@@ -173,28 +173,9 @@ public class RoutineService {
         routineList.forEach(routine -> {
             LocalDate routineCreate = routine.getCreatedAt().toLocalDate();
             routine.getDays().forEach( routineDay -> {
-                if(routineDay.getDay().equals(Week.MON)) {
-                    if(isBeforeWeekRoutine(daysRateList, routineCreate, 0))
-                        daysRateList.get(0).updateTotalDate();
-                } else if(routineDay.getDay().equals(Week.TUE)) {
-                    if(isBeforeWeekRoutine(daysRateList, routineCreate, 1))
-                        daysRateList.get(1).updateTotalDate();
-                } else if(routineDay.getDay().equals(Week.WED)) {
-                    if(isBeforeWeekRoutine(daysRateList, routineCreate, 2))
-                        daysRateList.get(2).updateTotalDate();
-                } else if(routineDay.getDay().equals(Week.THU)) {
-                    if(isBeforeWeekRoutine(daysRateList, routineCreate, 3))
-                        daysRateList.get(3).updateTotalDate();
-                } else if(routineDay.getDay().equals(Week.FRI)) {
-                    if(isBeforeWeekRoutine(daysRateList, routineCreate, 4))
-                        daysRateList.get(4).updateTotalDate();
-                } else if(routineDay.getDay().equals(Week.SAT)) {
-                    if(isBeforeWeekRoutine(daysRateList, routineCreate, 5))
-                        daysRateList.get(5).updateTotalDate();
-                } else if(routineDay.getDay().equals(Week.SUN)) {
-                    if(isBeforeWeekRoutine(daysRateList, routineCreate, 6))
-                        daysRateList.get(6).updateTotalDate();
-                }
+                int index = routineDay.getDay().getIndex();
+                if(isBeforeWeekRoutine(daysRateList, routineCreate, index))
+                    daysRateList.get(index).updateTotalDone();
             });
         });
     }

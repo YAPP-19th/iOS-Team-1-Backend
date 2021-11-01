@@ -55,6 +55,8 @@ public class RoutineController {
         return routineService.updateRoutineSequence(day, sequence.getSequence(), AccountUtil.getAccount());
     }
 
+    @ApiOperation(value = "주단위 일별 루틴 수행률 조회", notes = "주단위로 일별 루티 수행률 조회하기\n 요청 요일은 월요일이어야 합니다." +
+            " \n 월료일부터 금요일 까지 계산되어 제공됩니다.")
     @GetMapping("/{start}/rate")
     public RoutineDTO.ResponseDaysRoutineRateMessageDto getDaysRoutineRate(@PathVariable String start) {
         return routineService.getRoutineDaysRate(AccountUtil.getAccount(), LocalDate.parse(start));

@@ -19,10 +19,15 @@ public class RoutineDTO {
 
     @Getter
     public static class ResponseRoutineDaysRate {
+        @ApiModelProperty(value = "요일", example = "2021-10-18")
         private LocalDate date;
+        @ApiModelProperty(value = "성공", example = "1")
         private Integer fullyDone;
+        @ApiModelProperty(value = "부분성공", example = "0")
         private Integer partiallyDone;
-        private Integer totalDate;
+        @ApiModelProperty(value = "총", example = "2")
+        private Integer totalDone;
+        @ApiModelProperty(value = "수행률", example = "50%")
         private String rate;
 
         @Builder
@@ -30,7 +35,7 @@ public class RoutineDTO {
             this.date = date;
             this.fullyDone = 0;
             this.partiallyDone = 0;
-            this.totalDate = 0;
+            this.totalDone = 0;
         }
         public void updateFullyDone() {
             this.fullyDone += 1;
@@ -38,8 +43,8 @@ public class RoutineDTO {
         public void updatePartiallyDone() {
             this.partiallyDone += 1;
         }
-        public void updateTotalDate() {
-            this.totalDate += 1;
+        public void updateTotalDone() {
+            this.totalDone += 1;
         }
         public void updateRate(String rate) {
             this.rate = rate.equals("NaN%") ? "0%" : rate;
@@ -134,7 +139,7 @@ public class RoutineDTO {
         private List<ResponseRoutineDaysRate> data;
         public static ResponseDaysRoutineRateMessageDto of(List<ResponseRoutineDaysRate> daysRateList) {
             daysRateList.forEach(x -> {
-                String rate = String.format("%.0f", ((x.getFullyDone() + (x.getPartiallyDone() * 0.5)) / x.getTotalDate()) * 100) + '%';
+                String rate = String.format("%.3f", ((x.getFullyDone() + (x.getPartiallyDone() * 0.5)) / x.getTotalDone()));
                 x.updateRate(rate);
             });
             return ResponseDaysRoutineRateMessageDto.builder().message(
