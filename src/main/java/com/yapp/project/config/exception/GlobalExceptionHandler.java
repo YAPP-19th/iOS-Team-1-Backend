@@ -1,7 +1,8 @@
 package com.yapp.project.config.exception;
 
+import com.yapp.project.aux.AlertService;
 import com.yapp.project.aux.Message;
-import io.sentry.Sentry;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,11 +12,14 @@ import java.io.IOException;
 
 @RestControllerAdvice
 @Slf4j
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
+    private final AlertService alertService;
+
     @ExceptionHandler(IOException.class)
     public ResponseEntity<Message> handle(IOException e){
         final Message message = Message.of(e.getMessage());
-        Sentry.captureException(e);
+        alertService.sentryWithSlackMessage(e);
         return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
