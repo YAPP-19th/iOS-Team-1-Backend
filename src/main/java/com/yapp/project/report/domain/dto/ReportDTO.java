@@ -5,6 +5,7 @@ import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.report.domain.*;
 import com.yapp.project.retrospect.domain.Result;
 import com.yapp.project.routine.domain.Week;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,10 +23,15 @@ public class ReportDTO {
 
     @Getter
     public static class ResponseMonthRoutineReport {
+        @ApiModelProperty(value = "루틴이름", example = "물 1잔 꼭 챙겨마시기!")
         private String title;
+        @ApiModelProperty(value = "카테고리", example = "생활")
         private String category;
+        @ApiModelProperty(value = "완료 수행률", example = "50")
         private String fullyDoneRate;
+        @ApiModelProperty(value = "부분완료 수행률", example = "0%")
         private String partiallyDoneRate;
+        @ApiModelProperty(value = "미완료 수행률", example = "50%")
         private String notDoneRate;
 
         @Builder
@@ -42,10 +48,15 @@ public class ReportDTO {
 
     @Getter
     public static class ResponseWeekRoutineReport {
+        @ApiModelProperty(value = "수행률", example = "30%")
         private String rate;
+        @ApiModelProperty(value = "주 마지막 날(일)", example = "2021-10-24")
         private LocalDate lastDate;
+        @ApiModelProperty(value = "완료수", example = "5")
         private int fullyDoneCount;
+        @ApiModelProperty(value = "부분완료수", example = "2")
         private int partiallyDoneCount;
+        @ApiModelProperty(value = "실패수", example = "13")
         private int notDoneCount;
         private List<ResponseWeekRoutineList> responseWeekRoutine;
 
@@ -66,6 +77,7 @@ public class ReportDTO {
 
     @Getter
     public static class ResponseWeekRoutineList {
+        @ApiModelProperty(value = "루틴이름", example = "1챕터 꼭꼭! 읽기")
         private String title;
         private List<Week> routineDayList;
         private List<ResponseWeekRetrospectReport> retrospectDayList;
@@ -82,7 +94,9 @@ public class ReportDTO {
 
     @Getter
     public static class ResponseWeekRetrospectReport {
+        @ApiModelProperty(value = "수행 결과", example = "DONE")
         private Result result;
+        @ApiModelProperty(value = "요일", example = "THU")
         private String day;
 
         @Builder
@@ -94,6 +108,7 @@ public class ReportDTO {
 
     @Getter
     public static class ResponseMonthReport {
+        @ApiModelProperty(value = "주차별 수행률", example = "['30%', '40%', '67%', '48%']")
         List<String> weekRateList = new ArrayList<>();
         List<ResponseMonthRoutineReport> monthRoutineReportList = new ArrayList<>();
 
