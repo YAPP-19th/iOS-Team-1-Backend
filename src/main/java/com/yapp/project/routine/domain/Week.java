@@ -1,5 +1,27 @@
 package com.yapp.project.routine.domain;
 
 public enum Week {
-    MON, TUE, WED, THU, FRI, SAT, SUN
+    MON("MON", 0),
+    TUE("TUE", 1),
+    WED("WED", 2),
+    THU("THU", 3),
+    FRI("FRI", 4),
+    SAT("SAT", 5),
+    SUN("SUN", 6);
+
+    private String week;
+    private int index;
+
+    Week(String week, int index) {
+        this.week = week;
+        this.index = index;
+    }
+
+    public String getWeek() {
+        return week;
+    }
+
+    public int getIndex() {
+        return index;
+    }
 }
