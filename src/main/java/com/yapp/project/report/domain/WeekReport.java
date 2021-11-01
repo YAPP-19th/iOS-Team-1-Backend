@@ -19,7 +19,7 @@ public class WeekReport {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Account account;
 
     @OneToMany(mappedBy = "weekReport", cascade = CascadeType.ALL)

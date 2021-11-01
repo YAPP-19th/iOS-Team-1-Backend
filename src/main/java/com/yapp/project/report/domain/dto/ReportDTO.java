@@ -2,16 +2,21 @@ package com.yapp.project.report.domain.dto;
 
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
-import com.yapp.project.report.domain.MonthRoutineReport;
+import com.yapp.project.report.domain.*;
+import com.yapp.project.retrospect.domain.Result;
+import com.yapp.project.routine.domain.Week;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.yapp.project.aux.content.ReportContent.MONTH_REPORT_OK;
+import static com.yapp.project.aux.content.ReportContent.WEEK_REPORT_OK;
 
 public class ReportDTO {
 
@@ -32,6 +37,58 @@ public class ReportDTO {
             this.fullyDoneRate = String.format("%.0f", ((double)report.getFullyDoneCount() / allCount) * 100) + '%';
             this.partiallyDoneRate = String.format("%.0f", ((double)report.getPartiallyDoneCount() / allCount) * 100) + '%';
             this.notDoneRate = String.format("%.0f", ((double)report.getNotDoneCount() / allCount) * 100) + '%';
+        }
+    }
+
+    @Getter
+    public static class ResponseWeekRoutineReport {
+        private String rate;
+        private LocalDate lastDate;
+        private int fullyDoneCount;
+        private int partiallyDoneCount;
+        private int notDoneCount;
+        private List<ResponseWeekRoutineList> responseWeekRoutine;
+
+        @Builder
+        public ResponseWeekRoutineReport(WeekReport report) {
+            this.rate = report.getRate();
+            this.lastDate = report.getLastDate();
+            this.fullyDoneCount = report.getFullyDoneCount();
+            this.partiallyDoneCount = report.getPartiallyDoneCount();
+            this.notDoneCount = report.getNotDoneCount();
+            this.responseWeekRoutine =
+                    report.getRoutineResults().stream().map( routineResult ->
+                        ResponseWeekRoutineList.builder().routineResult(routineResult).build()
+                    ).collect(Collectors.toList());
+
+        }
+    }
+
+    @Getter
+    public static class ResponseWeekRoutineList {
+        private String title;
+        private List<Week> routineDayList;
+        private List<ResponseWeekRetrospectReport> retrospectDayList;
+
+        @Builder
+        public ResponseWeekRoutineList(RoutineResult routineResult) {
+            this.title = routineResult.getTitle();
+            this.routineDayList = routineResult.getRoutineReportDayList().stream().map( routineResultDay ->
+                    routineResultDay.getDay()).collect(Collectors.toList());
+            this.retrospectDayList = routineResult.getRetrospectReportDays().stream().map( retrospectReportDay ->
+                    ResponseWeekRetrospectReport.builder().retrospectReportDay(retrospectReportDay).build()).collect(Collectors.toList());
+        }
+    }
+
+    @Getter
+    public static class ResponseWeekRetrospectReport {
+        private Result result;
+        private String day;
+
+        @Builder
+        public ResponseWeekRetrospectReport(RetrospectReportDay retrospectReportDay) {
+            this.result = retrospectReportDay.getResult();
+            this.day = retrospectReportDay.getDay();
         }
     }
 
@@ -65,6 +122,21 @@ public class ReportDTO {
             return ResponseMonthReportMessage.builder().message(
                     Message.builder().status(StatusEnum.MONTH_REPORT_OK).msg(MONTH_REPORT_OK).build()
             ).data(responseMonthReport).build();
+        }
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @Builder
+    public static class ResponseWeekReportMessage {
+        private Message message;
+        private ResponseWeekRoutineReport data;
+        public static ResponseWeekReportMessage of(WeekReport weekReport) {
+
+            return ResponseWeekReportMessage.builder().message(
+                    Message.builder().status(StatusEnum.WEEK_REPORT_OK).msg(WEEK_REPORT_OK).build()
+            ).data(ReportDTO.ResponseWeekRoutineReport.builder().report(weekReport).build()).build();
         }
     }
 }

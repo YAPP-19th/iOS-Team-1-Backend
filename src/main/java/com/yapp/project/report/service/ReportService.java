@@ -30,6 +30,14 @@ public class ReportService {
     private final WeekReportRepository weekReportRepository;
     private final MonthRoutineReportRepository monthRoutineReportRepository;
 
+    @Transactional
+    public ReportDTO.ResponseWeekReportMessage getWeekReportLastDate(Account account, LocalDate date) {
+        WeekReport weekReport = weekReportRepository.findByAccountAndLastDate(account, date).orElseThrow(
+                // 예외처리
+        );
+        return ReportDTO.ResponseWeekReportMessage.of(weekReport);
+    }
+
     @Transactional(readOnly = true)
     public ReportDTO.ResponseMonthReportMessage getMonthReportByYearAndMonth(Account account, Integer year, Integer month) {
         List<MonthRoutineReport> monthReportList = monthRoutineReportRepository.findAllByAccountAndYearAndMonth(account, year, month);
