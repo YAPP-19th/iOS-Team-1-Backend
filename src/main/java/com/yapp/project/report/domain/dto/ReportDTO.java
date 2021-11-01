@@ -4,7 +4,6 @@ import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.report.domain.*;
 import com.yapp.project.retrospect.domain.Result;
-import com.yapp.project.routine.domain.Week;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
