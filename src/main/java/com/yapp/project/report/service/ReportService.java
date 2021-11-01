@@ -4,6 +4,7 @@ import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.config.exception.report.AlreadyWeekReportFoundException;
 import com.yapp.project.config.exception.report.MonthReportNotFoundMonthException;
+import com.yapp.project.config.exception.report.WeekReportNotFoundMonthException;
 import com.yapp.project.report.domain.dto.ReportDTO;
 import com.yapp.project.retrospect.domain.Result;
 import com.yapp.project.retrospect.domain.Retrospect;
@@ -32,6 +33,12 @@ public class ReportService {
     private final WeekReportRepository weekReportRepository;
     private final MonthRoutineReportRepository monthRoutineReportRepository;
     private final  LocalDate LAST_MON = DateUtil.KST_LOCAL_DATE_NOW().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)); // 가장 최근 월요일
+
+    @Transactional
+    public ReportDTO.ResponseWeekReportMessage getWeekReportLastDate(Account account, LocalDate date) {
+        WeekReport weekReport = weekReportRepository.findByAccountAndLastDate(account, date).orElseThrow(WeekReportNotFoundMonthException::new);
+        return ReportDTO.ResponseWeekReportMessage.of(weekReport);
+    }
 
     @Transactional(readOnly = true)
     public ReportDTO.ResponseMonthReportMessage getMonthReportByYearAndMonth(Account account, Integer year, Integer month) {
