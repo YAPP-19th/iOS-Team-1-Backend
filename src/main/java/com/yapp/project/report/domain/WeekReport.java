@@ -22,7 +22,7 @@ public class WeekReport {
     @ManyToOne
     private Account account;
 
-    @OneToMany(mappedBy = "weekReport", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "weekReport", cascade = CascadeType.ALL)
     private List<RoutineResult> routineResults = new ArrayList<>();
 
     private String rate;

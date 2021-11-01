@@ -1,14 +1,55 @@
 package com.yapp.project.routine.domain;
 
 import com.yapp.project.aux.Message;
+import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.report.domain.MonthRoutineReport;
+import com.yapp.project.report.domain.dto.ReportDTO;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.yapp.project.aux.content.ReportContent.DAY_ROUTINE_RATE_OK;
+
 public class RoutineDTO {
+
+    @Getter
+    public static class ResponseRoutineDaysRate {
+        @ApiModelProperty(value = "요일", example = "2021-10-18")
+        private LocalDate date;
+        @ApiModelProperty(value = "성공", example = "1")
+        private Integer fullyDone;
+        @ApiModelProperty(value = "부분성공", example = "0")
+        private Integer partiallyDone;
+        @ApiModelProperty(value = "총", example = "2")
+        private Integer totalDone;
+        @ApiModelProperty(value = "수행률", example = "50%")
+        private String rate;
+
+        @Builder
+        public ResponseRoutineDaysRate(LocalDate date) {
+            this.date = date;
+            this.fullyDone = 0;
+            this.partiallyDone = 0;
+            this.totalDone = 0;
+        }
+        public void updateFullyDone() {
+            this.fullyDone += 1;
+        }
+        public void updatePartiallyDone() {
+            this.partiallyDone += 1;
+        }
+        public void updateTotalDone() {
+            this.totalDone += 1;
+        }
+        public void updateRate(String rate) {
+            this.rate = rate.equals("NaN%") ? "0%" : rate;
+        }
+    }
 
     @Getter
     @Setter
@@ -87,5 +128,23 @@ public class RoutineDTO {
     public static class ResponseRoutineListMessageDto {
         private Message message;
         private List<ResponseRoutineDto> data;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @Builder
+    public static class ResponseDaysRoutineRateMessageDto {
+        private Message message;
+        private List<ResponseRoutineDaysRate> data;
+        public static ResponseDaysRoutineRateMessageDto of(List<ResponseRoutineDaysRate> daysRateList) {
+            daysRateList.forEach(x -> {
+                String rate = String.format("%.3f", ((x.getFullyDone() + (x.getPartiallyDone() * 0.5)) / x.getTotalDone()));
+                x.updateRate(rate);
+            });
+            return ResponseDaysRoutineRateMessageDto.builder().message(
+                    Message.builder().status(StatusEnum.DAY_ROUTINE_RATE_OK).msg(DAY_ROUTINE_RATE_OK).build()
+            ).data(daysRateList).build();
+        }
     }
 }

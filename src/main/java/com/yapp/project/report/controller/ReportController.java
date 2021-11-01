@@ -23,7 +23,8 @@ public class ReportController {
     }
 
     @GetMapping("/month/{year}/{month}")
-    public ReportDTO.ResponseRetrospectMessage getMonthReportByYearAndMonth(@PathVariable Integer year, @PathVariable Integer month) {
+    public ReportDTO.ResponseMonthReportMessage getMonthReportByYearAndMonth(
+            @PathVariable Integer year, @PathVariable Integer month) {
         return reportService.getMonthReportByYearAndMonth(AccountUtil.getAccount(), year, month);
     }
 

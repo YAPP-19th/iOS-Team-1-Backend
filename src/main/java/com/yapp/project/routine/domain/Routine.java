@@ -45,7 +45,7 @@ public class Routine {
     @Column(nullable = false)
     private String category;
 
-    @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "routine", fetch = FetchType.EAGER,cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoutineDay> days = new ArrayList<>();
 
     @OneToMany(mappedBy = "routine")
@@ -77,5 +77,10 @@ public class Routine {
 
     public void deleteRoutine() {
         this.isDelete = true;
+    }
+
+    /** Test */
+    public void updateCreateAt(LocalDateTime localDateTime) {
+        this.createdAt = localDateTime;
     }
 }

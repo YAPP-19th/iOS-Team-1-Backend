@@ -2,7 +2,11 @@ package com.yapp.project.routine;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.test.account.AccountTemplate;
+import com.yapp.project.aux.test.routine.RoutineTemplate;
+import com.yapp.project.config.exception.report.RoutineStartDayBadRequestException;
 import com.yapp.project.config.exception.routine.BadRequestRoutineException;
+import com.yapp.project.retrospect.domain.Retrospect;
+import com.yapp.project.retrospect.domain.RetrospectRepository;
 import com.yapp.project.routine.domain.Routine;
 import com.yapp.project.routine.domain.RoutineDTO;
 import com.yapp.project.routine.domain.RoutineRepository;
@@ -15,6 +19,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +37,8 @@ public class RoutineServiceTest {
 
     @Mock
     private RoutineRepository routineRepository;
+    @Mock
+    private RetrospectRepository retrospectRepository;
 
     @Test
     void testCreateRoutineSuccess() {
@@ -190,4 +198,61 @@ public class RoutineServiceTest {
         assertThat(responseRoutineDtos.get(0).getTitle()).isEqualTo(newRoutine2.getTitle());
     }
 
+    @Test
+    void testGetDaysRoutineRateSuccessBothBeforeWeekCaseAndAfterWeekCase() {
+        /* 월 수 금 루틴을 금요일에 생성한 Case + 루틴 생성 일주일 지난 일반 케이스*/
+        // given
+        Account account = AccountTemplate.makeTestAccount();
+        List<Routine> routineList = new ArrayList<>();
+        List<Retrospect> retrospectList = new ArrayList<>();
+        Routine coffeeRoutine = RoutineTemplate.makeCoffeeRoutine(account);
+        List<Retrospect> coffeeRetrospectList = RoutineTemplate.makeCoffeeRetrospectList(coffeeRoutine);
+        Routine readingRoutine = RoutineTemplate.makeReadingRoutine(account);
+        List<Retrospect> readingRetrospectList = RoutineTemplate.makeReadingRetrospectList(readingRoutine);
+        Routine runningRoutine = RoutineTemplate.makeRunningRoutine(account);
+        List<Retrospect> runningRetrospectList = RoutineTemplate.makeRunningRetrospectList(runningRoutine);
+        Routine waterRoutine = RoutineTemplate.makeWaterRoutine(account);
+        List<Retrospect> waterRetrospectList = RoutineTemplate.makeWaterRetrospectList(waterRoutine);
+        Routine vitaminRoutine = RoutineTemplate.makeVitaminRoutine(account);
+
+        routineList.add(coffeeRoutine);
+        routineList.add(readingRoutine);
+        routineList.add(runningRoutine);
+        routineList.add(waterRoutine);
+        routineList.add(vitaminRoutine);
+        retrospectList.addAll(coffeeRetrospectList);
+        retrospectList.addAll(readingRetrospectList);
+        retrospectList.addAll(runningRetrospectList);
+        retrospectList.addAll(waterRetrospectList);
+        LocalDate start = LocalDate.parse("2021-10-18");
+
+        // mocking
+        given(retrospectRepository.findAllByDateBetweenAndRoutineAccount(
+                start, start.plusDays(6), account)).willReturn(retrospectList);
+        given(routineRepository.findAllByIsDeleteIsFalseAndAccount(account)).willReturn(routineList);
+        // when
+        List<RoutineDTO.ResponseRoutineDaysRate> result = routineService.getRoutineDaysRate(account, start).getData();
+
+        // then
+        /* 월 ~ 일 */
+        assertThat(result.get(0).getRate()).isEqualTo("0.000");
+        assertThat(result.get(1).getRate()).isEqualTo("0.333");
+        assertThat(result.get(2).getRate()).isEqualTo("0.250");
+        assertThat(result.get(3).getRate()).isEqualTo("0.333");
+        assertThat(result.get(4).getRate()).isEqualTo("0.250");
+        assertThat(result.get(5).getRate()).isEqualTo("0.500");
+        assertThat(result.get(6).getRate()).isEqualTo("0.333");
+    }
+
+    @Test
+    void testGetDaysRoutineRateFailByNotMonDay() {
+        // given
+        Account account = AccountTemplate.makeTestAccount();
+        LocalDate start = LocalDate.parse("2021-10-19");
+
+        // when then
+        assertThrows(RoutineStartDayBadRequestException.class, () -> {
+            routineService.getRoutineDaysRate(account, start);
+        });
+    }
 }

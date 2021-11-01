@@ -3,15 +3,21 @@ package com.yapp.project.routine.service;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.config.exception.report.RoutineStartDayBadRequestException;
 import com.yapp.project.config.exception.routine.BadRequestRoutineException;
+import com.yapp.project.retrospect.domain.Result;
+import com.yapp.project.retrospect.domain.Retrospect;
+import com.yapp.project.retrospect.domain.RetrospectRepository;
 import com.yapp.project.routine.domain.*;
 import com.yapp.project.config.exception.routine.NotFoundRoutineException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.format.TextStyle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,6 +25,25 @@ import java.util.stream.Collectors;
 public class RoutineService {
 
     private final RoutineRepository routineRepository;
+    private final RetrospectRepository retrospectRepository;
+    private static final int WEEK_LENGTH = 7;
+
+    @Transactional(readOnly = true)
+    public RoutineDTO.ResponseDaysRoutineRateMessageDto getRoutineDaysRate(Account account, LocalDate start) {
+        checkIsMonDay(start);
+        List<Retrospect> retrospectList = retrospectRepository.findAllByDateBetweenAndRoutineAccount(
+                start, start.plusDays(6), account);
+        List<Routine> routineList = routineRepository.findAllByIsDeleteIsFalseAndAccount(account);
+        List<RoutineDTO.ResponseRoutineDaysRate> daysRateList = new ArrayList<>();
+        daysRateList.add(RoutineDTO.ResponseRoutineDaysRate.builder().date(start).build());
+        for (int i = 1; i < WEEK_LENGTH; i++) {
+            daysRateList.add(RoutineDTO.ResponseRoutineDaysRate.builder().date(
+                    start.plusDays(i)).build());
+        }
+        calculateDayRoutineAllCount(routineList, daysRateList);
+        statisticsDayRoutine(retrospectList, daysRateList);
+        return RoutineDTO.ResponseDaysRoutineRateMessageDto.of(daysRateList);
+    }
 
     public RoutineDTO.ResponseRoutineListMessageDto updateRoutineSequence(Week day, ArrayList<Long> sequence, Account account) {
         List<Routine> routineList = findAllIsExistById(sequence);
@@ -129,5 +154,40 @@ public class RoutineService {
                     y.updateSequence(routineListSequence.get(x.getId()));
             });
         });
+    }
+
+    private void statisticsDayRoutine(List<Retrospect> retrospectList, List<RoutineDTO.ResponseRoutineDaysRate> daysRateList) {
+        daysRateList.forEach(daysRate -> {
+            retrospectList.forEach(retrospect -> {
+                if(retrospect.getDate().isEqual(daysRate.getDate())) {
+                    if(retrospect.getResult() == Result.DONE)
+                        daysRate.updateFullyDone();
+                    else if(retrospect.getResult() == Result.TRY)
+                        daysRate.updatePartiallyDone();
+                }
+            });
+        });
+    }
+
+    private void calculateDayRoutineAllCount(List<Routine> routineList, List<RoutineDTO.ResponseRoutineDaysRate> daysRateList) {
+        routineList.forEach(routine -> {
+            LocalDate routineCreate = routine.getCreatedAt().toLocalDate();
+            routine.getDays().forEach( routineDay -> {
+                int index = routineDay.getDay().getIndex();
+                if(isBeforeWeekRoutine(daysRateList, routineCreate, index))
+                    daysRateList.get(index).updateTotalDone();
+            });
+        });
+    }
+
+    private boolean isBeforeWeekRoutine(List<RoutineDTO.ResponseRoutineDaysRate> daysRateList, LocalDate routineCreate, int index) {
+        return routineCreate.isBefore(daysRateList.get(index).getDate()) || routineCreate.isEqual(daysRateList.get(index).getDate());
+    }
+
+    private void checkIsMonDay(LocalDate start) {
+        Week isMon = Week.valueOf(start.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase());
+        if(!isMon.equals(Week.MON)){
+            throw new RoutineStartDayBadRequestException();
+        }
     }
 }

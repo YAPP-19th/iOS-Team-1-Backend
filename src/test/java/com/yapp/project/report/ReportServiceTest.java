@@ -47,7 +47,7 @@ public class ReportServiceTest {
 
         // when
         reportService.makeMonthReport(savedAccount);
-        ReportDTO.ResponseRetrospectMessage monthReportByYearAndMonth = reportService.getMonthReportByYearAndMonth(savedAccount, year, month);
+        ReportDTO.ResponseMonthReportMessage monthReportByYearAndMonth = reportService.getMonthReportByYearAndMonth(savedAccount, year, month);
         List<ReportDTO.ResponseMonthRoutineReport> data = monthReportByYearAndMonth.getData().getMonthRoutineReportList();
 
         // then

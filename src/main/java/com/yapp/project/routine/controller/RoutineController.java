@@ -1,20 +1,15 @@
 package com.yapp.project.routine.controller;
 
-import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.common.AccountUtil;
-import com.yapp.project.routine.domain.Routine;
 import com.yapp.project.routine.domain.RoutineDTO;
 import com.yapp.project.routine.domain.Week;
 import com.yapp.project.routine.service.RoutineService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
@@ -58,5 +53,12 @@ public class RoutineController {
     public RoutineDTO.ResponseRoutineListMessageDto updateRoutineSequence(
             @PathVariable Week day, @RequestBody RoutineDTO.RequestRoutineSequence sequence) {
         return routineService.updateRoutineSequence(day, sequence.getSequence(), AccountUtil.getAccount());
+    }
+
+    @ApiOperation(value = "주단위 일별 루틴 수행률 조회", notes = "주단위로 일별 루티 수행률 조회하기\n 요청 요일은 월요일이어야 합니다." +
+            " \n 월료일부터 금요일 까지 계산되어 제공됩니다.")
+    @GetMapping("/{start}/rate")
+    public RoutineDTO.ResponseDaysRoutineRateMessageDto getDaysRoutineRate(@PathVariable String start) {
+        return routineService.getRoutineDaysRate(AccountUtil.getAccount(), LocalDate.parse(start));
     }
 }
