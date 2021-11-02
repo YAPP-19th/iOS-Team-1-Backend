@@ -47,12 +47,12 @@ public class WeekReport {
         this.isReport = false;
     }
 
-    public void addBasicData(Account account, String rate, int fullyDoneCount, int partiallyDoneCount, int notDoneCount) {
+    public void addBasicData(Account account, String rate, int notDoneCount, int fullyDoneCount, int partiallyDoneCount) {
         this.account = account;
         this.rate = rate;
+        this.notDoneCount = notDoneCount;
         this.fullyDoneCount = fullyDoneCount;
         this.partiallyDoneCount = partiallyDoneCount;
-        this.notDoneCount = notDoneCount;
     }
 
     public void addRoutineResult(RoutineResult routineResult) {

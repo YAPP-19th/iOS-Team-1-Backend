@@ -67,15 +67,14 @@ public class ReportService {
     @Transactional
     public void makeWeekReport(Account account) {
         checkIsReported(account);
-        /** index 0 : Total, 1 : fullyDone, 2 : particularlyDone */
+        /** index 0 : notDone, 1 : fullyDone, 2 : particularlyDone */
         int result [] = new int[]{0, 0, 0};
         List<Routine> routineList = routineRepository.findAllByIsDeleteIsFalseAndAccount(account);
-        routineList.stream().forEach(routine -> result[0] += routine.getDays().size());
-        List<RoutineResult> routineResultList = getRoutineResults(result, routineList);
+        List<RoutineResult> routineResultList = getRoutineResults( routineList);
         List<Retrospect> retrospectList = retrospectRepository.findAllByIsReportIsFalseAndRoutineAccount(account);
         WeekReport weekReport = WeekReport.builder().build();
         statisticsRetrospect(result, routineResultList, retrospectList, weekReport);
-        makeNotDoneRetrospectList(routineList, routineResultList);
+        makeNotDoneRetrospectList(routineList, routineResultList, result);
         setRetrospectBasicData(account, result, weekReport);
         weekReportRepository.save(weekReport);
     }
@@ -138,7 +137,7 @@ public class ReportService {
         });
     }
 
-    private void makeNotDoneRetrospectList(List<Routine> routineList, List<RoutineResult> routineResultList) {
+    private void makeNotDoneRetrospectList(List<Routine> routineList, List<RoutineResult> routineResultList, int[] result) {
         routineResultList.forEach(routineResult -> {
             List<Week> retrospectDayList = routineResult.getRetrospectReportDays().stream().map( day -> Week.valueOf(day.getDay())).collect(Collectors.toList());
             LocalDate startDate = routineResult.getRoutineCreateAt().toLocalDate();
@@ -162,33 +161,19 @@ public class ReportService {
                 }
             }
             notDays.removeAll(retrospectDayList);
+            result[0] += notDays.size();
             notDays.forEach( newDay ->
                     RetrospectReportDay.builder().routineResult(routineResult).day(newDay.getWeek()).result(Result.NOT).build());
+            routineResult.addRoutineNotDoneCount(notDays.size());
         });
+
     }
 
-    private List<RoutineResult> getRoutineResults(int[] result, List<Routine> routineList) {
+    private List<RoutineResult> getRoutineResults(List<Routine> routineList) {
         List<RoutineResult> routineResultList = routineList.stream().map(routine -> {
-            LocalDate startDate = routine.getCreatedAt().toLocalDate();
-            List<String> days = routine.getDays().stream().map(routineDay -> routineDay.getDay().toString()).collect(Collectors.toList());
-            int passDaysCount = 0;
-            int allCount = days.size();
-            if (startDate.plusDays(7).isAfter(LAST_MON)) {
-                List<String> mockDays = new ArrayList<>();
-                mockDays.addAll(days);
-                List<String> newDays = new ArrayList<>();
-                int i = 0;
-                while (!startDate.plusDays(i).isEqual(LAST_MON)) {
-                    newDays.add(startDate.plusDays(i++).getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase());
-                }
-                mockDays.removeAll(newDays);
-                passDaysCount = mockDays.size();
-                allCount = days.size() - passDaysCount;
-                result[0] -= mockDays.size();
-            }
             RoutineResult routineResult = RoutineResult.builder()
                     .title(routine.getTitle()).category(routine.getCategory()).routineId(routine.getId())
-                    .routineCreateAt(routine.getCreatedAt()).passDaysCount(passDaysCount).allCount(allCount).build();
+                    .routineCreateAt(routine.getCreatedAt()).build();
             return routineResult;
         }).collect(Collectors.toList());
         return routineResultList;
@@ -197,10 +182,10 @@ public class ReportService {
     private void setRetrospectBasicData(Account account, int[] result, WeekReport weekReport) {
         weekReport.addBasicData(
                 account,
-                (int) (((result[1] + (result[2] * 0.5)) / result[0]) * 100) + "%",
+                (int) (((result[1] + (result[2] * 0.5)) / (result[0] + (result[1] + result[2]))) * 100) + "%",
+                result[0],
                 result[1],
-                result[2],
-                result[0] - (result[1] + result[2])
+                result[2]
         );
     }
 

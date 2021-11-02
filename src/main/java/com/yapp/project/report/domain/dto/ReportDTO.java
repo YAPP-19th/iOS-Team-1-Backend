@@ -26,7 +26,7 @@ public class ReportDTO {
         private String title;
         @ApiModelProperty(value = "카테고리", example = "생활")
         private String category;
-        @ApiModelProperty(value = "완료 수행률", example = "50")
+        @ApiModelProperty(value = "완료 수행률", example = "50%")
         private String fullyDoneRate;
         @ApiModelProperty(value = "부분완료 수행률", example = "0%")
         private String partiallyDoneRate;
