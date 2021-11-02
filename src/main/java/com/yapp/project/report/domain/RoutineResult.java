@@ -29,25 +29,19 @@ public class RoutineResult{
 
     private Long routineId;
 
-    private Long allCount;
-
     private Long fullyDoneCount;
 
     private Long partiallyDoneCount;
 
     private Long notDoneCount;
 
-    private Long passDaysCount;
-
     private LocalDateTime routineCreateAt;
 
     @Builder
-    public RoutineResult(String title, String category, Long routineId, int passDaysCount, int allCount, LocalDateTime routineCreateAt) {
+    public RoutineResult(String title, String category, Long routineId, LocalDateTime routineCreateAt) {
         this.title = title;
         this.category = category;
         this.routineId = routineId;
-        this.passDaysCount = Long.valueOf(passDaysCount);
-        this.allCount = Long.valueOf(allCount);
         this.routineCreateAt = routineCreateAt;
     }
 
@@ -63,6 +57,9 @@ public class RoutineResult{
     public void addRoutineResultDoneCount(int[] routineResultCount) {
         this.fullyDoneCount = Long.valueOf(routineResultCount[0]);
         this.partiallyDoneCount = Long.valueOf(routineResultCount[1]);
-        this.notDoneCount = allCount - (fullyDoneCount + partiallyDoneCount);
+    }
+
+    public void addRoutineNotDoneCount(int notDoneCount) {
+        this.notDoneCount = Long.valueOf(notDoneCount);
     }
 }
