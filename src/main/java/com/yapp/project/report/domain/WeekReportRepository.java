@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface WeekReportRepository extends JpaRepository<WeekReport, Long> {
     Boolean existsByAccountAndLastDate(Account account, LocalDate minusDays);
 
+    List<WeekReport> findAllByAccount(Account account);
+
     List<WeekReport> findAllByAccountAndIsReportIsFalseOrderByLastDate(Account account);
 
     Optional<WeekReport> findByAccountAndLastDate(Account account, LocalDate lastDate);

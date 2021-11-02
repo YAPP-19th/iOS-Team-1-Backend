@@ -68,6 +68,10 @@ public class WeekReport {
         this.monthReportMonth = DateUtil.KST_LOCAL_DATE_NOW().getMonth().getValue() - 1;
     }
 
+    public void deleteReport() {
+        this.account = null;
+    }
+
     /** Test용 */
     public void addIdAndLastDate(Long id, String lastDate) {
         this.id = id;
