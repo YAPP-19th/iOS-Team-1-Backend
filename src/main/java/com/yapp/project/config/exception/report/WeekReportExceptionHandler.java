@@ -1,6 +1,6 @@
 package com.yapp.project.config.exception.report;
 
-import com.yapp.project.aux.AlertService;
+import com.yapp.project.aux.alert.AlertService;
 import com.yapp.project.aux.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
