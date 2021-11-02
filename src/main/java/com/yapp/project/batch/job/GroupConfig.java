@@ -1,5 +1,6 @@
 package com.yapp.project.batch.job;
 
+import com.yapp.project.aux.AlertService;
 import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.mission.domain.repository.MissionRepository;
@@ -30,6 +31,7 @@ public class GroupConfig {
     private final StepBuilderFactory stepBuilderFactory;
     private final OrganizationRepository organizationRepository;
     private final MissionRepository missionRepository;
+    private final AlertService alertService;
 
     @Bean(name="groupJob")
     public Job achievementRateJob(){
@@ -55,6 +57,7 @@ public class GroupConfig {
         log.info("미션 성공/실패 횟수를 읽고 있습니다.");
         List<Mission> missions = missionRepository.findAllByIsDeleteIsFalse();
         log.info("총 미션 갯수는 "+missions.size()+"개 입니다.");
+        alertService.slackSendMessage("총 미션 갯수는 "+missions.size()+"개 입니다.");
         return new ListItemReader<>(missions);
     }
 
