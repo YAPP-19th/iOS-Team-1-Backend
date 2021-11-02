@@ -61,4 +61,8 @@ public class MonthRoutineReport {
         this.title = title;
         this.category = category;
     }
+
+    public void deleteReport() {
+        this.account = null;
+    }
 }

@@ -76,6 +76,7 @@ public class Routine {
     }
 
     public void deleteRoutine() {
+        this.account = null;
         this.isDelete = true;
     }
 
