@@ -48,7 +48,6 @@ class MissionRepositoryTest {
         Organization response = list.get(0).getOrganization();
         assertThat(dbOrganization.getId()).isEqualTo(response.getId());
         assertThat(dbOrganization.getCategory()).isEqualTo(response.getCategory());
-        assertThat(dbOrganization.getRecommend()).isEqualTo(response.getRecommend());
     }
 
     @Test
@@ -67,8 +66,6 @@ class MissionRepositoryTest {
         //then
         assertThat(response.getOrganization().getTitle()).isEqualTo(dbOrganization.getTitle());
         assertThat(response.getOrganization().getCategory()).isEqualTo(dbOrganization.getCategory());
-        assertThat(response.getOrganization().getRecommend()).isEqualTo(dbOrganization.getRecommend());
-        assertThat(response.getOrganization().getSummary()).isEqualTo(dbOrganization.getSummary());
         assertThat(response.getSuccessCount()).isZero();
         assertThat(response.getFailureCount()).isZero();
         assertThat(response.getIsDelete()).isFalse();

@@ -50,11 +50,11 @@ class GroupServiceTest {
     @Test
     void test_디테일_페이지(){
         Organization organization = makeTestOrganization();
-        given(organizationRepository.findById(1L)).willReturn(Optional.ofNullable(organization));
+        given(organizationRepository.findById(1L)).willReturn(Optional.of(organization));
         OrgDto.OrgDetailResponse response = groupService.detailGroup(1L);
-        assert organization != null;
         assertThat(response.getTitle()).isEqualTo(organization.getTitle());
-        assertThat(response.getSummary()).isEqualTo(organization.getSummary());
+        assertThat(response.getBeginTime()).isEqualTo(organization.getBeginTime());
+        assertThat(response.getEndTime()).isEqualTo(organization.getEndTime());
     }
 
     @Test

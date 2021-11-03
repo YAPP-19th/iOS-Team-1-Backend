@@ -145,6 +145,8 @@ class MissionServiceTest {
         //then
         assertThat(responseMessage.getMessage().getStatus()).isEqualTo(StatusEnum.MISSION_OK);
         assertThat(responseMessage.getData().getPeriod()).isEqualTo(7);
+        assertThat(responseMessage.getData().getBeginTime()).isEqualTo(OrganizationTemplate.BEGIN_TIME);
+        assertThat(responseMessage.getData().getEndTime()).isEqualTo(OrganizationTemplate.END_TIME);
     }
 
     @Test

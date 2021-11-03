@@ -140,8 +140,9 @@ public class Mission {
                 .weeks(weeks.stream().map(Cron::getWeek).collect(Collectors.toList()))
                 .period(this.getPeriod())
                 .endDate(finishDate)
+                .beginTime(this.organization.getBeginTime())
+                .endTime(this.organization.getEndTime())
                 .shoot(this.organization.getShoot())
-                .promise(this.organization.getPromise())
                 .nowPeople(this.organization.getCount())
                 .build();
     }

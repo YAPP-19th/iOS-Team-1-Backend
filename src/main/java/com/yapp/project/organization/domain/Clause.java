@@ -5,17 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class Clause {
-    private String recommend;
-
     private String shoot;
-
-    private String promise;
-
-    private String summary;
-
+    private LocalTime beginTime;
+    private LocalTime endTime;
 }

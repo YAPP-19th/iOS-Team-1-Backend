@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public class MissionDto {
@@ -45,6 +46,7 @@ public class MissionDto {
     @Getter
     @AllArgsConstructor
     @Builder
+    @ToString
     public static class MissionDetailResponse{
         @ApiModelProperty(value = "그룹_카테고리",example = "미라클모닝")
         private String category;
@@ -64,8 +66,10 @@ public class MissionDto {
         private LocalDate endDate;
         @ApiModelProperty(value = "찍어주세요",example = "명상을 할 조용한 장소")
         private String shoot;
-        @ApiModelProperty(value = "지켜주세요",example = "오전 5시 ~ 8시 사이 사진 업로드")
-        private String promise;
+        @ApiModelProperty(value = "시작시간",example = "5")
+        private LocalTime beginTime;
+        @ApiModelProperty(value = "끝나는시간",example = "8")
+        private LocalTime endTime;
         @ApiModelProperty(value = "현재_미션_클리어한_수",example = "7")
         private Integer nowPeople;
     }
@@ -73,6 +77,7 @@ public class MissionDto {
     @Getter
     @AllArgsConstructor
     @Builder
+    @ToString
     public static class MissionDetailResponseMessage{
         private Message message;
         private MissionDetailResponse data;

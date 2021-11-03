@@ -8,6 +8,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,11 +25,11 @@ public class Organization {
         this.title = title;
         this.rate = rate;
         this.category = category;
-        this.recommend = clause.getRecommend();
         this.shoot = clause.getShoot();
-        this.promise = clause.getPromise();
-        this.summary = clause.getSummary();
+        this.beginTime = clause.getBeginTime();
+        this.endTime = clause.getEndTime();
         this.updatedAt = DateUtil.KST_LOCAL_DATE_NOW();
+
     }
 
     @PrePersist
@@ -59,13 +60,7 @@ public class Organization {
 
     private String category;
 
-    private String recommend;
-
     private String shoot;
-
-    private String promise;
-
-    private String summary;
 
     private Integer count;
 
@@ -75,9 +70,9 @@ public class Organization {
 
     private LocalDate updatedAt;
 
-    public void setCaptures(List<Capture> captures) {
-        this.captures = captures;
-    }
+    private LocalTime beginTime;
+
+    private LocalTime endTime;
 
     public OrgDto.OrgResponse toResponseDto(){
         return OrgDto.OrgResponse.builder().id(id)
@@ -88,8 +83,7 @@ public class Organization {
     public OrgDto.OrgDetailResponse toDetailResponseDto(){
         return OrgDto.OrgDetailResponse.builder().id(id)
                 .shoot(shoot).participant(missions.size()).rate(rate).title(title)
-                .recommend(recommend).promise(promise).category(category)
-                .summary(summary).build();
+                .category(category).beginTime(beginTime).endTime(endTime).build();
     }
 
     public void updateCurrentCount(){
