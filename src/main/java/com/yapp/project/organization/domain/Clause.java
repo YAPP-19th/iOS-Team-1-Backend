@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Clause {
     private String shoot;
-    private Integer startTime;
-    private Integer finishTime;
+    private Integer beginTime;
+    private Integer endTime;
 }

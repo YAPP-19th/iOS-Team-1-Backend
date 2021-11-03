@@ -52,8 +52,8 @@ class GroupServiceTest {
         given(organizationRepository.findById(1L)).willReturn(Optional.of(organization));
         OrgDto.OrgDetailResponse response = groupService.detailGroup(1L);
         assertThat(response.getTitle()).isEqualTo(organization.getTitle());
-        assertThat(response.getStartTime()).isEqualTo(organization.getStartTime());
-        assertThat(response.getFinishTime()).isEqualTo(organization.getFinishTime());
+        assertThat(response.getStartTime()).isEqualTo(organization.getBeginTime());
+        assertThat(response.getFinishTime()).isEqualTo(organization.getEndTime());
     }
 
     @Test

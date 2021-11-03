@@ -14,7 +14,7 @@ public class OrganizationTemplate {
 
     private static final String SHOOT = "명상을 할 조용한 장소";
 
-    private static final Clause CLAUSE = Clause.builder().startTime(START_TIME).finishTime(FINISH_TIME).shoot(SHOOT).build();
+    private static final Clause CLAUSE = Clause.builder().beginTime(START_TIME).endTime(FINISH_TIME).shoot(SHOOT).build();
 
     public static Organization makeTestOrganization(){
         return makeTestOrganization(TITLE,CATEGORY);

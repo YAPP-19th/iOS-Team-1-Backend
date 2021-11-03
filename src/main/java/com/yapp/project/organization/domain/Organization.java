@@ -23,8 +23,8 @@ public class Organization {
         this.rate = rate;
         this.category = category;
         this.shoot = clause.getShoot();
-        this.startTime = clause.getStartTime();
-        this.finishTime = clause.getFinishTime();
+        this.beginTime = clause.getBeginTime();
+        this.endTime = clause.getEndTime();
     }
     @PrePersist
     public void prePersist(){
@@ -55,9 +55,9 @@ public class Organization {
 
     private Integer count;
 
-    private Integer startTime;
+    private Integer beginTime;
 
-    private Integer finishTime;
+    private Integer endTime;
 
     public OrgDto.OrgResponse toResponseDto(){
         return OrgDto.OrgResponse.builder().id(id)
@@ -68,7 +68,7 @@ public class Organization {
     public OrgDto.OrgDetailResponse toDetailResponseDto(){
         return OrgDto.OrgDetailResponse.builder().id(id)
                 .shoot(shoot).participant(missions.size()).rate(rate).title(title)
-                .category(category).startTime(startTime).finishTime(finishTime)
+                .category(category).startTime(beginTime).finishTime(endTime)
                 .build();
     }
 
