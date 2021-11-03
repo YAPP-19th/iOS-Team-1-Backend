@@ -15,7 +15,7 @@ public class OrganizationTemplate {
     public static final LocalTime END_TIME = LocalTime.of(8,0);
 
     private static final String SHOOT = "명상을 할 조용한 장소";
-    
+
     private static final Clause CLAUSE = Clause.builder().beginTime(BEGIN_TIME).endTime(END_TIME).shoot(SHOOT).build();
 
     public static Organization makeTestOrganization(){
