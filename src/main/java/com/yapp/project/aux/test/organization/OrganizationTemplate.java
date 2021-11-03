@@ -11,8 +11,8 @@ public class OrganizationTemplate {
     private static Long id = 1L;
     public static final String TITLE = "명상";
     public static final String CATEGORY = "미라클모닝";
-    public static final LocalTime BEGIN_TIME = LocalTime.of(5,0);
-    public static final LocalTime END_TIME = LocalTime.of(8,0);
+    public static final LocalTime BEGIN_TIME = LocalTime.of(0,0);
+    public static final LocalTime END_TIME = LocalTime.of(23,59, 59);
 
     private static final String SHOOT = "명상을 할 조용한 장소";
 
