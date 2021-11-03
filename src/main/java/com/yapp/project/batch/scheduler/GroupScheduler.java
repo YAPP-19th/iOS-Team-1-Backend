@@ -1,6 +1,7 @@
 package com.yapp.project.batch.scheduler;
 
-import com.yapp.project.aux.AlertService;
+import com.yapp.project.aux.alert.AlertService;
+import com.yapp.project.aux.alert.SlackChannel;
 import com.yapp.project.aux.common.DateUtil;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.batch.core.Job;
@@ -22,13 +23,13 @@ public class GroupScheduler {
         this.alertService = alertService;
     }
 
-    @Scheduled(cron = "* 30 15 * * *")
+    @Scheduled(cron = "0 30 15 * * *")
     public void groupBatchExecuteJob() throws JobExecutionException{
-        alertService.slackSendMessage(":arrow_forward:배치작업 시작합니다.");
+        alertService.slackSendMessage(SlackChannel.BATCH,":arrow_forward:배치작업 시작합니다.");
         jobLauncher.run(job, new JobParametersBuilder()
                             .addString("groupUpdateDate", DateUtil.KST_LOCAL_DATETIME_NOW().toString())
                             .toJobParameters());
-        alertService.slackSendMessage(":black_square_for_stop:배치작업 끝났습니다.");
+        alertService.slackSendMessage(SlackChannel.BATCH,":black_square_for_stop:배치작업 끝났습니다.");
     }
 
 }
