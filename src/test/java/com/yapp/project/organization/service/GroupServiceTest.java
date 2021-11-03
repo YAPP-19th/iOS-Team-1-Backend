@@ -42,7 +42,6 @@ class GroupServiceTest {
         ArrayList<MissionOrganization> emptyList = new ArrayList<>();
         given(missionRepository.findMissionByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(account)).willReturn(emptyList);
         given(organizationRepository.findAll()).willReturn(organizations);
-
         List<OrgDto.OrgResponse> res = groupService.findAll(account);
         assertThat(res.get(0).getTitle()).isEqualTo(organization.getTitle());
     }
@@ -50,11 +49,11 @@ class GroupServiceTest {
     @Test
     void test_디테일_페이지(){
         Organization organization = makeTestOrganization();
-        given(organizationRepository.findById(1L)).willReturn(Optional.ofNullable(organization));
+        given(organizationRepository.findById(1L)).willReturn(Optional.of(organization));
         OrgDto.OrgDetailResponse response = groupService.detailGroup(1L);
-        assert organization != null;
         assertThat(response.getTitle()).isEqualTo(organization.getTitle());
-        assertThat(response.getSummary()).isEqualTo(organization.getSummary());
+        assertThat(response.getStartTime()).isEqualTo(organization.getStartTime());
+        assertThat(response.getFinishTime()).isEqualTo(organization.getFinishTime());
     }
 
     @Test

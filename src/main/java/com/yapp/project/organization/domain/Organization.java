@@ -22,17 +22,14 @@ public class Organization {
         this.title = title;
         this.rate = rate;
         this.category = category;
-        this.recommend = clause.getRecommend();
         this.shoot = clause.getShoot();
-        this.promise = clause.getPromise();
-        this.summary = clause.getSummary();
+        this.startTime = clause.getStartTime();
+        this.finishTime = clause.getFinishTime();
     }
-
     @PrePersist
     public void prePersist(){
         this.count = this.count == null ? 0 : this.count;
     }
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +41,7 @@ public class Organization {
 
     @OneToMany(mappedBy = "organization")
     @ToString.Exclude
-    private List<Capture> captures = new ArrayList<>();
+    private final List<Capture> captures = new ArrayList<>();
 
     private String title;
 
@@ -54,19 +51,13 @@ public class Organization {
 
     private String category;
 
-    private String recommend;
-
     private String shoot;
-
-    private String promise;
-
-    private String summary;
 
     private Integer count;
 
-    public void setCaptures(List<Capture> captures) {
-        this.captures = captures;
-    }
+    private Integer startTime;
+
+    private Integer finishTime;
 
     public OrgDto.OrgResponse toResponseDto(){
         return OrgDto.OrgResponse.builder().id(id)
@@ -77,8 +68,8 @@ public class Organization {
     public OrgDto.OrgDetailResponse toDetailResponseDto(){
         return OrgDto.OrgDetailResponse.builder().id(id)
                 .shoot(shoot).participant(missions.size()).rate(rate).title(title)
-                .recommend(recommend).promise(promise).category(category)
-                .summary(summary).build();
+                .category(category).startTime(startTime).finishTime(finishTime)
+                .build();
     }
 
     public void updateCurrentCount(){

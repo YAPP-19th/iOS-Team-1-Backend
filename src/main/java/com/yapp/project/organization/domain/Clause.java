@@ -10,12 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Clause {
-    private String recommend;
-
     private String shoot;
-
-    private String promise;
-
-    private String summary;
-
+    private Integer startTime;
+    private Integer finishTime;
 }

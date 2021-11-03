@@ -96,7 +96,6 @@ public class Mission {
                 .period(this.getPeriod())
                 .endDate(finishDate)
                 .shoot(this.organization.getShoot())
-                .promise(this.organization.getPromise())
                 .nowPeople(this.organization.getCount())
                 .build();
     }

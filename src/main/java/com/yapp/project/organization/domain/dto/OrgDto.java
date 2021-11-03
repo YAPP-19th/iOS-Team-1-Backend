@@ -71,19 +71,19 @@ public class OrgDto {
         private String title;
         @ApiModelProperty(value = "달성률",example = "87")
         private Integer rate;
-        @ApiModelProperty(value = "이렇게해보세",example = "명상을 처음 접해본다면, 호흡부터 시작해보세요.  \n" +
-                "기도를 통해 들어가 발끝까지 뻗어나가는 호흡을 조용히 느껴보며 머리의 생각을 비워보세요.  \n" +
-                "집중이 힘들다면 조용한 음악이나 자연의 소리를 틀어보는 것도 나쁘지 않아요. \n" +
-                "소리에 귀를 기울이며 명상에 몰입해보세요.")
-        private String recommend;
+
         @ApiModelProperty(value = "찍어주세요",example = "명상을 할 조용한 장소")
         private String shoot;
-        @ApiModelProperty(value = "지켜주세요",example = "오전 5시 ~ 8시 사이 사진 업로드")
-        private String promise;
+
         @ApiModelProperty(value = "카테고리",example = "미라클모닝")
         private String category;
-        @ApiModelProperty(value = "요약",example = "오늘도 나만의 중심을 단단하게 다져보세요")
-        private String summary;
+
+        @ApiModelProperty(value = "시작시간", example = "5")
+        private Integer startTime;
+
+        @ApiModelProperty(value = "끝나는 시간", example = "8")
+        private Integer finishTime;
+
         @ApiModelProperty(value = "참여자",example = "25")
         private Integer participant;
     }
