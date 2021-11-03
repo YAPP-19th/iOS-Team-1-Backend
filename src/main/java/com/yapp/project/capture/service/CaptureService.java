@@ -1,9 +1,11 @@
 package com.yapp.project.capture.service;
 
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.capture.domain.CaptureImage;
 import com.yapp.project.capture.domain.repository.CaptureImageRepository;
 import com.yapp.project.config.exception.capture.AlreadyExistsCaptureException;
+import com.yapp.project.config.exception.capture.UploadTimeException;
 import com.yapp.project.config.exception.mission.MissionNotFoundException;
 import com.yapp.project.capture.domain.Achievement;
 import com.yapp.project.capture.domain.Capture;
@@ -44,6 +46,7 @@ public class CaptureService {
             throw new AlreadyExistsCaptureException();
         }
         Mission mission = missionRepository.findById(missionId).orElseThrow(MissionNotFoundException::new);
+        validateMissionCaptureTime(mission);
         mission.updateSuccessCount();
         Capture capture = saveCapture(mission, imagePath);
         captureRepository.save(capture);
@@ -136,6 +139,16 @@ public class CaptureService {
                     .map(Capture::toCaptureResponse).collect(Collectors.toList());
         }else{
             return Collections.emptyList();
+        }
+    }
+
+
+    private void validateMissionCaptureTime(Mission mission){
+        LocalTime beginTime = mission.getOrganization().getBeginTime();
+        LocalTime endTime = mission.getOrganization().getEndTime();
+        LocalTime now = DateUtil.KST_LOCAL_DATETIME_NOW().toLocalTime();
+        if (now.isAfter(endTime) || now.isBefore(beginTime)){
+            throw new UploadTimeException();
         }
     }
 
