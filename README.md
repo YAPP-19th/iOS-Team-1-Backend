@@ -10,6 +10,7 @@ Yapp 19기 iOS 1팀 개발 프로젝트입니다.
 - DataBase: PostgreSQL
 - CI/ CD: Docker, Jenkins
 - API Documentation: Swagger
+- Error Tracking: Sentry
 
 </br>
 
