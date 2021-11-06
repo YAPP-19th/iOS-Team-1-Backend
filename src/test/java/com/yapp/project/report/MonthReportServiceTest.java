@@ -4,11 +4,11 @@ import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.repository.AccountRepository;
 import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.aux.test.account.AccountTemplate;
-import com.yapp.project.aux.test.report.ReportTemplate;
 import com.yapp.project.report.domain.WeekReport;
 import com.yapp.project.report.domain.WeekReportRepository;
 import com.yapp.project.report.domain.dto.ReportDTO;
 import com.yapp.project.report.service.ReportService;
+import com.yapp.project.report.template.MonthReportTemplate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +17,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-public class ReportServiceTest {
+public class MonthReportServiceTest {
 
     @Autowired
     private WeekReportRepository weekReportRepository;
@@ -34,10 +34,10 @@ public class ReportServiceTest {
         //given
         Account account = AccountTemplate.makeTestAccount();
         Account savedAccount = accountRepository.save(account);
-        WeekReport week1Report = ReportTemplate.makeWeek1(savedAccount);
-        WeekReport week2Report = ReportTemplate.makeWeek2(savedAccount);
-        WeekReport week3Report = ReportTemplate.makeWeek3(savedAccount);
-        WeekReport week4Report = ReportTemplate.makeWeek4(savedAccount);
+        WeekReport week1Report = MonthReportTemplate.makeWeek1(savedAccount);
+        WeekReport week2Report = MonthReportTemplate.makeWeek2(savedAccount);
+        WeekReport week3Report = MonthReportTemplate.makeWeek3(savedAccount);
+        WeekReport week4Report = MonthReportTemplate.makeWeek4(savedAccount);
         weekReportRepository.save(week1Report);
         weekReportRepository.save(week2Report);
         weekReportRepository.save(week3Report);

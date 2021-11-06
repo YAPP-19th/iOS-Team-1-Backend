@@ -32,7 +32,7 @@ public class ReportService {
     private final RoutineRepository routineRepository;
     private final WeekReportRepository weekReportRepository;
     private final MonthRoutineReportRepository monthRoutineReportRepository;
-    private final  LocalDate LAST_MON = DateUtil.KST_LOCAL_DATE_NOW().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)); // 가장 최근 월요일
+//    private final LocalDate LAST_MON = DateUtil.KST_LOCAL_DATE_NOW().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)); // 가장 최근 월요일
 
     @Transactional
     public ReportDTO.ResponseWeekReportMessage getWeekReportLastDate(Account account, LocalDate date) {
@@ -65,7 +65,7 @@ public class ReportService {
     }
 
     @Transactional
-    public void makeWeekReport(Account account) {
+    public WeekReport makeWeekReport(Account account) {
         checkIsReported(account);
         /** index 0 : notDone, 1 : fullyDone, 2 : particularlyDone */
         int result [] = new int[]{0, 0, 0};
@@ -77,6 +77,7 @@ public class ReportService {
         makeNotDoneRetrospectList(routineList, routineResultList, result);
         setRetrospectBasicData(account, result, weekReport);
         weekReportRepository.save(weekReport);
+        return weekReport; // Test 위한 로직 처리 결과 응답.
     }
 
     private void statisticsRoutineDuringMonth(List<RoutineResult> routineResultList, List<MonthRoutineReport> monthRoutineReportList) {
@@ -108,6 +109,7 @@ public class ReportService {
     }
 
     private void checkIsReported(Account account) {
+        LocalDate LAST_MON = DateUtil.KST_LOCAL_DATE_NOW().with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
         Boolean isReported = weekReportRepository.existsByAccountAndLastDate(account, LAST_MON.minusDays(1));
         if(isReported){
             throw new AlreadyWeekReportFoundException();
@@ -115,6 +117,7 @@ public class ReportService {
     }
 
     private void statisticsRetrospect(int[] result, List<RoutineResult> routineResultList, List<Retrospect> retrospectList, WeekReport weekReport) {
+        LocalDate LAST_MON = DateUtil.KST_LOCAL_DATE_NOW().with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
         routineResultList.forEach(routineResult -> {
             int tempResult[] = new int[] {0, 0}; /** index 0 : fullyDone, 1 : particularlyDone */
             retrospectList.forEach(retrospect -> {
@@ -138,6 +141,7 @@ public class ReportService {
     }
 
     private void makeNotDoneRetrospectList(List<Routine> routineList, List<RoutineResult> routineResultList, int[] result) {
+        LocalDate LAST_MON = DateUtil.KST_LOCAL_DATE_NOW().with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
         routineResultList.forEach(routineResult -> {
             List<Week> retrospectDayList = routineResult.getRetrospectReportDays().stream().map( day -> Week.valueOf(day.getDay())).collect(Collectors.toList());
             LocalDate startDate = routineResult.getRoutineCreateAt().toLocalDate();

@@ -2,7 +2,6 @@ package com.yapp.project.routine;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.test.account.AccountTemplate;
-import com.yapp.project.aux.test.routine.RoutineTemplate;
 import com.yapp.project.config.exception.report.RoutineStartDayBadRequestException;
 import com.yapp.project.config.exception.routine.BadRequestRoutineException;
 import com.yapp.project.retrospect.domain.Retrospect;
