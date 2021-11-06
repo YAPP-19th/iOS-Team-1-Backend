@@ -4,6 +4,7 @@ import com.yapp.project.account.domain.dto.AccountDto.*;
 import com.yapp.project.account.domain.dto.SocialDto.*;
 import com.yapp.project.account.domain.dto.TokenDto;
 import com.yapp.project.account.domain.dto.TokenRequestDto;
+import com.yapp.project.account.domain.oauth.kakao.KakaoResponse;
 import com.yapp.project.account.domain.repository.AccountRepository;
 import com.yapp.project.account.util.PasswordUtil;
 import com.yapp.project.aux.Message;
@@ -12,6 +13,7 @@ import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.aux.common.Utils;
 import com.yapp.project.aux.content.AccountContent;
+import com.yapp.project.aux.request.ApiService;
 import com.yapp.project.config.exception.account.*;
 import com.yapp.project.config.jwt.TokenInfo;
 import com.yapp.project.config.jwt.TokenProvider;
@@ -19,6 +21,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,8 +33,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MultiValueMap;
 
 import java.time.Duration;
+import java.util.Objects;
 
 import static com.yapp.project.aux.content.AccountContent.ACCOUNT_OK_MSG;
 import static com.yapp.project.aux.content.AccountContent.EMAIL_SUBJECT;
@@ -44,6 +51,7 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final RedisTemplate<String,String> redisTemplate;
     private final JavaMailSender javaMailSender;
+    private final ApiService<KakaoResponse> apiService;
 
     @Value("${social.value}")
     private String suffix;
@@ -54,8 +62,11 @@ public class AuthService {
     @Value("${property.status}")
     private String profile;
 
+
+
     @Transactional(readOnly = true)
     public SocialResponseMessage socialAccess(SocialRequest socialRequestDto){
+        checkSocialToken(socialRequestDto);
         SocialType socialType = socialRequestDto.getSocial();
         String email = socialRequestDto.getEmail();
         Account account = accountRepository.findByEmail(email).orElse(null);
@@ -169,6 +180,25 @@ public class AuthService {
         return Message.of(StatusEnum.ACCOUNT_OK, ACCOUNT_OK_MSG);
     }
 
+    public void checkSocialToken(SocialRequest data){
+        if (!profile.equals("test")){
+            if (data.getSocial().equals(SocialType.KAKAO)){
+                String url = "https://kapi.kakao.com/v2/user/me";
+                String auth = "Bearer " + data.getToken();
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("Content-type","application/x-www-form-urlencoded;charset=utf-8");
+                headers.add("Authorization", auth);
+                HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(headers);
+                ResponseEntity<KakaoResponse> response = apiService.HttpEntityPost(url, request, KakaoResponse.class);
+                String responseId = Objects.requireNonNull(response.getBody()).getId();
+                if (!responseId.equals(data.getId())){
+                    throw new TokenInvalidException();
+                }
+            }else{
+                // APPLE 관련 로직 처리
+            }
+        }
+    }
 
     public void signUp(UserRequest accountRequestDto){
         String email = accountRequestDto.getEmail();
