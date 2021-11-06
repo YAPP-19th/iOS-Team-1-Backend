@@ -32,7 +32,6 @@ public class ReportService {
     private final RoutineRepository routineRepository;
     private final WeekReportRepository weekReportRepository;
     private final MonthRoutineReportRepository monthRoutineReportRepository;
-//    private final LocalDate LAST_MON = DateUtil.KST_LOCAL_DATE_NOW().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)); // 가장 최근 월요일
 
     @Transactional
     public ReportDTO.ResponseWeekReportMessage getWeekReportLastDate(Account account, LocalDate date) {
