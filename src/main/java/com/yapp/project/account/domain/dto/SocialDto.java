@@ -25,6 +25,10 @@ public class SocialDto {
         @ApiModelProperty(value = "소셜토큰", example = "토큰 값")
         private String token;
 
+        public void insertId(String id){
+            this.id = id;
+        }
+
         public SocialType getSocial(){
             if (socialType.equalsIgnoreCase(SocialType.KAKAO.name())){
                 return SocialType.KAKAO;
