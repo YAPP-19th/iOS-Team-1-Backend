@@ -72,4 +72,11 @@ public class AccountExceptionHandler {
         return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(SocialTokenInvalidException.class)
+    public ResponseEntity<Message> handle(SocialTokenInvalidException e){
+        final Message message = Message.of(e.getStatus() ,e.getMessage());
+        alertService.sentryWithSlackMessage(e);
+        return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
+    }
+
 }
