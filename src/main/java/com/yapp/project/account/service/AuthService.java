@@ -212,7 +212,7 @@ public class AuthService {
         headers.add("Content-type","application/x-www-form-urlencoded;charset=utf-8");
         headers.add("Authorization", auth);
         HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(headers);
-        ResponseEntity<KakaoResponse> response = apiService.HttpEntityPost(url, request, KakaoResponse.class);
+        ResponseEntity<KakaoResponse> response = apiService.httpEntityPost(url, request, KakaoResponse.class);
         return Objects.requireNonNull(response.getBody()).getId();
     }
 

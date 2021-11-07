@@ -24,7 +24,7 @@ public class ApiService<T> {
         return restTemplate.exchange(url,HttpMethod.GET,httpHeaders,clazz);
     }
 
-    public ResponseEntity<T> HttpEntityPost(String url, HttpEntity<MultiValueMap<String,String>> httpHeaders, Class<T> clazz) {
+    public ResponseEntity<T> httpEntityPost(String url, HttpEntity<MultiValueMap<String,String>> httpHeaders, Class<T> clazz) {
         return restTemplate.exchange(url, HttpMethod.POST, httpHeaders, clazz);
     }
 
