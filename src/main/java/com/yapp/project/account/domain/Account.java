@@ -59,7 +59,7 @@ public class Account {
     private final List<WeekReport> weekReportList = new ArrayList<>();
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<MonthRoutineReport> monthRoutineReportList = new ArrayList<>();
+    private final List<MonthRoutineReport> monthRoutineReportList = new ArrayList<>();
 
     public void updateLastLoginAccount(){
         this.lastLogin = KST_LOCAL_DATETIME_NOW();

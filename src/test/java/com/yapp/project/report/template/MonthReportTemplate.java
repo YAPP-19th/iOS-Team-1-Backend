@@ -1,11 +1,11 @@
-package com.yapp.project.aux.test.report;
+package com.yapp.project.report.template;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.report.domain.RoutineResult;
 import com.yapp.project.report.domain.WeekReport;
 
-public class ReportTemplate {
-    private ReportTemplate(){
+public class MonthReportTemplate {
+    private MonthReportTemplate(){
     }
     private static Long id = 1L;
 

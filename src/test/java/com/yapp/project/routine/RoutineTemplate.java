@@ -1,4 +1,4 @@
-package com.yapp.project.aux.test.routine;
+package com.yapp.project.routine;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.retrospect.domain.Result;
@@ -20,6 +20,16 @@ public class RoutineTemplate {
     }
     private static Long routineId = 1L;
     private static Long retrospectId = 1L;
+
+    public static Routine makeRoutine(Account account, String title, String goal, String category, String createAt, List<Week> days) {
+        RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto(title, goal, days, "07:35", category);
+        Routine routine = Routine.builder().newRoutine(newRoutine).id(routineId++).account(account).build();
+        List<RoutineDay> routineDays = days.stream().map(day -> RoutineDay.builder().day(day).routine(routine).build()).collect(Collectors.toList());
+        routine.addDays(routineDays);
+        routine.updateCreateAt(LocalDateTime.parse(createAt,
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        return routine;
+    }
 
     public static Routine makeCoffeeRoutine(Account account) {
         List<Week> coffeeDays = new ArrayList<>();
