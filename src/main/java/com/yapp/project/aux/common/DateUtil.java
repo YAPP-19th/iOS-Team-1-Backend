@@ -25,6 +25,10 @@ public class DateUtil {
         return KST_LOCAL_DATE_NOW().minus(Period.ofDays(1));
     }
 
+    public static LocalDateTime STRING_TO_DATETIME(String date) {
+        return LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    };
+
     public static final int TEMP_NUMBER_SECONDS = 1000*60*3;
 
     public static LocalDate convertStr2LocalDate(String yyyymmdd){
