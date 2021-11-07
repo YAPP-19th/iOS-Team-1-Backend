@@ -1,9 +1,12 @@
 package com.yapp.project.account.service;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yapp.project.account.domain.*;
 import com.yapp.project.account.domain.dto.AccountDto.*;
 import com.yapp.project.account.domain.dto.SocialDto.*;
 import com.yapp.project.account.domain.dto.TokenDto;
 import com.yapp.project.account.domain.dto.TokenRequestDto;
+import com.yapp.project.account.domain.oauth.apple.AppleKeyStorage;
 import com.yapp.project.account.domain.oauth.kakao.KakaoResponse;
 import com.yapp.project.account.domain.repository.AccountRepository;
 import com.yapp.project.account.util.PasswordUtil;
@@ -17,6 +20,8 @@ import com.yapp.project.aux.request.ApiService;
 import com.yapp.project.config.exception.account.*;
 import com.yapp.project.config.jwt.TokenInfo;
 import com.yapp.project.config.jwt.TokenProvider;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -35,7 +40,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
 import java.time.Duration;
+import java.util.Base64;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.yapp.project.aux.content.AccountContent.ACCOUNT_OK_MSG;
@@ -63,10 +77,10 @@ public class AuthService {
     private String profile;
 
 
-
     @Transactional(readOnly = true)
     public SocialResponseMessage socialAccess(SocialRequest socialRequestDto){
-        checkSocialToken(socialRequestDto);
+        String socialId = getSocialIdFromToken(socialRequestDto);
+        socialRequestDto.insertId(socialId);
         SocialType socialType = socialRequestDto.getSocial();
         String email = socialRequestDto.getEmail();
         Account account = accountRepository.findByEmail(email).orElse(null);
@@ -180,27 +194,61 @@ public class AuthService {
         return Message.of(StatusEnum.ACCOUNT_OK, ACCOUNT_OK_MSG);
     }
 
-    public void checkSocialToken(SocialRequest data){
-        if (!profile.equals("test")){
-            if (data.getSocial().equals(SocialType.KAKAO)){
-                String url = "https://kapi.kakao.com/v2/user/me";
-                String auth = "Bearer " + data.getToken();
-                HttpHeaders headers = new HttpHeaders();
-                headers.add("Content-type","application/x-www-form-urlencoded;charset=utf-8");
-                headers.add("Authorization", auth);
-                HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(headers);
-                ResponseEntity<KakaoResponse> response = apiService.HttpEntityPost(url, request, KakaoResponse.class);
-                String responseId = Objects.requireNonNull(response.getBody()).getId();
-                if (!responseId.equals(data.getId())){
-                    throw new TokenInvalidException();
-                }
-            }else{
-                // APPLE 관련 로직 처리
-            }
+    private String getSocialIdFromToken(SocialRequest data){
+        if (profile.equals("test")){
+            return "testForId";
+        }
+        if (data.getSocial().equals(SocialType.KAKAO)){
+            return getKakaoId(data);
+        }else{
+            return getAppleId(data.getToken());
         }
     }
 
-    public void signUp(UserRequest accountRequestDto){
+    private String getKakaoId(SocialRequest data){
+        String url = "https://kapi.kakao.com/v2/user/me";
+        String auth = "Bearer " + data.getToken();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type","application/x-www-form-urlencoded;charset=utf-8");
+        headers.add("Authorization", auth);
+        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(headers);
+        ResponseEntity<KakaoResponse> response = apiService.httpEntityPost(url, request, KakaoResponse.class);
+        return Objects.requireNonNull(response.getBody()).getId();
+    }
+
+    private AppleKeyStorage getApplePublicKeys(){
+        String url = "https://appleid.apple.com/auth/keys";
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<MultiValueMap<String,String>> request = new HttpEntity<>(headers);
+        ResponseEntity<AppleKeyStorage> response =  apiService.getAppleKeys(url,request,AppleKeyStorage.class);
+        return response.getBody();
+    }
+
+    private String getAppleId(String token){
+        AppleKeyStorage appleKeyStorage = getApplePublicKeys();
+        String headerToken = token.substring(0,token.indexOf("."));
+        try {
+            Map<String, String> header = new ObjectMapper().readValue(new String(Base64.getDecoder().decode(headerToken), StandardCharsets.UTF_8), Map.class);
+            assert appleKeyStorage != null;
+            AppleKeyStorage.AppleKey key = appleKeyStorage.getMatchedKeyBy(header.get("kid"), header.get("alg"))
+                    .orElseThrow(SocialTokenInvalidException::new);
+            byte[] nBytes = Base64.getUrlDecoder().decode(key.getN());
+            byte[] eBytes = Base64.getUrlDecoder().decode(key.getE());
+
+            BigInteger n = new BigInteger(1, nBytes);
+            BigInteger e = new BigInteger(1,eBytes);
+
+            RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(n,e);
+            KeyFactory keyFactory = KeyFactory.getInstance(key.getKty());
+            PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
+            Claims claims = Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token).getBody();
+            return claims.getSubject();
+        } catch (JsonProcessingException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new SocialTokenInvalidException();
+        }
+    }
+
+    private void signUp(UserRequest accountRequestDto){
         String email = accountRequestDto.getEmail();
         String nickname = accountRequestDto.getNickname();
         checkDuplicateExceptionFields(email, nickname);
