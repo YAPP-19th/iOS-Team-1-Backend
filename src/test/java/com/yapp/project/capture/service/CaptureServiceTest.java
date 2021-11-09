@@ -31,10 +31,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.time.format.TextStyle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.yapp.project.aux.content.CaptureContent.CAPTURE_ALREADY_FINISH;
@@ -69,10 +67,10 @@ class CaptureServiceTest{
         Long missionId = mission.getId();
         LocalTime midnight = LocalTime.MIDNIGHT;
         LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
-        int todayValue = today.getDayOfWeek().getValue();
+        String todayValue = today.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase();
         LocalDateTime todayMidnight = LocalDateTime.of(today, midnight);
         List<Cron> weeks = new ArrayList<>();
-        Cron cron = Cron.builder().week(Week.getIndexOfValue(todayValue-1)).mission(mission).build();
+        Cron cron = Cron.builder().week(Week.valueOf(todayValue)).mission(mission).build();
         weeks.add(cron);
         mission.setWeeksForTest(weeks);
         given(captureRepository.findByCreatedAtIsAfterAndMission_Id(todayMidnight, missionId)).willReturn(Optional.empty());

@@ -25,22 +25,4 @@ public enum Week {
         return index;
     }
 
-    public static Week getIndexOfValue(int index){
-        switch (index){
-            case 1:
-                return Week.TUE;
-            case 2:
-                return Week.WED;
-            case 3:
-                return Week.THU;
-            case 4:
-                return Week.FRI;
-            case 5:
-                return Week.SAT;
-            case 6:
-                return Week.SUN;
-            default:
-                return Week.MON;
-        }
-    }
 }
