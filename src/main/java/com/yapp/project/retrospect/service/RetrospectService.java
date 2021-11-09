@@ -28,34 +28,7 @@ import java.util.stream.Collectors;
 
 import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATE_NOW;
 import static com.yapp.project.aux.common.SnapShotUtil.saveImages;
-import com.yapp.project.account.domain.Account;
-import com.yapp.project.aux.Message;
-import com.yapp.project.aux.StatusEnum;
-import com.yapp.project.config.exception.retrospect.BadRequestRetrospectException;
-import com.yapp.project.config.exception.retrospect.InvalidRetrospectUpdateException;
-import com.yapp.project.config.exception.retrospect.NotFoundRetrospectException;
-import com.yapp.project.retrospect.domain.Result;
-import com.yapp.project.retrospect.domain.Retrospect;
-import com.yapp.project.retrospect.domain.RetrospectRepository;
-import com.yapp.project.retrospect.domain.dto.RetrospectDTO;
-import com.yapp.project.routine.domain.Routine;
-import com.yapp.project.routine.service.RoutineService;
-import com.yapp.project.snapshot.domain.Snapshot;
-import com.yapp.project.snapshot.domain.SnapshotRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import javax.transaction.Transactional;
-import java.io.IOException;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.format.TextStyle;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATE_NOW;
-import static com.yapp.project.aux.common.SnapShotUtil.saveImages;
 
 @Service
 @RequiredArgsConstructor
@@ -122,7 +95,7 @@ public class RetrospectService {
             retrospect.deleteImage();
         } else {
             String newImagePath = saveImages(updateRetrospect.getImage(), retrospect.getRoutine().getId(), FILE_SERVER_PATH);
-            if(!snapshotRepository.findByUrl(newImagePath).isPresent()) {
+            if(snapshotRepository.findByUrl(newImagePath).isEmpty()) {
                 retrospect.updateRetrospect(snapshotRepository.save(Snapshot.builder().url(newImagePath).build()));
             }
         }

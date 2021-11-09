@@ -47,7 +47,7 @@ public class RoutineService {
 
     public RoutineDTO.ResponseRoutineListMessageDto updateRoutineSequence(Week day, ArrayList<Long> sequence, Account account) {
         List<Routine> routineList = findAllIsExistById(sequence);
-        routineList.stream().forEach(x -> checkIsMine(account, x));
+        routineList.forEach(x -> checkIsMine(account, x));
         updateRoutineDaysSequence(day, sequence, routineList);
         routineRepository.saveAll(routineList);
         return getRoutineList(day, account);
@@ -122,12 +122,12 @@ public class RoutineService {
     }
 
     public Routine findIsExistByIdAndIsNotDelete(Long routineId) {
-        return routineRepository.findByIdAndIsDeleteIsFalse(routineId).orElseThrow(() -> new NotFoundRoutineException());
+        return routineRepository.findByIdAndIsDeleteIsFalse(routineId).orElseThrow(NotFoundRoutineException::new);
     }
 
     private void updateDayList(RoutineDTO.RequestRoutineDto updateRoutine, Routine routine) {
         List<RoutineDay> deleteDay = new ArrayList<>();
-        routine.getDays().stream().forEach(x -> {
+        routine.getDays().forEach(x -> {
             if (!updateRoutine.getDays().contains(x.getDay()))
                 deleteDay.add(x);
             else {
@@ -144,29 +144,25 @@ public class RoutineService {
 
     private void updateRoutineDaysSequence(Week day, ArrayList<Long> sequence, List<Routine> routineList) {
         HashMap<Long, Long> routineListSequence = new HashMap<>();
-        Long routineSequence = 1L;
+        long routineSequence = 1L;
         for (Long seq : sequence) {
             routineListSequence.put(seq, routineSequence++);
         }
-        routineList.forEach(x -> {
-            x.getDays().forEach(y -> {
-                if(y.getDay().equals(day))
-                    y.updateSequence(routineListSequence.get(x.getId()));
-            });
-        });
+        routineList.forEach(x -> x.getDays().forEach(y -> {
+            if(y.getDay().equals(day))
+                y.updateSequence(routineListSequence.get(x.getId()));
+        }));
     }
 
     private void statisticsDayRoutine(List<Retrospect> retrospectList, List<RoutineDTO.ResponseRoutineDaysRate> daysRateList) {
-        daysRateList.forEach(daysRate -> {
-            retrospectList.forEach(retrospect -> {
-                if(retrospect.getDate().isEqual(daysRate.getDate())) {
-                    if(retrospect.getResult() == Result.DONE)
-                        daysRate.updateFullyDone();
-                    else if(retrospect.getResult() == Result.TRY)
-                        daysRate.updatePartiallyDone();
-                }
-            });
-        });
+        daysRateList.forEach(daysRate -> retrospectList.forEach(retrospect -> {
+            if(retrospect.getDate().isEqual(daysRate.getDate())) {
+                if(retrospect.getResult() == Result.DONE)
+                    daysRate.updateFullyDone();
+                else if(retrospect.getResult() == Result.TRY)
+                    daysRate.updatePartiallyDone();
+            }
+        }));
     }
 
     private void calculateDayRoutineAllCount(List<Routine> routineList, List<RoutineDTO.ResponseRoutineDaysRate> daysRateList) {
