@@ -9,8 +9,8 @@ public enum Week {
     SAT("SAT", 5),
     SUN("SUN", 6);
 
-    private String week;
-    private int index;
+    private final String week;
+    private final int index;
 
     Week(String week, int index) {
         this.week = week;
@@ -24,4 +24,5 @@ public enum Week {
     public int getIndex() {
         return index;
     }
+
 }

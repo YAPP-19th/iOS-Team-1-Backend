@@ -2,6 +2,7 @@ package com.yapp.project.capture.service;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.aux.content.CaptureContent;
 import com.yapp.project.aux.test.account.AccountTemplate;
 import com.yapp.project.aux.test.capture.CaptureTemplate;
@@ -11,13 +12,18 @@ import com.yapp.project.capture.domain.Capture;
 import com.yapp.project.capture.domain.repository.CaptureImageRepository;
 import com.yapp.project.capture.domain.repository.CaptureRepository;
 import com.yapp.project.config.exception.capture.AlreadyExistsCaptureException;
+import com.yapp.project.config.exception.capture.NotTodayCaptureException;
+import com.yapp.project.mission.domain.Cron;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.mission.domain.repository.MissionRepository;
 import com.yapp.project.organization.domain.Organization;
+import com.yapp.project.routine.domain.Week;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -25,10 +31,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.time.format.TextStyle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.yapp.project.aux.content.CaptureContent.CAPTURE_ALREADY_FINISH;
@@ -63,7 +67,12 @@ class CaptureServiceTest{
         Long missionId = mission.getId();
         LocalTime midnight = LocalTime.MIDNIGHT;
         LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        String todayValue = today.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase();
         LocalDateTime todayMidnight = LocalDateTime.of(today, midnight);
+        List<Cron> weeks = new ArrayList<>();
+        Cron cron = Cron.builder().week(Week.valueOf(todayValue)).mission(mission).build();
+        weeks.add(cron);
+        mission.setWeeksForTest(weeks);
         given(captureRepository.findByCreatedAtIsAfterAndMission_Id(todayMidnight, missionId)).willReturn(Optional.empty());
         given(missionRepository.findById(missionId)).willReturn(Optional.of(mission));
         //when
@@ -88,6 +97,29 @@ class CaptureServiceTest{
         //when -> then
         assertThatThrownBy(() -> captureService.captureTodayMission(imagePath, missionId))
                 .isInstanceOf(AlreadyExistsCaptureException.class).hasMessage(CAPTURE_ALREADY_FINISH);
+    }
+
+    @Test
+    void test_오늘_사진_인증_하는_날이_아닐_때(){
+        try (MockedStatic<DateUtil> dateUtil = Mockito.mockStatic(DateUtil.class)){
+            //given
+            dateUtil.when(DateUtil::KST_LOCAL_DATETIME_NOW).thenReturn(LocalDateTime.of(2021,11,9,6,30));
+            dateUtil.when(DateUtil::KST_LOCAL_DATE_NOW).thenReturn(LocalDate.of(2021,11,9));
+            dateUtil.when(DateUtil::MID_NIGHT).thenReturn(LocalDateTime.of(2021,11,9,0,0)); // 화요일
+            String imagePath = "home/image/capture";
+            Account account = AccountTemplate.makeTestAccount();
+            Organization organization = OrganizationTemplate.makeTestOrganization();
+            Mission mission = MissionTemplate.makeMission(account, organization);
+            Long missionId = mission.getId();
+            LocalDateTime today = DateUtil.MID_NIGHT();
+            given(captureRepository.findByCreatedAtIsAfterAndMission_Id(today, missionId)).willReturn(Optional.empty());
+            given(missionRepository.findById(missionId)).willReturn(Optional.of(mission));
+            //when -> then
+            assertThatThrownBy(() -> captureService.captureTodayMission(imagePath,missionId))
+                    .isInstanceOf(NotTodayCaptureException.class)
+                    .hasMessage(CaptureContent.CAPTURE_NOT_UPLOAD_DAY);
+        }
+
     }
 
 
@@ -185,7 +217,6 @@ class CaptureServiceTest{
         assertThat(message.getMessage().getMsg()).isEqualTo(CaptureContent.CAPTURE_LIST_SUCCESS);
         int listSize = message.getData().getCaptures().size();
         assertThat(listSize).isEqualTo(6);
-
     }
 
 }

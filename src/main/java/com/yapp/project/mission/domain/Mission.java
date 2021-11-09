@@ -113,9 +113,16 @@ public class Mission {
     }
 
     public void defaultSetting(){
+        // 환경이 테스트임을 확인하는 assertion 이 필요
         this.successCount = 0;
         this.failureCount = 0;
         this.isFinish = false;
+
+    }
+
+    public void setWeeksForTest(List<Cron> weeks){
+        // 환경이 테스트임을 확인하는 assertion 이 필요
+        this.weeks.addAll(weeks);
     }
 
     public void setCountForTest(){

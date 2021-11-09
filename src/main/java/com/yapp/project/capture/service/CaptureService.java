@@ -5,10 +5,12 @@ import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.capture.domain.CaptureImage;
 import com.yapp.project.capture.domain.repository.CaptureImageRepository;
 import com.yapp.project.config.exception.capture.AlreadyExistsCaptureException;
+import com.yapp.project.config.exception.capture.NotTodayCaptureException;
 import com.yapp.project.config.exception.capture.UploadTimeException;
 import com.yapp.project.config.exception.mission.MissionNotFoundException;
 import com.yapp.project.capture.domain.Achievement;
 import com.yapp.project.capture.domain.Capture;
+import com.yapp.project.mission.domain.Cron;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.capture.domain.repository.CaptureRepository;
 import com.yapp.project.mission.domain.repository.MissionRepository;
@@ -46,7 +48,7 @@ public class CaptureService {
             throw new AlreadyExistsCaptureException();
         }
         Mission mission = missionRepository.findById(missionId).orElseThrow(MissionNotFoundException::new);
-        validateMissionCaptureTime(mission);
+        validateMissionCaptureTimeAndDays(mission);
         mission.updateSuccessCount();
         Capture capture = saveCapture(mission, imagePath);
         captureRepository.save(capture);
@@ -143,7 +145,13 @@ public class CaptureService {
     }
 
 
-    private void validateMissionCaptureTime(Mission mission){
+    private void validateMissionCaptureTimeAndDays(Mission mission){
+        List<Cron> days = mission.getWeeks();
+        LocalDate today = DateUtil.KST_LOCAL_DATE_NOW();
+        int todayValue = today.getDayOfWeek().getValue()-1;
+        if (days.stream().noneMatch(x -> x.getWeek().getIndex() == todayValue)){
+            throw new NotTodayCaptureException();
+        }
         LocalTime beginTime = mission.getOrganization().getBeginTime();
         LocalTime endTime = mission.getOrganization().getEndTime();
         LocalTime now = DateUtil.KST_LOCAL_DATETIME_NOW().toLocalTime();

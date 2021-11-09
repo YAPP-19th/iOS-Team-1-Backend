@@ -10,6 +10,7 @@ import com.yapp.project.retrospect.domain.Result;
 import com.yapp.project.retrospect.domain.Retrospect;
 import com.yapp.project.retrospect.domain.RetrospectRepository;
 import com.yapp.project.routine.domain.Routine;
+import com.yapp.project.routine.domain.RoutineDay;
 import com.yapp.project.routine.domain.RoutineRepository;
 import com.yapp.project.report.domain.*;
 import com.yapp.project.routine.domain.Week;
@@ -42,23 +43,23 @@ public class ReportService {
     @Transactional(readOnly = true)
     public ReportDTO.ResponseMonthReportMessage getMonthReportByYearAndMonth(Account account, Integer year, Integer month) {
         List<MonthRoutineReport> monthReportList = monthRoutineReportRepository.findAllByAccountAndYearAndMonth(account, year, month);
-        if(monthReportList.size() == 0) {
+        if(monthReportList.isEmpty()) {
             throw new MonthReportNotFoundMonthException();
         }
         List<WeekReport> weekReportList =
                 weekReportRepository.findAllByAccountAndMonthReportYearAndMonthReportMonthOrderByLastDate(account, year, month);
-        List<String> weekRateList = weekReportList.stream().map(weekRate -> weekRate.getRate()).collect(Collectors.toList());
+        List<String> weekRateList = weekReportList.stream().map(WeekReport::getRate).collect(Collectors.toList());
         return ReportDTO.ResponseMonthReportMessage.of(monthReportList, weekRateList);
     }
 
     @Transactional
     public void makeMonthReport(Account account) {
         List<WeekReport> weekReportList = weekReportRepository.findAllByAccountAndIsReportIsFalseOrderByLastDate(account);
-        HashSet<Long> routineIdHashSet = new HashSet();
+        HashSet<Long> routineIdHashSet = new HashSet<>();
         List<RoutineResult> routineResultList = getRoutineResultList(weekReportList, routineIdHashSet);
         List<MonthRoutineReport> monthRoutineReportList = getMonthRoutineReportList(account, routineIdHashSet);
         statisticsRoutineDuringMonth(routineResultList, monthRoutineReportList);
-        weekReportList.forEach(weekReport -> weekReport.updateMonthReportYearAndMonth());
+        weekReportList.forEach(WeekReport::updateMonthReportYearAndMonth);
         weekReportRepository.saveAll(weekReportList);
         monthRoutineReportRepository.saveAll(monthRoutineReportList);
     }
@@ -67,7 +68,7 @@ public class ReportService {
     public WeekReport makeWeekReport(Account account) {
         checkIsReported(account);
         /** index 0 : notDone, 1 : fullyDone, 2 : particularlyDone */
-        int result [] = new int[]{0, 0, 0};
+        int[] result = new int[]{0, 0, 0};
         List<Routine> routineList = routineRepository.findAllByIsDeleteIsFalseAndAccount(account);
         List<RoutineResult> routineResultList = getRoutineResults( routineList);
         List<Retrospect> retrospectList = retrospectRepository.findAllByIsReportIsFalseAndRoutineAccount(account);
@@ -80,14 +81,12 @@ public class ReportService {
     }
 
     private void statisticsRoutineDuringMonth(List<RoutineResult> routineResultList, List<MonthRoutineReport> monthRoutineReportList) {
-        monthRoutineReportList.forEach( monthRoutineReport -> {
-            routineResultList.forEach( routineResult -> {
-                if(monthRoutineReport.getRoutineId() == routineResult.getRoutineId()) {
-                    monthRoutineReport.updateMonthRoutineResultCount(routineResult.getFullyDoneCount(), routineResult.getPartiallyDoneCount(), routineResult.getNotDoneCount());
-                    monthRoutineReport.updateRoutineTitleAndCategory(routineResult.getTitle(), routineResult.getCategory());
-                }
-            });
-        });
+        monthRoutineReportList.forEach( monthRoutineReport -> routineResultList.forEach(routineResult -> {
+            if(Objects.equals(monthRoutineReport.getRoutineId(), routineResult.getRoutineId())) {
+                monthRoutineReport.updateMonthRoutineResultCount(routineResult.getFullyDoneCount(), routineResult.getPartiallyDoneCount(), routineResult.getNotDoneCount());
+                monthRoutineReport.updateRoutineTitleAndCategory(routineResult.getTitle(), routineResult.getCategory());
+            }
+        }));
     }
 
     private List<MonthRoutineReport> getMonthRoutineReportList(Account account, HashSet<Long> routineIdHashSet) {
@@ -118,9 +117,9 @@ public class ReportService {
     private void statisticsRetrospect(int[] result, List<RoutineResult> routineResultList, List<Retrospect> retrospectList, WeekReport weekReport) {
         LocalDate LAST_MON = DateUtil.KST_LOCAL_DATE_NOW().with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
         routineResultList.forEach(routineResult -> {
-            int tempResult[] = new int[] {0, 0}; /** index 0 : fullyDone, 1 : particularlyDone */
+            int[] tempResult = new int[] {0, 0}; /** index 0 : fullyDone, 1 : particularlyDone */
             retrospectList.forEach(retrospect -> {
-                if(retrospect.getRoutine().getId() == routineResult.getRoutineId() && retrospect.getDate().isBefore(LAST_MON)) {
+                if(Objects.equals(retrospect.getRoutine().getId(), routineResult.getRoutineId()) && retrospect.getDate().isBefore(LAST_MON)) {
                     String day = retrospect.getDate().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase();
                     if(retrospect.getResult() == Result.DONE){
                         tempResult[0]++;
@@ -146,8 +145,8 @@ public class ReportService {
             LocalDate startDate = routineResult.getRoutineCreateAt().toLocalDate();
             List<Week> notDays = new ArrayList<>();
             for (Routine routine: routineList) {
-                List<Week> routineDays = routine.getDays().stream().map(routineDay -> routineDay.getDay()).collect(Collectors.toList());
-                if (routine.getId() == routineResult.getRoutineId()) {
+                List<Week> routineDays = routine.getDays().stream().map(RoutineDay::getDay).collect(Collectors.toList());
+                if (Objects.equals(routine.getId(), routineResult.getRoutineId())) {
                     if (startDate.plusDays(7).isAfter(LAST_MON)) {
                         List<Week> mockDays = new ArrayList<>();
                         notDays.addAll(routineDays);
@@ -158,7 +157,7 @@ public class ReportService {
                         routineDays.removeAll(mockDays);
                         notDays.removeAll(routineDays);
                     } else {
-                        notDays.addAll(routine.getDays().stream().map(routineDay -> routineDay.getDay()).collect(Collectors.toList()));
+                        notDays.addAll(routine.getDays().stream().map(RoutineDay::getDay).collect(Collectors.toList()));
                     }
                     break;
                 }
