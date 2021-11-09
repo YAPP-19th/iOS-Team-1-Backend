@@ -35,4 +35,11 @@ public class CaptureExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NotTodayCaptureException.class)
+    public ResponseEntity<Message> handle(NotTodayCaptureException e){
+        final Message message = Message.of(e.getStatus(), e.getMessage());
+        alertService.sentryWithSlackMessage(e);
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
+
 }
