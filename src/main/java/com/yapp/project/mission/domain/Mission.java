@@ -104,6 +104,10 @@ public class Mission {
         this.successCount+=1;
     }
 
+    public void updateFailureCount(){
+        this.failureCount+=1;
+    }
+
     public void remove(){
         this.isDelete=true;
     }
