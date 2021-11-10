@@ -23,13 +23,13 @@ public class GroupScheduler {
         this.alertService = alertService;
     }
 
-    @Scheduled(cron = "0 30 15 * * *")
+    @Scheduled(cron = "0 0 16 * * *")
     public void groupBatchExecuteJob() throws JobExecutionException{
         alertService.slackSendMessage(SlackChannel.BATCH,":arrow_forward:배치작업 시작합니다.");
         jobLauncher.run(job, new JobParametersBuilder()
                             .addString("groupUpdateDate", DateUtil.KST_LOCAL_DATETIME_NOW().toString())
                             .toJobParameters());
-        alertService.slackSendMessage(SlackChannel.BATCH,":black_square_for_stop:배치작업 끝났습니다.");
+        alertService.slackSendMessage(SlackChannel.BATCH,":ballot_box_with_check:배치작업 끝났습니다.");
     }
 
 }
