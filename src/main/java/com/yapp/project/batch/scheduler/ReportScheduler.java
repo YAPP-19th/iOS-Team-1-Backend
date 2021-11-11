@@ -42,7 +42,7 @@ public class ReportScheduler {
         alertService.slackSendMessage(SlackChannel.BATCH,
                 ":arrow_forward:월 리포트 발급 배치작업 시작합니다.");
         jobLauncher.run(monthReportJob, new JobParametersBuilder()
-                .addString("makeWeekReportDate", DateUtil.KST_LOCAL_DATETIME_NOW().toString())
+                .addString("makeMonthReportDate", DateUtil.KST_LOCAL_DATETIME_NOW().toString())
                 .toJobParameters());
         alertService.slackSendMessage(SlackChannel.BATCH,
                 ":ballot_box_with_check:월 리포트 발급 배치작업 마쳤습니다.");

@@ -45,7 +45,7 @@ public class ReportConfig {
     @Bean(name = "makeMonthReportJob")
     public Job makeMonthReportJob() {
         return jobBuilderFactory.get("makeMonthReportJob")
-                .start(makeWeekReportStep())
+                .start(makeMonthReportStep())
                 .incrementer(new RunIdIncrementer())
                 .build();
 
