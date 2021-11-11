@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
@@ -43,11 +44,11 @@ public class ReportService {
     @Transactional(readOnly = true)
     public ReportDTO.ResponseMonthReportMessage getMonthReportByYearAndMonth(Account account, Integer year, Integer month) {
         List<MonthRoutineReport> monthReportList = monthRoutineReportRepository.findAllByAccountAndYearAndMonth(account, year, month);
-        if(monthReportList.isEmpty()) {
-            throw new MonthReportNotFoundMonthException();
-        }
         List<WeekReport> weekReportList =
                 weekReportRepository.findAllByAccountAndMonthReportYearAndMonthReportMonthOrderByLastDate(account, year, month);
+        if(monthReportList.isEmpty() && weekReportList.isEmpty()) {
+            throw new MonthReportNotFoundMonthException();
+        }
         List<String> weekRateList = weekReportList.stream().map(WeekReport::getRate).collect(Collectors.toList());
         return ReportDTO.ResponseMonthReportMessage.of(monthReportList, weekRateList);
     }
@@ -69,7 +70,10 @@ public class ReportService {
         checkIsReported(account);
         /** index 0 : notDone, 1 : fullyDone, 2 : particularlyDone */
         int[] result = new int[]{0, 0, 0};
-        List<Routine> routineList = routineRepository.findAllByIsDeleteIsFalseAndAccount(account);
+        LocalDate LAST_MON = DateUtil.KST_LOCAL_DATE_NOW().with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
+        List<Routine> routineList = routineRepository.findAllByIsDeleteIsFalseAndAccount(account)
+                .stream().filter(routine -> LocalDate.from(routine.getCreatedAt())
+                        .isBefore(LAST_MON)).collect(Collectors.toList());
         List<RoutineResult> routineResultList = getRoutineResults( routineList);
         List<Retrospect> retrospectList = retrospectRepository.findAllByIsReportIsFalseAndRoutineAccount(account);
         WeekReport weekReport = WeekReport.builder().build();
