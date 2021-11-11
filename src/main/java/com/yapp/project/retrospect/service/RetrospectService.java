@@ -15,6 +15,7 @@ import com.yapp.project.routine.service.RoutineService;
 import com.yapp.project.snapshot.domain.Snapshot;
 import com.yapp.project.snapshot.domain.SnapshotRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -33,7 +34,10 @@ import static com.yapp.project.aux.common.SnapShotUtil.saveImages;
 @Service
 @RequiredArgsConstructor
 public class RetrospectService {
-    private static final String FILE_SERVER_PATH = "/home/image/retrospect/";
+
+    @Value("${property.image.path}")
+    private final String PREFIX_FILE_SERVER_PATH;
+    private final String FILE_SERVER_PATH = PREFIX_FILE_SERVER_PATH + "retrospect/";
 
     private final RetrospectRepository retrospectRepository;
     private final SnapshotRepository snapshotRepository;
