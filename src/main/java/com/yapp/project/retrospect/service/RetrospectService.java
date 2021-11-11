@@ -36,7 +36,7 @@ import static com.yapp.project.aux.common.SnapShotUtil.saveImages;
 public class RetrospectService {
 
     @Value("${property.image.path}")
-    private final String PREFIX_FILE_SERVER_PATH;
+    private String PREFIX_FILE_SERVER_PATH;
     private final String FILE_SERVER_PATH = PREFIX_FILE_SERVER_PATH + "retrospect/";
 
     private final RetrospectRepository retrospectRepository;
