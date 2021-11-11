@@ -3,6 +3,7 @@ package com.yapp.project.retrospect.service;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.config.exception.retrospect.BadRequestRetrospectException;
 import com.yapp.project.config.exception.retrospect.InvalidRetrospectUpdateException;
 import com.yapp.project.config.exception.retrospect.NotFoundRetrospectException;
@@ -46,8 +47,9 @@ public class RetrospectService {
     public RetrospectDTO.ResponseRetrospectMessage setRetrospectResult(RetrospectDTO.RequestRetrospectResult retrospectResult, Account account) {
         Routine routine = routineService.findIsExistByIdAndIsNotDelete(retrospectResult.getRoutineId());
         routineService.checkIsMine(account, routine);
-        checkIsDate(routine);
-        Optional<Retrospect> preRetrospect = retrospectRepository.findByRoutineAndDate(routine, KST_LOCAL_DATE_NOW());
+        checkIsDate(routine, DateUtil.convertStr2LocalDate(retrospectResult.getDate()));
+        Optional<Retrospect> preRetrospect = retrospectRepository.findByRoutineAndDate(routine,
+                DateUtil.convertStr2LocalDate(retrospectResult.getDate()));
         Retrospect retrospect = preRetrospect.orElseGet(() ->
                 Retrospect.builder().routine(routine).isReport(false).build());
         retrospect.updateResult(retrospectResult.getResult());
@@ -77,7 +79,9 @@ public class RetrospectService {
     public RetrospectDTO.ResponseRetrospectMessage createRetrospect(RetrospectDTO.RequestRetrospect requestRetrospect, String imagePath ,Account account) {
         Routine routine = routineService.findIsExistByIdAndIsNotDelete(requestRetrospect.getRoutineId());
         routineService.checkIsMine(account, routine);
-        Optional<Retrospect> preRetrospect = retrospectRepository.findByRoutineAndDate(routine, KST_LOCAL_DATE_NOW());
+        checkIsDate(routine, DateUtil.convertStr2LocalDate(requestRetrospect.getDate()));
+        Optional<Retrospect> preRetrospect = retrospectRepository.findByRoutineAndDate(routine,
+                DateUtil.convertStr2LocalDate(requestRetrospect.getDate()));
         Retrospect retrospect = preRetrospect.orElseGet(() ->
                 Retrospect.builder().routine(routine).content(requestRetrospect.getContent())
                         .isReport(false).result(Result.NOT).build());
@@ -115,10 +119,22 @@ public class RetrospectService {
         }
     }
 
-    private void checkIsDate(Routine routine) {
-        DayOfWeek dayOfWeek = KST_LOCAL_DATE_NOW().getDayOfWeek();
+    private void checkIsDate(Routine routine, LocalDate date) {
+        boolean isDayContains = checkDateIsInRoutineDate(routine, date);
+        boolean isBeforeTwoDayFromNow = checkDateIsBeforeTwoDayFromNow(date);
+        if(!isDayContains && isBeforeTwoDayFromNow)
+            throw new BadRequestRetrospectException();
+    }
+
+    private boolean checkDateIsInRoutineDate(Routine routine, LocalDate date) {
+        DayOfWeek dayOfWeek = date.getDayOfWeek();
         List<String> dateList = routine.getDays().stream().map(x -> x.getDay().toString()).collect(Collectors.toList());
         boolean isContains = dateList.contains(dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.US).toUpperCase());
-        if(!isContains) throw new BadRequestRetrospectException();
+        return isContains;
+    }
+
+    private boolean checkDateIsBeforeTwoDayFromNow(LocalDate date) {
+        LocalDate plusTwoDay = date.plusDays(2);
+        return !plusTwoDay.isAfter(DateUtil.KST_LOCAL_DATE_NOW());
     }
 }
