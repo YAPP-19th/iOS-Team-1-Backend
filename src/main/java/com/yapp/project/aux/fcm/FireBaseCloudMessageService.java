@@ -39,7 +39,6 @@ public class FireBaseCloudMessageService {
                 .addHeader(HttpHeaders.CONTENT_TYPE, CONTENT_TYPE)
                 .build();
         Response response = client.newCall(request).execute();
-        System.out.println(response.body().string());
     }
 
     private String makeMessage(String targetToken, String title, String body) throws JsonParseException, JsonProcessingException {
