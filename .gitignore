@@ -1,5 +1,6 @@
 dockerfiles/.env
 src/main/resources/application.properties
+src/main/resources/firebase
 .idea
 HELP.md
 .gradle
