@@ -76,8 +76,11 @@ public class Retrospect {
         this.result = result;
     }
 
-    public void updateIsReport() {
+    public void updateIsReportTrue() {
         this.isReport = true;
+    }
+    public void updateIsReportFalse() {
+        this.isReport = false;
     }
 
     /** Test */
