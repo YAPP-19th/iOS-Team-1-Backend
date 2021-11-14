@@ -3,6 +3,7 @@ package com.yapp.project.routine.service;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.config.exception.report.RoutineStartDayBadRequestException;
 import com.yapp.project.config.exception.routine.BadRequestRoutineException;
 import com.yapp.project.retrospect.domain.Result;
@@ -15,8 +16,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,6 +48,7 @@ public class RoutineService {
         return RoutineDTO.ResponseDaysRoutineRateMessageDto.of(daysRateList);
     }
 
+    @Transactional
     public RoutineDTO.ResponseRoutineListMessageDto updateRoutineSequence(Week day, ArrayList<Long> sequence, Account account) {
         List<Routine> routineList = findAllIsExistById(sequence);
         routineList.forEach(x -> checkIsMine(account, x));
@@ -53,6 +57,7 @@ public class RoutineService {
         return getRoutineList(day, account);
     }
 
+    @Transactional
     public Message deleteRoutine(Long routineId, Account account) {
         Routine routine = findIsExistByIdAndIsNotDelete(routineId);
         checkIsMine(account, routine);
@@ -61,6 +66,7 @@ public class RoutineService {
         return Message.builder().msg("삭제 성공").status(StatusEnum.ROUTINE_OK).build();
     }
 
+    @Transactional
     public RoutineDTO.ResponseRoutineMessageDto updateRoutine(Long routineId, RoutineDTO.RequestRoutineDto updateRoutine, Account account) {
         checkDataIsNull(updateRoutine);
         Routine routine = findIsExistByIdAndIsNotDelete(routineId);
@@ -73,6 +79,7 @@ public class RoutineService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public RoutineDTO.ResponseRoutineListMessageDto getRoutineList(Week day, Account account) {
         List<Routine> routineList = routineRepository // Sort.by("days").descending(): sequence가 0인 루틴은 최신 등록순
                 .findAllByIsDeleteIsFalseAndAccountAndDaysDayOrderByDaysSequence(account, day, Sort.by("days").descending());
@@ -83,6 +90,7 @@ public class RoutineService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public RoutineDTO.ResponseRoutineMessageDto getRoutine(Long routineId, Account account) {
         Routine routine = findIsExistByIdAndIsNotDelete(routineId);
         checkIsMine(account, routine);
@@ -92,6 +100,7 @@ public class RoutineService {
                 .build();
     }
 
+    @Transactional
     public RoutineDTO.ResponseRoutineMessageDto createRoutine(RoutineDTO.RequestRoutineDto newRoutine, Account account) {
         checkDataIsNull(newRoutine);
         Routine routine = Routine.builder()
@@ -127,15 +136,29 @@ public class RoutineService {
 
     private void updateDayList(RoutineDTO.RequestRoutineDto updateRoutine, Routine routine) {
         List<RoutineDay> deleteDay = new ArrayList<>();
-        routine.getDays().forEach(x -> {
-            if (!updateRoutine.getDays().contains(x.getDay()))
-                deleteDay.add(x);
+        routine.getDays().forEach(day -> {
+            if (!updateRoutine.getDays().contains(day.getDay()))
+                deleteDay.add(day);
             else {
-                updateRoutine.getDays().remove(x.getDay());
+                updateRoutine.getDays().remove(day.getDay());
             }
         });
         routine.getDays().removeAll(deleteDay);
+        setRetrospectIsReportTrueByDeleteDay(routine, deleteDay);
         setDays(updateRoutine.getDays(), routine);
+    }
+
+    private void setRetrospectIsReportTrueByDeleteDay(Routine routine, List<RoutineDay> deleteDay) {
+        LocalDate start = DateUtil.KST_LOCAL_DATE_NOW().with(TemporalAdjusters.previous(DayOfWeek.MONDAY));
+        List<Retrospect> retrospectList = retrospectRepository.findAllByDateBetweenAndRoutine(start, start.plusDays(6), routine);
+        List<String> stringDayList = deleteDay.stream().map(day -> day.getDay().toString()).collect(Collectors.toList());
+        List<Retrospect> deleteDayRetrospectList = retrospectList.stream().filter(retrospect ->
+                        stringDayList.contains(retrospect.getDate()
+                                .getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase()))
+                .collect(Collectors.toList());
+        retrospectList.removeAll(deleteDayRetrospectList);
+        deleteDayRetrospectList.forEach(Retrospect::updateIsReportTrue);
+        retrospectList.forEach(Retrospect::updateIsReportFalse);
     }
 
     private List<Routine> findAllIsExistById(ArrayList<Long> sequence) {

@@ -134,7 +134,7 @@ public class ReportService {
                         result[2]++;
                         RetrospectReportDay.builder().routineResult(routineResult).day(day).result(retrospect.getResult()).build();
                     }
-                    retrospect.updateIsReport();
+                    retrospect.updateIsReportTrue();
                 }
             });
             routineResult.addRoutineResultDoneCount(tempResult);
