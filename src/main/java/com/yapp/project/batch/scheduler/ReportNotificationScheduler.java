@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import static com.yapp.project.aux.content.ReportContent.*;
+
 @Component
 public class ReportNotificationScheduler {
     private final Job weekNotificationJob;
@@ -26,25 +28,21 @@ public class ReportNotificationScheduler {
         this.alertService = alertService;
     }
 
-    @Scheduled(cron = "0 0 22 * * 3")
+    @Scheduled(cron = "0 16 2 * * 3")
     public void weekReportNotificationJob() throws JobExecutionException{
-        alertService.slackSendMessage(SlackChannel.BATCH,
-                ":arrow_forward:주 리포트 알림 푸시 시작합니다.");
+        alertService.slackSendMessage(SlackChannel.BATCH, WEEK_REPORT_PUSH_START);
         jobLauncher.run(weekNotificationJob, new JobParametersBuilder()
                 .addString("weekReportNotificationDate", DateUtil.KST_LOCAL_DATETIME_NOW().toString())
                 .toJobParameters());
-        alertService.slackSendMessage(SlackChannel.BATCH,
-                ":ballot_box_with_check:주 리포트 알림 푸시 마쳤습니다.");
+        alertService.slackSendMessage(SlackChannel.BATCH, WEEK_REPORT_PUSH_END);
     }
 
-    @Scheduled(cron = "0 0 23 1 * ?")
+    @Scheduled(cron = "0 20 2 ? * 3#1")
     public void monthReportNotificationJob() throws JobExecutionException{
-        alertService.slackSendMessage(SlackChannel.BATCH,
-                ":arrow_forward:월 리포트 알림 푸시 시작합니다.");
+        alertService.slackSendMessage(SlackChannel.BATCH, MONTH_REPORT_PUSH_START);
         jobLauncher.run(monthNotificationJob, new JobParametersBuilder()
                 .addString("monthReportNotificationDate", DateUtil.KST_LOCAL_DATETIME_NOW().toString())
                 .toJobParameters());
-        alertService.slackSendMessage(SlackChannel.BATCH,
-                ":ballot_box_with_check:월 리포트 알림 푸시 마쳤습니다.");
+        alertService.slackSendMessage(SlackChannel.BATCH, MONTH_REPORT_PUSH_END);
     }
 }

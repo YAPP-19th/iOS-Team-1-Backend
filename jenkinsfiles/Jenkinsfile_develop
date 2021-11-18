@@ -32,6 +32,13 @@ pipeline {
       }
     }
 
+    stage('set firebase key') {
+          steps {
+            sh 'mkdir ./src/main/resources/firebase'
+            sh 'cp ../properties/firebase/firebase_service_key.json ./src/main/resources/firebase'
+          }
+        }
+
     stage('build') {
       steps {
         sh './gradlew clean build -x test'

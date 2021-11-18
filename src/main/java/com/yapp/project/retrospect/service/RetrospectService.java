@@ -3,7 +3,6 @@ package com.yapp.project.retrospect.service;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
-import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.config.exception.retrospect.BadRequestRetrospectException;
 import com.yapp.project.config.exception.retrospect.InvalidRetrospectUpdateException;
 import com.yapp.project.config.exception.retrospect.NotFoundRetrospectException;
@@ -16,10 +15,9 @@ import com.yapp.project.routine.service.RoutineService;
 import com.yapp.project.snapshot.domain.Snapshot;
 import com.yapp.project.snapshot.domain.SnapshotRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -45,6 +43,7 @@ public class RetrospectService {
     private final SnapshotRepository snapshotRepository;
     private final RoutineService routineService;
 
+    @Transactional
     public RetrospectDTO.ResponseRetrospectMessage setRetrospectResult(RetrospectDTO.RequestRetrospectResult retrospectResult, Account account) {
         Routine routine = routineService.findIsExistByIdAndIsNotDelete(retrospectResult.getRoutineId());
         routineService.checkIsMine(account, routine);
@@ -58,17 +57,20 @@ public class RetrospectService {
         return RetrospectDTO.ResponseRetrospectMessage.of(StatusEnum.RETROSPECT_OK , "회고 수행 여부 설정 성공", saveRetrospect);
     }
 
+    @Transactional(readOnly = true)
     public RetrospectDTO.ResponseRetrospectListMessage getRetrospectList(LocalDate date, Account account) {
         List<Retrospect> retrospectList = retrospectRepository.findAllByDateAndRoutineAccount(date, account);
         return RetrospectDTO.ResponseRetrospectListMessage.of(StatusEnum.RETROSPECT_OK, "요일 기준 회고 전체 조회 성공", retrospectList);
     }
 
+    @Transactional(readOnly = true)
     public RetrospectDTO.ResponseRetrospectMessage getRetrospect(Long retrospectId, Account account) {
         Retrospect retrospect = retrospectRepository.findById(retrospectId).orElseThrow(NotFoundRetrospectException::new);
         routineService.checkIsMine(account, retrospect.getRoutine());
         return RetrospectDTO.ResponseRetrospectMessage.of(StatusEnum.RETROSPECT_OK, "회고 단일 조회 성공", retrospect);
     }
 
+    @Transactional
     public Message deleteRetrospect(Long retrospectId, Account account) {
         Retrospect retrospect = retrospectRepository.findById(retrospectId).orElseThrow(NotFoundRetrospectException::new);
         routineService.checkIsMine(account, retrospect.getRoutine());
