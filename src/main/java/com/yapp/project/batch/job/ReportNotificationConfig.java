@@ -29,9 +29,10 @@ public class ReportNotificationConfig {
     private final JobBuilderFactory jobBuilderFactory;
     private final FireBaseCloudMessageService fireBaseCloudMessageService;
 
-    private final String TITLE = "리포트 발급 알림";
-    private final String WEEK_BODY = "주 리포트가 발급되었습니다!";
-    private final String MONTH_BODY = "월 리포트가 발급되었습니다!";
+    private final String WEEK_TITLE = "주간 리포트가 도착했습니다 \uD83D\uDC8C";
+    private final String MONTH_TITLE = "월간 리포트가 도착했습니다 \uD83D\uDC8C";
+    private final String WEEK_BODY = "님의 한 주간의 발자취를 확인해보세요! \uD83D\uDC3E";
+    private final String MONTH_BODY = "님의 한 달간의 발자취를 확인해보세요! \uD83D\uDC3E";
 
     @Bean(name = "weekReportNotificationJob")
     public Job weekReportNotificationJob() {
@@ -79,7 +80,8 @@ public class ReportNotificationConfig {
         ItemProcessor<Account, Account> itemProcessor = new ItemProcessor<>() {
             @Override
             public Account process(Account account) throws Exception {
-                fireBaseCloudMessageService.sendMessageTo(account.getFcmToken(), TITLE, WEEK_BODY);
+                fireBaseCloudMessageService.
+                        sendMessageTo(account.getFcmToken(), WEEK_TITLE, account.getNickname() + WEEK_BODY);
                 return null;
             }
         };
@@ -90,7 +92,8 @@ public class ReportNotificationConfig {
         ItemProcessor<Account, Account> itemProcessor = new ItemProcessor<>() {
             @Override
             public Account process(Account account) throws Exception {
-                fireBaseCloudMessageService.sendMessageTo(account.getFcmToken(), TITLE, MONTH_BODY);
+                fireBaseCloudMessageService.
+                        sendMessageTo(account.getFcmToken(), MONTH_TITLE, account.getNickname() + MONTH_BODY);
                 return null;
             }
         };
