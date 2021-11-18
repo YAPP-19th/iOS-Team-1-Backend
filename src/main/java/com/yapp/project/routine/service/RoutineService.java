@@ -38,8 +38,7 @@ public class RoutineService {
                 start, start.plusDays(6), account);
         List<Routine> routineList = routineRepository.findAllByIsDeleteIsFalseAndAccount(account);
         List<RoutineDTO.ResponseRoutineDaysRate> daysRateList = new ArrayList<>();
-        daysRateList.add(RoutineDTO.ResponseRoutineDaysRate.builder().date(start).build());
-        for (int i = 1; i < WEEK_LENGTH; i++) {
+        for (int i = 0; i < WEEK_LENGTH; i++) {
             daysRateList.add(RoutineDTO.ResponseRoutineDaysRate.builder().date(
                     start.plusDays(i)).build());
         }
