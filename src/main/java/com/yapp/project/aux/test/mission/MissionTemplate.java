@@ -48,7 +48,7 @@ public class MissionTemplate {
     }
 
     public static MissionDto.MissionRequest makeMissionRequest(String startDate, String finishDate){
-        return MissionDto.MissionRequest.builder().id(missionId++).startDate(startDate).finishDate(finishDate).weeks(WEEKS).build();
+        return MissionDto.MissionRequest.builder().id(missionId++).startDate(startDate).finishDate(finishDate).weeks(WEEKS).startTime("06:00").build();
     }
 
 }
