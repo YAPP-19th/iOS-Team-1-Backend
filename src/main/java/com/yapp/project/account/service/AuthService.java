@@ -293,6 +293,7 @@ public class AuthService {
         Account account = accountRepository.findByEmail(accountRequestDto.getEmail())
                 .orElseThrow(NotFoundUserInformationException::new);
         account.updateLastLoginAccount();
+        account.updateFcmToken(accountRequestDto.getFcmToken());
 
         UsernamePasswordAuthenticationToken authenticationToken = accountRequestDto.toAuthentication();
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);

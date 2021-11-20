@@ -2,6 +2,7 @@ package com.yapp.project.account.domain.dto;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.SocialType;
+import com.yapp.project.aux.test.account.AccountTemplate;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,7 +13,7 @@ class AccountUserSocialRequestDtoTest {
 
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     AccountDto.UserRequest accountRequestDto = new AccountDto.UserRequest("test@example.com","test",
-            "test1234", SocialType.NORMAL);
+            "test1234", SocialType.NORMAL, AccountTemplate.FCM_TOKEN);
 
     @Test
     void toAccount() {

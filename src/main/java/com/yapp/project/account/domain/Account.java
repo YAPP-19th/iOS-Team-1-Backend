@@ -65,8 +65,12 @@ public class Account {
         this.lastLogin = KST_LOCAL_DATETIME_NOW();
     }
 
+    public void updateFcmToken(String fcmToken){
+        this.fcmToken = fcmToken;
+    }
+
     public UserRequest toAccountRequestDto(String suffix){
-        return new UserRequest(email,nickname,email+suffix,socialType);
+        return new UserRequest(email,nickname,email+suffix,socialType,fcmToken);
     }
 
     public void resetPassword(PasswordEncoder passwordEncoder, String newPassword){

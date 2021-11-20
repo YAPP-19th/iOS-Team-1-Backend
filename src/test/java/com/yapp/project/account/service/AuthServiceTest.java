@@ -48,6 +48,10 @@ class AuthServiceTest {
         SocialDto.TokenMessage message = authService.normalSignUp(request);
         //then
         assertThat(message.getData().getAccessToken()).isNotNull();
+
+        Account account = accountRepository.findByEmail(AccountTemplate.EMAIL).orElse(null);
+        assertThat(account).isNotNull();
+        assertThat(account.getFcmToken()).isNotNull();
     }
 
 
