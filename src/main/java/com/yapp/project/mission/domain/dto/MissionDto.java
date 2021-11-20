@@ -34,12 +34,17 @@ public class MissionDto {
         private String finishDate;
         @ApiModelProperty(value = "미션_하는_요일",example = "[WED, THU, FRI]")
         private List<Week> weeks;
+        @ApiModelProperty(value = "알람 여부", example = "false")
+        private Boolean isAlarm;
+        @ApiModelProperty(value = "알람 시작 시간", example = "05:00")
+        private String startTime;
 
         public Mission toMission(Account account, Organization organization){
+            LocalTime sTime = DateUtil.convertStr2LocalTime(startTime);
             LocalDate sDate = DateUtil.convertStr2LocalDate(startDate);
             LocalDate fDate = DateUtil.convertStr2LocalDate(finishDate);
             return Mission.builder().account(account).startDate(sDate).finishDate(fDate)
-                    .organization(organization).build();
+                    .organization(organization).isAlarm(isAlarm).startTime(sTime).build();
         }
     }
 

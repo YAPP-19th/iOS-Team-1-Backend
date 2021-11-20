@@ -13,6 +13,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class Mission {
     @Builder
     public Mission(
             Long id, Organization organization, Account account, LocalDate startDate, LocalDate finishDate,
-            Boolean isFinish
+            Boolean isFinish, Boolean isAlarm, LocalTime startTime
     ){
         this.id = id;
         this.organization = organization;
@@ -35,12 +36,15 @@ public class Mission {
         this.startDate = startDate;
         this.finishDate = finishDate;
         this.isFinish = isFinish;
+        this.isAlarm = isAlarm;
+        this.startTime = startTime;
     }
 
     @PrePersist
     public void prePersist(){
         this.isFinish = (this.isFinish!=null)&&this.isFinish;
         this.isDelete = (this.isDelete!=null)&&this.isDelete;
+        this.isAlarm = (this.isAlarm!=null)&&this.isAlarm;
         this.successCount = this.successCount!=null?this.successCount:0;
         this.failureCount = this.failureCount!=null?this.failureCount:0;
     }
@@ -72,6 +76,10 @@ public class Mission {
     private Integer successCount;
 
     private Integer failureCount;
+
+    private Boolean isAlarm;
+
+    private LocalTime startTime;
 
     private Boolean isFinish;
 
@@ -121,12 +129,18 @@ public class Mission {
         this.successCount = 0;
         this.failureCount = 0;
         this.isFinish = false;
+        this.isDelete = false;
 
     }
 
     public void setWeeksForTest(List<Cron> weeks){
         // 환경이 테스트임을 확인하는 assertion 이 필요
         this.weeks.addAll(weeks);
+    }
+
+    public void setStartDateForTest(LocalTime time){
+        // 환경이 테스트임을 확인하는 assertion 이 필요
+        this.startTime = time;
     }
 
     public void setCountForTest(){

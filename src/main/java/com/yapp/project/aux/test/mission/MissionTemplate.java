@@ -7,6 +7,7 @@ import com.yapp.project.organization.domain.Organization;
 import com.yapp.project.routine.domain.Week;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +31,10 @@ public class MissionTemplate {
 
     public static Mission makeMission(Account account, Organization organization,
                                       LocalDate startDate, LocalDate finishDate){
-        Mission mission = Mission.builder().id(missionId++).account(account).organization(organization).startDate(startDate).finishDate(finishDate).build();
+        Mission mission = Mission.builder().id(missionId++).
+                account(account).organization(organization)
+                .startDate(startDate).finishDate(finishDate)
+                .isAlarm(true).startTime(LocalTime.of(6,0)).build();
         mission.defaultSetting();
         return mission;
     }

@@ -34,4 +34,8 @@ public class DateUtil {
     public static LocalDate convertStr2LocalDate(String yyyymmdd){
         return LocalDate.parse(yyyymmdd, DateTimeFormatter.ISO_DATE);
     }
+
+    public static LocalTime convertStr2LocalTime(String hhmm){
+        return LocalTime.parse(hhmm);
+    }
 }
