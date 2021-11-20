@@ -24,7 +24,7 @@ public class AccountTemplate {
     public static final String EMAIL = "springboot@example.com";
     public static final String ANOTHER_EMAIL = "django@example.com";
     public static final SocialType SOCIAL_TYPE = SocialType.NORMAL;
-
+    public static final String FCM_TOKEN = "****====$$$$****";
 
     public static SocialDto.SocialSignUpRequest makeSocialSignUpRequest(){
         return SocialDto.SocialSignUpRequest.builder().email(EMAIL).nickname(USERNAME)
@@ -75,7 +75,7 @@ public class AccountTemplate {
     }
 
     public static UserRequest makeAccountRequestDto(String email, String username, String password, SocialType socialType){
-        return new UserRequest(email,username,password,socialType);
+        return new UserRequest(email,username,password,socialType,FCM_TOKEN);
     }
 
 }

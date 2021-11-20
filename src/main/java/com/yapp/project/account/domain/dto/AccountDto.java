@@ -30,6 +30,8 @@ public class AccountDto {
         private String password;
         @ApiModelProperty(value = "소셜타입", example = "KAKAO/APPLE/NORMAL")
         private SocialType socialType;
+        @ApiModelProperty(value = "fcm 토큰", example = "---====*********")
+        private String fcmToken;
         public Account toAccount(PasswordEncoder passwordEncoder){
             return Account.builder()
                     .email(email)
@@ -37,6 +39,7 @@ public class AccountDto {
                     .password(passwordEncoder.encode(password))
                     .authority(Authority.ROLE_USER)
                     .socialType(socialType)
+                    .fcmToken(fcmToken)
                     .createdAt(KST_LOCAL_DATETIME_NOW())
                     .lastLogin(KST_LOCAL_DATETIME_NOW())
                     .build();
