@@ -3,6 +3,7 @@ package com.yapp.project.mission.service;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.aux.content.MissionContent;
 import com.yapp.project.capture.domain.Capture;
 import com.yapp.project.capture.domain.CaptureImage;
@@ -20,6 +21,8 @@ import com.yapp.project.routine.domain.Week;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +84,27 @@ public class MissionService {
         }
         mission.remove();
         return Message.of(StatusEnum.MISSION_OK, MissionContent.MISSION_DELETE_SUCCESS);
+    }
+
+    public List<Mission> checkLastDayMission(){
+        List<Mission> missions = missionRepository.findAllByIsDeleteIsFalse();
+        return missions.stream()
+                .filter(mission -> mission.getFinishDate().isEqual(DateUtil.KST_LOCAL_DATE_NOW()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Mission> getWakeUpClockMission(LocalDateTime dateTime){
+        List<Mission> missions =  missionRepository.findAllByIsDeleteIsFalseAndIsAlarmIsTrueAndStartTimeEquals(dateTime.toLocalTime());
+        List<Mission> response = new ArrayList<>();
+        for (Mission mission : missions){
+            for (Cron cron : mission.getWeeks()){
+                if ( cron.getWeek().getIndex() == dateTime.getDayOfWeek().getValue()){
+                    response.add(mission);
+                    break;
+                }
+            }
+        }
+        return response;
     }
 
     private void setDays(List<Week> days, Mission mission){

@@ -11,19 +11,23 @@ import com.yapp.project.capture.domain.repository.CaptureImageRepository;
 import com.yapp.project.config.exception.mission.AlreadyMissionExistException;
 import com.yapp.project.aux.content.MissionContent;
 import com.yapp.project.config.exception.mission.MissionNotFoundException;
+import com.yapp.project.mission.domain.Cron;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.mission.domain.dto.MissionDto;
 import com.yapp.project.mission.domain.repository.MissionRepository;
 import com.yapp.project.organization.domain.Organization;
 import com.yapp.project.organization.domain.repository.OrganizationRepository;
+import com.yapp.project.routine.domain.Week;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.time.Period;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -172,5 +176,78 @@ class MissionServiceTest {
         //then
         assertThat(message.getStatus()).isEqualTo(StatusEnum.MISSION_OK);
         assertThat(message.getMsg()).isEqualTo(MissionContent.MISSION_DELETE_SUCCESS);
+    }
+
+    @Test
+    void test_일어나기_10분_전() {
+        try (MockedStatic<DateUtil> dateUtil = Mockito.mockStatic(DateUtil.class)){
+            //given
+            dateUtil.when(DateUtil::KST_LOCAL_DATETIME_NOW).thenReturn(LocalDateTime.of(2021,11,20,6,0));
+            dateUtil.when(DateUtil::KST_LOCAL_DATE_NOW).thenReturn(LocalDate.of(2021,11,20));
+            dateUtil.when(DateUtil::MID_NIGHT).thenReturn(LocalDateTime.of(2021,11,20,0,0)); // 일요일
+
+            Account account = AccountTemplate.makeTestAccount();
+            Organization organization = OrganizationTemplate.makeTestOrganization();
+            Organization organization2 = OrganizationTemplate.makeTestOrganization("기상","6시 기상");
+            Mission mission = MissionTemplate.makeMission(account, organization);
+            Mission mission2 = MissionTemplate.makeMission(account, organization2);
+
+            List<Cron> list = new ArrayList<>();
+            Cron cron = Cron.builder().mission(mission).week(Week.SAT).build();
+            Cron cron2 = Cron.builder().mission(mission).week(Week.SUN).build();
+            list.add(cron);
+            list.add(cron2);
+            mission.setWeeksForTest(list); // SUN, SAT
+            list.remove(cron2);
+            mission2.setWeeksForTest(list); // SAT
+            List<Mission> missions = new ArrayList<>();
+            missions.add(mission);
+            missions.add(mission2);
+            given(missionRepository.findAllByIsDeleteIsFalseAndIsAlarmIsTrueAndStartTimeEquals(DateUtil.KST_LOCAL_DATETIME_NOW().toLocalTime()))
+                    .willReturn(missions);
+            //when
+            List<Mission> result = missionService.getWakeUpClockMission(DateUtil.KST_LOCAL_DATETIME_NOW());
+            //then
+            assertThat(result.size()).isOne();
+            assertThat(result).contains(mission);
+        }
+    }
+
+    @Test
+    void test_오늘_마지막_미션인_사람들_추출(){
+        try (MockedStatic<DateUtil> dateUtil = Mockito.mockStatic(DateUtil.class)){
+            //given
+            dateUtil.when(DateUtil::KST_LOCAL_DATETIME_NOW).thenReturn(LocalDateTime.of(2021,11,20,9,0));
+            dateUtil.when(DateUtil::KST_LOCAL_DATE_NOW).thenReturn(LocalDate.of(2021,11,20));
+            dateUtil.when(DateUtil::MID_NIGHT).thenReturn(LocalDateTime.of(2021,11,20,0,0)); // 일요일
+            // set account,organization,mission
+            Account account = AccountTemplate.makeTestAccount();
+            Organization organization = OrganizationTemplate.makeTestOrganization();
+            Organization organization2 = OrganizationTemplate.makeTestOrganization("기상","7시 기상");
+            LocalDate startDate = DateUtil.KST_LOCAL_DATE_NOW().minusDays(7);
+            LocalDate finishDate = DateUtil.KST_LOCAL_DATE_NOW();
+            Mission mission = MissionTemplate.makeMission(account,organization,startDate,finishDate);
+            Mission mission2 = MissionTemplate.makeMission(account,organization2);
+            //set day of week
+            List<Cron> list = new ArrayList<>();
+            Cron cron = Cron.builder().mission(mission).week(Week.SAT).build();
+            Cron cron2 = Cron.builder().mission(mission).week(Week.SUN).build();
+            list.add(cron);
+            list.add(cron2);
+
+            mission.setWeeksForTest(list);
+            mission2.setWeeksForTest(list);
+            List<Mission> missions = new ArrayList<>();
+            missions.add(mission);
+            missions.add(mission2);
+            given(missionRepository.findAllByIsDeleteIsFalse()).willReturn(missions);
+            //when
+            List<Mission> res = missionService.checkLastDayMission();
+            //then
+            assertThat(res).isNotNull();
+            assertThat(res.size()).isOne();
+            Mission resMission = res.get(0);
+            assertThat(resMission.getFinishDate()).isEqualTo(finishDate);
+        }
     }
 }
