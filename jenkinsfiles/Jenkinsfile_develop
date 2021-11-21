@@ -5,8 +5,8 @@ pipeline {
       parallel {
         stage('db restart') {
           steps {
-            sh 'docker rm -f postgres'
-            sh 'docker rm -f redis'
+            sh 'docker rm -fv postgres'
+            sh 'docker rm -fv redis'
             sh 'docker run -p 54320:5432 --name postgres -e POSTGRES_HOST_AUTH_METHOD=$POSTGRES_HOST_AUTH_METHOD -e POSTGRES_DB=$POSTGRES_DB -e POSTGRES_USER=$POSTGRES_USER -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -d vixx170627/postgres-ko'
             sh 'docker run -p 63790:6379 --name redis -d redis'
           }
@@ -17,6 +17,7 @@ pipeline {
             sh 'cp ../properties/test/application.properties ./src/main/resources'
           }
         }
+
       }
     }
 
@@ -33,11 +34,11 @@ pipeline {
     }
 
     stage('set firebase key') {
-          steps {
-            sh 'mkdir ./src/main/resources/firebase'
-            sh 'cp ../properties/firebase/firebase_service_key.json ./src/main/resources/firebase'
-          }
-        }
+      steps {
+        sh 'mkdir ./src/main/resources/firebase'
+        sh 'cp ../properties/firebase/firebase_service_key.json ./src/main/resources/firebase'
+      }
+    }
 
     stage('build') {
       steps {
@@ -54,31 +55,29 @@ pipeline {
 
     stage('db stop') {
       steps {
-        sh 'docker rm -f postgres'
-        sh 'docker rm -f redis'
+        sh 'docker rm -fv postgres'
+        sh 'docker rm -fv redis'
       }
     }
 
     stage('SSH transfer') {
-            steps([$class: 'BapSshPromotionPublisherPlugin']) {
-              sshPublisher(
-                continueOnError: false, failOnError: true,
-                publishers: [
-                  sshPublisherDesc(
-                    configName: "develop",//Jenkins 시스템 정보에 사전 입력한 서버 ID
-                    verbose: true,
-                    transfers: [
-                      sshTransfer(
-                         sourceFiles: "run.zsh", //전송할 파일
-                         removePrefix: "", //파일에서 삭제할 경로가 있다면 작성
-                         remoteDirectory: "", //배포할 위치
-                         execCommand: "sh run.zsh" //원격지에서 실행할 커맨드
-                      )
-                    ]
-                  )
-                ]
-              )
+      steps {
+        sshPublisher(failOnError: true, publishers: [
+                            sshPublisherDesc(
+                                configName: "develop",//Jenkins 시스템 정보에 사전 입력한 서버 ID
+                                verbose: true,
+                                transfers: [
+                                    sshTransfer(
+                                         sourceFiles: "run.zsh", //전송할 파일
+                                         removePrefix: "", //파일에서 삭제할 경로가 있다면 작성
+                                         remoteDirectory: "", //배포할 위치
+                                         execCommand: "sh run.zsh" //원격지에서 실행할 커맨드
+                                      )
+                                    ]
+                                  )
+                                ])
+              }
             }
+
           }
-  }
-}
+        }
