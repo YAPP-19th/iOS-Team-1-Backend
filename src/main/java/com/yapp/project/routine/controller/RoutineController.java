@@ -48,7 +48,7 @@ public class RoutineController {
         return routineService.deleteRoutine(routineId, AccountUtil.getAccount());
     }
 
-    @ApiOperation(value = "요일 루틴 순서 편집", notes = "요일 루틴 순서 편집하기")
+    @ApiOperation(value = "요일 루틴 순서 편집", notes = "요일 루틴 순서 편집하기\n 루틴ID를 순서대로 넘겨주세요")
     @PatchMapping("/sequence/{day}")
     public RoutineDTO.ResponseRoutineListMessageDto updateRoutineSequence(
             @PathVariable Week day, @RequestBody RoutineDTO.RequestRoutineSequence sequence) {
