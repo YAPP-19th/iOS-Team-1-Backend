@@ -34,6 +34,15 @@ class AccountServiceTest {
     @Autowired
     private CaptureImageRepository captureImageRepository;
 
+    @Test
+    @Transactional
+    void test_알람토글_변경() {
+        Account account = accountRepository.save(AccountTemplate.makeTestAccount());
+        assertThat(account.getIsAlarm()).isFalse();
+        accountService.clickAlarmToggle(account);
+        assertThat(account.getIsAlarm()).isTrue();
+    }
+
 
     @Test
     @Transactional

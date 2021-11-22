@@ -187,6 +187,7 @@ class MissionServiceTest {
             dateUtil.when(DateUtil::MID_NIGHT).thenReturn(LocalDateTime.of(2021,11,20,0,0)); // 일요일
 
             Account account = AccountTemplate.makeTestAccount();
+            account.clickAlarmToggle();
             Organization organization = OrganizationTemplate.makeTestOrganization();
             Organization organization2 = OrganizationTemplate.makeTestOrganization("기상","6시 기상");
             Mission mission = MissionTemplate.makeMission(account, organization);
@@ -222,6 +223,7 @@ class MissionServiceTest {
             dateUtil.when(DateUtil::MID_NIGHT).thenReturn(LocalDateTime.of(2021,11,20,0,0)); // 일요일
             // set account,organization,mission
             Account account = AccountTemplate.makeTestAccount();
+            account.clickAlarmToggle();
             Organization organization = OrganizationTemplate.makeTestOrganization();
             Organization organization2 = OrganizationTemplate.makeTestOrganization("기상","7시 기상");
             LocalDate startDate = DateUtil.KST_LOCAL_DATE_NOW().minusDays(7);

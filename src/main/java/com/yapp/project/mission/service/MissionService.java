@@ -89,7 +89,8 @@ public class MissionService {
     public List<Mission> checkLastDayMission(){
         List<Mission> missions = missionRepository.findAllByIsDeleteIsFalse();
         return missions.stream()
-                .filter(mission -> mission.getFinishDate().isEqual(DateUtil.KST_LOCAL_DATE_NOW()))
+                .filter(mission -> mission.getAccount().getIsAlarm() &&
+                        mission.getFinishDate().isEqual(DateUtil.KST_LOCAL_DATE_NOW()))
                 .collect(Collectors.toList());
     }
 
@@ -97,14 +98,21 @@ public class MissionService {
         List<Mission> missions =  missionRepository.findAllByIsDeleteIsFalseAndIsAlarmIsTrueAndStartTimeEquals(dateTime.toLocalTime());
         List<Mission> response = new ArrayList<>();
         for (Mission mission : missions){
-            for (Cron cron : mission.getWeeks()){
-                if ( cron.getWeek().getIndex() == dateTime.getDayOfWeek().getValue()){
-                    response.add(mission);
-                    break;
-                }
+            Account account = mission.getAccount();
+            if (account.getIsAlarm()){
+                findTodayMission(mission, dateTime, response);
             }
         }
         return response;
+    }
+
+    private void findTodayMission(Mission mission, LocalDateTime dateTime, List<Mission> response) {
+        for (Cron cron : mission.getWeeks()){
+            if (cron.getWeek().getIndex() == dateTime.getDayOfWeek().getValue()){
+                response.add(mission);
+                break;
+            }
+        }
     }
 
     private void setDays(List<Week> days, Mission mission){
