@@ -44,11 +44,33 @@ public class AccountDto {
                     .lastLogin(KST_LOCAL_DATETIME_NOW())
                     .build();
         }
+        public LoginRequest toLoginRequest(){
+            return LoginRequest.builder().email(email)
+                    .fcmToken(fcmToken)
+                    .password(password)
+                    .build();
+        }
         public UsernamePasswordAuthenticationToken toAuthentication() {
             return new UsernamePasswordAuthenticationToken(email,password);
         }
         public void updateSocialType(SocialType socialType){
             this.socialType = socialType;
+        }
+    }
+
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class LoginRequest {
+        @ApiModelProperty(value = "이메일",example = "yapp@example.com")
+        private String email;
+        @ApiModelProperty(value = "비밀번호", example = "비밀번호")
+        private String password;
+        @ApiModelProperty(value = "fcm 토큰", example = "---====*********")
+        private String fcmToken;
+        public UsernamePasswordAuthenticationToken toAuthentication() {
+            return new UsernamePasswordAuthenticationToken(email,password);
         }
     }
 

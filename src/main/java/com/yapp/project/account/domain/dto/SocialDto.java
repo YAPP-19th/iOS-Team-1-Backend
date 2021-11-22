@@ -29,7 +29,7 @@ public class SocialDto {
             this.id = id;
         }
 
-        public SocialType getSocial(){
+        public SocialType getSocialType(){
             if (socialType.equalsIgnoreCase(SocialType.KAKAO.name())){
                 return SocialType.KAKAO;
             }else {
@@ -38,7 +38,7 @@ public class SocialDto {
         }
 
         public String getEmail(){
-            if (getSocial().equals(SocialType.KAKAO)){
+            if (getSocialType().equals(SocialType.KAKAO)){
                 return id+"@kakao.com";
             }else{
                 return id+"@apple.com";

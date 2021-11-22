@@ -112,7 +112,7 @@ class AuthServiceTest {
         accountRepository.save(account);
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
         //when
-        TokenDto tokenDto = authService.login(accountRequestDto);
+        TokenDto tokenDto = authService.login(accountRequestDto.toLoginRequest());
         //then
         assertThat(tokenDto.getAccessToken()).isNotNull();
         assertThat(tokenDto.getRefreshToken()).isNotNull();
@@ -125,7 +125,7 @@ class AuthServiceTest {
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto("fail@example.com"
                 ,"fail");
         //when -> then
-        assertThatThrownBy(() ->authService.login(accountRequestDto)).isInstanceOf(NotFoundUserInformationException.class)
+        assertThatThrownBy(() ->authService.login(accountRequestDto.toLoginRequest())).isInstanceOf(NotFoundUserInformationException.class)
                 .hasMessage(AccountContent.NOT_FOUND_USER_INFORMATION);
     }
 
@@ -135,7 +135,7 @@ class AuthServiceTest {
         //given
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
         accountRepository.save(AccountTemplate.makeTestAccount());
-        TokenDto tokenDto = authService.login(accountRequestDto);
+        TokenDto tokenDto = authService.login(accountRequestDto.toLoginRequest());
         TokenRequestDto tokenRequestDto = new TokenRequestDto(tokenDto.getRefreshToken());
         TimeUnit.MICROSECONDS.sleep(1);
         //when
