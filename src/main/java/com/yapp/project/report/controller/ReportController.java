@@ -19,18 +19,6 @@ public class ReportController {
 
     private final ReportService reportService;
 
-    /** Todo change Schedule - Batch*/
-    @GetMapping("/week/test")
-    public void testWeekMethod() {
-       reportService.makeWeekReport(AccountUtil.getAccount());
-    }
-
-    /** Todo change Schedule - Batch*/
-    @GetMapping("/month/test")
-    public void asdgetMonthReportByYearAndMonth() {
-        reportService.makeMonthReport(AccountUtil.getAccount());
-    }
-
     @ApiOperation(value = "월 리포트 조회", notes = "월 리포트 조회하기. \n 월 리포트의 년도와 월을 넘겨주세요. \n ex) 2021/10")
     @GetMapping("/month/{year}/{month}")
     public ReportDTO.ResponseMonthReportMessage getMonthReportByYearAndMonth(
