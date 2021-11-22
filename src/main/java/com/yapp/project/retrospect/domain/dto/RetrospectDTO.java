@@ -70,7 +70,7 @@ public class RetrospectDTO {
         private LocalDate date;
         @ApiModelProperty(value = "이미지 경로", example = "이미지 경로입니다.")
         private String image;
-        @ApiModelProperty(value = "수행 여부", example = "루틴 수행 여부입니다.")
+        @ApiModelProperty(value = "수행 여부", example = "DONE")
         private Result result;
         private RoutineDTO.ResponseRoutineDto routine;
 
