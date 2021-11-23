@@ -30,6 +30,20 @@ public class AccountExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(EmailInvalidException.class)
+    public ResponseEntity<Message> handle(EmailInvalidException e){
+        final Message message = Message.of(e.getStatus(), e.getMessage());
+        alertService.sentryWithSlackMessage(e);
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NicknameLengthOverException.class)
+    public ResponseEntity<Message> handle(NicknameLengthOverException e){
+        final Message message = Message.of(e.getStatus() ,e.getMessage());
+        alertService.sentryWithSlackMessage(e);
+        return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(NotFoundUserInformationException.class)
     public ResponseEntity<Message> handle(NotFoundUserInformationException e){
         final Message message = Message.of(e.getStatus() ,e.getMessage());
@@ -65,12 +79,7 @@ public class AccountExceptionHandler {
         return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NicknameLengthOverException.class)
-    public ResponseEntity<Message> handle(NicknameLengthOverException e){
-        final Message message = Message.of(e.getStatus() ,e.getMessage());
-        alertService.sentryWithSlackMessage(e);
-        return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
-    }
+
 
     @ExceptionHandler(SocialTokenInvalidException.class)
     public ResponseEntity<Message> handle(SocialTokenInvalidException e){
