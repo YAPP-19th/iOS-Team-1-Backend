@@ -55,10 +55,21 @@ public class Account {
 
     private String fcmToken;
 
+    private Boolean isAlarm;
+
+    @PrePersist
+    public void prePersist() {
+        this.isDelete= isDelete != null && isDelete;
+        this.isAlarm= isAlarm != null && isAlarm;
+    }
+
+
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private final List<WeekReport> weekReportList = new ArrayList<>();
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private final List<MonthRoutineReport> monthRoutineReportList = new ArrayList<>();
 
     public void updateLastLoginAccount(){
@@ -75,6 +86,14 @@ public class Account {
 
     public void resetPassword(PasswordEncoder passwordEncoder, String newPassword){
         this.password = passwordEncoder.encode(newPassword);
+    }
+
+    public void clickAlarmToggle(){
+        if(this.isAlarm == null) {
+            this.isAlarm = false;
+            return;
+        }
+        this.isAlarm = !isAlarm;
     }
   
     public void remove() throws NoSuchAlgorithmException {

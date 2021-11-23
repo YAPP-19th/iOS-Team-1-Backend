@@ -43,6 +43,12 @@ public class AccountService {
     private final WeekReportRepository weekReportRepository;
     private final MonthRoutineReportRepository monthRoutineReportRepository;
 
+    @Transactional
+    public Message clickAlarmToggle(Account account) {
+        account.clickAlarmToggle();
+        return Message.of(StatusEnum.ACCOUNT_OK,AccountContent.CHANGE_ALARM_TOGGLE);
+    }
+
 
     @Transactional(readOnly = true)
     public AccountDto.UserResponse getUserInfo() {
@@ -92,17 +98,17 @@ public class AccountService {
     }
 
     private void deleteMonthReport(List<MonthRoutineReport> monthRoutineReportList) {
-        monthRoutineReportList.forEach(monthRoutineReport -> monthRoutineReport.deleteReport());
+        monthRoutineReportList.forEach(MonthRoutineReport::deleteReport);
         monthRoutineReportRepository.saveAll(monthRoutineReportList);
     }
 
     private void deleteWeekReport(List<WeekReport> weekReportList) {
-        weekReportList.forEach(weekReport -> weekReport.deleteReport());
+        weekReportList.forEach(WeekReport::deleteReport);
         weekReportRepository.saveAll(weekReportList);
     }
 
     private void deleteRoutine(List<Routine> routineList) {
-        routineList.forEach(routine -> routine.deleteRoutine());
+        routineList.forEach(Routine::deleteRoutine);
         routineRepository.saveAll(routineList);
     }
 }

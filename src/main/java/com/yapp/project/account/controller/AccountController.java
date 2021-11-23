@@ -42,4 +42,11 @@ public class AccountController {
         Account account = AccountUtil.getAccount();
         return accountService.removeAccount(account);
     }
+
+    @ApiOperation(value = "알람토글 변경")
+    @GetMapping
+    public Message clickAlarmToggle() {
+        Account account = AccountUtil.getAccount();
+        return accountService.clickAlarmToggle(account);
+    }
 }

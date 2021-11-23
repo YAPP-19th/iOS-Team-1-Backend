@@ -53,9 +53,11 @@ public class AccountTemplate {
     }
 
     public static Account makeTestAccount(String username, String email, Authority authority, SocialType socialType){
-        return Account.builder().id(id++).nickname(username).password(bCryptPasswordEncoder.encode(PASSWORD))
+        Account account = Account.builder().id(id++).nickname(username).password(bCryptPasswordEncoder.encode(PASSWORD))
                 .email(email).createdAt(KST_LOCAL_DATETIME_NOW()).lastLogin(KST_LOCAL_DATETIME_NOW())
                 .authority(authority).socialType(socialType).build();
+        account.clickAlarmToggle();
+        return account;
     }
 
     public static UserRequest makeAccountRequestDto(){
