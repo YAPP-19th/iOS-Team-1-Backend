@@ -9,7 +9,7 @@ import com.yapp.project.account.domain.dto.TokenRequestDto;
 import com.yapp.project.account.domain.oauth.apple.AppleKeyStorage;
 import com.yapp.project.account.domain.oauth.kakao.KakaoResponse;
 import com.yapp.project.account.domain.repository.AccountRepository;
-import com.yapp.project.account.util.PasswordUtil;
+import com.yapp.project.account.util.RegexUtil;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.PrefixType;
 import com.yapp.project.aux.StatusEnum;
@@ -75,6 +75,14 @@ public class AuthService {
 
     @Value("${property.status}")
     private String profile;
+
+    @Transactional(readOnly = true)
+    public EmailValidationResponseMessage isAlreadyExistEmail(String email) {
+        validateEmail(email);
+        boolean isExists = accountRepository.existsByEmail(email);
+        EmailValidationResponse response = new EmailValidationResponse(isExists);
+        return EmailValidationResponseMessage.of(StatusEnum.ACCOUNT_OK,AccountContent.EMAIL_VALIDATION,response);
+    }
 
 
     @Transactional(readOnly = true)
@@ -161,6 +169,7 @@ public class AuthService {
     public Message sendAuthenticationNumber(EmailRequest request){
         ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
         String email = request.getEmail();
+        validateEmail(email);
         Account account = accountRepository.findByEmail(email).orElseThrow(NotFoundUserInformationException::new);
         String key = PrefixType.PREFIX_TEMP_NUMBER + account.getEmail();
         String number = Utils.authenticationNumber();
@@ -251,6 +260,7 @@ public class AuthService {
 
     private void signUp(UserRequest accountRequestDto){
         String email = accountRequestDto.getEmail();
+        validateEmail(email);
         String nickname = accountRequestDto.getNickname();
         checkDuplicateExceptionFields(email, nickname);
         SocialType socialType = accountRequestDto.getSocialType();
@@ -260,6 +270,11 @@ public class AuthService {
         accountRepository.save(account);
     }
 
+    private void validateEmail(String email){
+        if (!RegexUtil.validEmail(email)){
+            throw new EmailInvalidException();
+        }
+    }
 
     private void sendEmail(String email, String number){
         if (profile.equals("test")){
@@ -274,7 +289,7 @@ public class AuthService {
     }
 
     private void checkPasswordValidation(SocialType socialType, String password){
-        if (socialType.equals(SocialType.NORMAL) && !PasswordUtil.validPassword(password)){
+        if (socialType.equals(SocialType.NORMAL) && !RegexUtil.validPassword(password)){
             throw new PasswordInvalidException();
         }
     }
@@ -291,7 +306,9 @@ public class AuthService {
 
 
     public TokenDto login(LoginRequest loginRequest){
-        Account account = accountRepository.findByEmail(loginRequest.getEmail())
+        String email = loginRequest.getEmail();
+        validateEmail(email);
+        Account account = accountRepository.findByEmail(email)
                 .orElseThrow(NotFoundUserInformationException::new);
         updateAccountInformation(account,loginRequest.getFcmToken());
 

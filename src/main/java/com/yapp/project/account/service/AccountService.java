@@ -5,7 +5,7 @@ import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.SocialType;
 import com.yapp.project.account.domain.dto.AccountDto;
 import com.yapp.project.account.domain.repository.AccountRepository;
-import com.yapp.project.account.util.PasswordUtil;
+import com.yapp.project.account.util.RegexUtil;
 import com.yapp.project.account.util.SecurityUtil;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
@@ -64,7 +64,7 @@ public class AccountService {
             throw new AssertionError();
         }
         Account dbAccount = accountRepository.findByEmail(account.getEmail()).orElseThrow(NotFoundUserInformationException::new);
-        if(!PasswordUtil.validPassword(password)){
+        if(!RegexUtil.validPassword(password)){
             throw new PasswordInvalidException();
         }
         dbAccount.resetPassword(passwordEncoder,password);

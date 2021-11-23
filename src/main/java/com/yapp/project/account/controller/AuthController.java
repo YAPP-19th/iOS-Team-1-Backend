@@ -72,4 +72,10 @@ public class AuthController {
         return authService.resetPassword(request);
     }
 
+    @ApiOperation(value = "이메일 존재 여부")
+    @GetMapping("/email/{email}")
+    public AccountDto.EmailValidationResponseMessage validateEmail(@PathVariable String email){
+        return authService.isAlreadyExistEmail(email);
+    }
+
 }

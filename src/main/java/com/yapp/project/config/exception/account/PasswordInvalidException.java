@@ -8,7 +8,7 @@ import lombok.Getter;
 public class PasswordInvalidException extends IllegalArgumentException{
     private final StatusEnum status;
     public PasswordInvalidException(){
-        super(AccountContent.NOT_VAILDATION_PASSWORD);
+        super(AccountContent.NOT_VALIDATION_PASSWORD);
         this.status = StatusEnum.PASSWORD_BAD_REQUEST;
     }
 }

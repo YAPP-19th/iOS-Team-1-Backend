@@ -38,6 +38,29 @@ class AuthServiceTest {
     @Autowired
     private RedisTemplate<String,String> redisTemplate;
 
+    @Test
+    @Transactional
+    void test_이메일_인증_확인() {
+        //given
+        String email = AccountTemplate.EMAIL;
+        //when
+        AccountDto.EmailValidationResponseMessage message = authService.isAlreadyExistEmail(email);
+        //then
+        assertThat(message).isNotNull();
+        assertThat(message.getData().isExist()).isFalse();
+
+        //given
+        AccountDto.UserRequest request = AccountTemplate.makeAccountRequestDto();
+        authService.normalSignUp(request);
+        //when
+        AccountDto.EmailValidationResponseMessage message2 = authService.isAlreadyExistEmail(email);
+        //then
+        assertThat(message2).isNotNull();
+        assertThat(message2.getData().isExist()).isTrue();
+
+
+    }
+
 
     @Test
     @Transactional
@@ -63,7 +86,7 @@ class AuthServiceTest {
                 AccountTemplate.USERNAME,"1234");
         //when -> then
         assertThatThrownBy(() ->authService.normalSignUp(request)).isInstanceOf(PasswordInvalidException.class)
-                .hasMessage(AccountContent.NOT_VAILDATION_PASSWORD);
+                .hasMessage(AccountContent.NOT_VALIDATION_PASSWORD);
     }
 
 

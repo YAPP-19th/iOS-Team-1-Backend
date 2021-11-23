@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -87,6 +88,28 @@ public class AccountDto {
 
         public static UserResponse of(Account account) {
             return new UserResponse(account.getEmail(), account.getNickname(), account.getProfile());
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @ToString
+    public static class EmailValidationResponse {
+        @ApiModelProperty(value = "이메일 존재 여부", example = "true/false")
+        private boolean exist;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class EmailValidationResponseMessage {
+        private Message message;
+        private EmailValidationResponse data;
+
+        public static EmailValidationResponseMessage of(StatusEnum status, String message, EmailValidationResponse data) {
+            return EmailValidationResponseMessage.builder().message(
+                    Message.builder().status(status).msg(message).build()
+            ).data(data).build();
         }
     }
 
