@@ -82,6 +82,10 @@ public class OrgDto {
         private LocalTime beginTime;
         @ApiModelProperty(value = "끝나는 시간", example = "8")
         private LocalTime endTime;
+        @ApiModelProperty(value = "설명글", example = "고요히 자기 자신을 느껴보는 시간입니다. ")
+        private String description;
+        @ApiModelProperty(value = "이렇게 해보세요", example = "명상을 처음 접해본다면, 호흡부터 시작해보세요.  ")
+        private String recommend;
     }
 
     @Getter
