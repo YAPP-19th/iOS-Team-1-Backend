@@ -38,7 +38,7 @@ public class AuthController {
 
     @ApiOperation(value = "로그인", tags = "일반 회원 절차")
     @PostMapping("/login")
-    public ResponseEntity<SocialDto.TokenMessage> login(@RequestBody AccountDto.UserRequest request){
+    public ResponseEntity<SocialDto.TokenMessage> login(@RequestBody AccountDto.LoginRequest request){
         return ResponseEntity.ok(authService.normalLogin(request));
     }
 

@@ -81,11 +81,11 @@ public class AuthService {
     public SocialResponseMessage socialAccess(SocialRequest socialRequestDto){
         String socialId = getSocialIdFromToken(socialRequestDto);
         socialRequestDto.insertId(socialId);
-        SocialType socialType = socialRequestDto.getSocial();
+        SocialType socialType = socialRequestDto.getSocialType();
         String email = socialRequestDto.getEmail();
         Account account = accountRepository.findByEmail(email).orElse(null);
         if (account != null){
-            TokenDto tokenDto = login(account.toAccountRequestDto(suffix));
+            TokenDto tokenDto = login(account.toAccountRequestDto(suffix).toLoginRequest());
             SocialResponse socialResponseDto = new SocialResponse("LOGIN",tokenDto);
             return socialResponseDto.toSocialResponseMessage(AccountContent.SOCIAL_LOGIN_SUCCESS);
         }else {
@@ -104,15 +104,15 @@ public class AuthService {
         checkDuplicateExceptionFields(email, nickname);
         Account account = requestDto.toAccount(passwordEncoder,suffix);
         accountRepository.save(account);
-        TokenDto tokenDto = login(account.toAccountRequestDto(suffix));
+        TokenDto tokenDto = login(account.toAccountRequestDto(suffix).toLoginRequest());
         return tokenDto.toTokenMessage(AccountContent.SOCIAL_SIGNUP_FINISH, StatusEnum.SOCIAL_OK);
 
     }
 
 
     @Transactional(readOnly = true)
-    public TokenMessage normalLogin(UserRequest accountRequestDto){
-        return login(accountRequestDto).toTokenMessage(AccountContent.NORMAL_LOGIN_SUCCESS, StatusEnum.ACCOUNT_OK);
+    public TokenMessage normalLogin(LoginRequest loginRequest){
+        return login(loginRequest).toTokenMessage(AccountContent.NORMAL_LOGIN_SUCCESS, StatusEnum.ACCOUNT_OK);
     }
 
 
@@ -120,7 +120,8 @@ public class AuthService {
     public TokenMessage normalSignUp(UserRequest accountRequestDto){
         accountRequestDto.updateSocialType(SocialType.NORMAL);
         signUp(accountRequestDto);
-        return login(accountRequestDto).toTokenMessage(AccountContent.NORMAL_SIGNUP_SUCCESS, StatusEnum.ACCOUNT_OK);
+        LoginRequest loginRequest = accountRequestDto.toLoginRequest();
+        return login(loginRequest).toTokenMessage(AccountContent.NORMAL_SIGNUP_SUCCESS, StatusEnum.ACCOUNT_OK);
     }
 
 
@@ -198,7 +199,7 @@ public class AuthService {
         if (profile.equals("test")){
             return "testForId";
         }
-        if (data.getSocial().equals(SocialType.KAKAO)){
+        if (data.getSocialType().equals(SocialType.KAKAO)){
             return getKakaoId(data);
         }else{
             return getAppleId(data.getToken());
@@ -289,17 +290,24 @@ public class AuthService {
     }
 
 
-    public TokenDto login(UserRequest accountRequestDto){
-        Account account = accountRepository.findByEmail(accountRequestDto.getEmail())
+    public TokenDto login(LoginRequest loginRequest){
+        Account account = accountRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(NotFoundUserInformationException::new);
-        account.updateLastLoginAccount();
-        account.updateFcmToken(accountRequestDto.getFcmToken());
+        updateAccountInformation(account,loginRequest.getFcmToken());
 
-        UsernamePasswordAuthenticationToken authenticationToken = accountRequestDto.toAuthentication();
+        return getTokenDto(loginRequest);
+    }
+
+
+    private void updateAccountInformation(Account account, String fcmToken){
+        account.updateLastLoginAccount();
+        account.updateFcmToken(fcmToken);
+    }
+
+    private TokenDto getTokenDto(LoginRequest loginRequest) {
+        UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
-
-        // refreshToken redis에 저장
         ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
         String key = PrefixType.PREFIX_REFRESH_TOKEN + authentication.getName();
         valueOperations.set(key, tokenDto.getRefreshToken());

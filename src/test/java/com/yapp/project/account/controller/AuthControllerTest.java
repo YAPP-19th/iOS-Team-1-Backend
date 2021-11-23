@@ -71,7 +71,7 @@ class AuthControllerTest {
         Account account = AccountTemplate.makeTestAccount();
         accountRepository.save(account);
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
-        ResponseEntity<SocialDto.TokenMessage> response = authController.login(accountRequestDto);
+        ResponseEntity<SocialDto.TokenMessage> response = authController.login(accountRequestDto.toLoginRequest());
         assertThat(response).isNotNull();
         assertThat(tokenProvider.validateToken(Objects.requireNonNull(response.getBody()).getData().getAccessToken())).isTrue();
     }
@@ -82,7 +82,7 @@ class AuthControllerTest {
         Account account = AccountTemplate.makeTestAccount("meaning","meaning@example.com");
         accountRepository.save(account);
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
-        assertThatThrownBy(() -> authController.login(accountRequestDto)).isInstanceOf(NotFoundUserInformationException.class)
+        assertThatThrownBy(() -> authController.login(accountRequestDto.toLoginRequest())).isInstanceOf(NotFoundUserInformationException.class)
                 .hasMessage(AccountContent.NOT_FOUND_USER_INFORMATION);
     }
 
@@ -111,7 +111,7 @@ class AuthControllerTest {
         accountRepository.save(account);
 
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
-        ResponseEntity<SocialDto.TokenMessage> response = authController.login(accountRequestDto);
+        ResponseEntity<SocialDto.TokenMessage> response = authController.login(accountRequestDto.toLoginRequest());
         assertThat(response).isNotNull();
         assertThat(tokenProvider.validateToken(Objects.requireNonNull(response.getBody()).getData().getAccessToken())).isTrue();
 
@@ -148,7 +148,7 @@ class AuthControllerTest {
         accountRepository.save(account);
 
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
-        ResponseEntity<SocialDto.TokenMessage> response = authController.login(accountRequestDto);
+        ResponseEntity<SocialDto.TokenMessage> response = authController.login(accountRequestDto.toLoginRequest());
         assertThat(response).isNotNull();
         assertThat(tokenProvider.validateToken(Objects.requireNonNull(response.getBody()).getData().getAccessToken())).isTrue();
 
@@ -166,7 +166,7 @@ class AuthControllerTest {
         accountRepository.save(account);
 
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
-        ResponseEntity<SocialDto.TokenMessage> response = authController.login(accountRequestDto);
+        ResponseEntity<SocialDto.TokenMessage> response = authController.login(accountRequestDto.toLoginRequest());
         assertThat(response).isNotNull();
         assertThat(tokenProvider.validateToken(Objects.requireNonNull(response.getBody()).getData().getAccessToken())).isTrue();
 
