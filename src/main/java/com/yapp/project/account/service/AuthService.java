@@ -20,8 +20,8 @@ import com.yapp.project.aux.request.ApiService;
 import com.yapp.project.config.exception.account.*;
 import com.yapp.project.config.jwt.TokenInfo;
 import com.yapp.project.config.jwt.TokenProvider;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -253,7 +253,8 @@ public class AuthService {
             PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
             Claims claims = Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token).getBody();
             return claims.getSubject();
-        } catch (JsonProcessingException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+        } catch (JsonProcessingException | NoSuchAlgorithmException | InvalidKeySpecException | ExpiredJwtException |
+                UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
             throw new SocialTokenInvalidException();
         }
     }
