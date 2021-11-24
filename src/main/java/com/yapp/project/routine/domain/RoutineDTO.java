@@ -2,10 +2,8 @@ package com.yapp.project.routine.domain;
 
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
-import com.yapp.project.report.domain.MonthRoutineReport;
-import com.yapp.project.report.domain.dto.ReportDTO;
+import com.yapp.project.organization.domain.Organization;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.models.auth.In;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -16,6 +14,23 @@ import java.util.stream.Collectors;
 import static com.yapp.project.aux.content.ReportContent.DAY_ROUTINE_RATE_OK;
 
 public class RoutineDTO {
+
+    @Getter
+    public static class ResponseRecommendedRoutine {
+//        @ApiModelProperty(value = "타이틀", example = "")
+        private String title;
+//        @ApiModelProperty(value = "설명", example = "1")
+        private String description;
+//        @ApiModelProperty(value = "카테고리", example = "0")
+        private String category;
+
+        @Builder
+        public ResponseRecommendedRoutine(String title, String description, String category) {
+            this.title = title;
+            this.description = description;
+            this.category = category;
+        }
+    }
 
     @Getter
     public static class ResponseRoutineDaysRate {
@@ -145,6 +160,28 @@ public class RoutineDTO {
             return ResponseDaysRoutineRateMessageDto.builder().message(
                     Message.builder().status(StatusEnum.DAY_ROUTINE_RATE_OK).msg(DAY_ROUTINE_RATE_OK).build()
             ).data(daysRateList).build();
+        }
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @Builder
+    public static class ResponseRecommendedRoutineMessageDto {
+        private Message message;
+        private List<ResponseRecommendedRoutine> data;
+        public static ResponseRecommendedRoutineMessageDto of(List<Organization> recommendedRoutineList) {
+            List<ResponseRecommendedRoutine> data = recommendedRoutineList.stream().map(recommended -> {
+                int index = recommended.getDescription().indexOf("\\n");
+                String description = recommended.getDescription().substring(0, index);
+                return ResponseRecommendedRoutine.builder()
+                        .title(recommended.getTitle())
+                        .category(recommended.getCategory())
+                        .description(description).build();
+            }).collect(Collectors.toList());
+            return ResponseRecommendedRoutineMessageDto.builder().message(
+                    Message.builder().status(StatusEnum.RECOMMENDED_ROUTINE_OK).msg("추천 루틴 조회를 성공하였습니다.").build()
+            ).data(data).build();
         }
     }
 }

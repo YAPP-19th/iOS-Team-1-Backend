@@ -61,4 +61,10 @@ public class RoutineController {
     public RoutineDTO.ResponseDaysRoutineRateMessageDto getDaysRoutineRate(@PathVariable String start) {
         return routineService.getRoutineDaysRate(AccountUtil.getAccount(), LocalDate.parse(start));
     }
+
+    @ApiOperation(value = "추천 루틴 조회", notes = "추천 루틴 조회하기")
+    @GetMapping("/recommended")
+    public RoutineDTO.ResponseRecommendedRoutineMessageDto getRecommendedRoutine() {
+        return routineService.getRecommendedRoutine();
+    }
 }
