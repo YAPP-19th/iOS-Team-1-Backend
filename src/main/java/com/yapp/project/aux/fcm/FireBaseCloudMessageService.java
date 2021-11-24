@@ -25,11 +25,11 @@ public class FireBaseCloudMessageService {
     private final String CONTENT_TYPE = "application/json; UTF-8";
     private final String CONTENT_MEDIA_TYPE = "application/json; charset=utf-8";
     private final ObjectMapper objectMapper;
+    private static final OkHttpClient client = new OkHttpClient();
 
     public void sendMessageTo(String targetToken, String title, String body) throws IOException {
         String API_URL = "https://fcm.googleapis.com/v1/projects/" + PROJECT_ID + "/messages:send";
         String message = makeMessage(targetToken, title, body);
-        OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = RequestBody.create(message,
                 MediaType.get(CONTENT_MEDIA_TYPE));
         Request request = new Request.Builder()
@@ -38,7 +38,7 @@ public class FireBaseCloudMessageService {
                 .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
                 .addHeader(HttpHeaders.CONTENT_TYPE, CONTENT_TYPE)
                 .build();
-        Response response = client.newCall(request).execute();
+        client.newCall(request).execute();
     }
 
     private String makeMessage(String targetToken, String title, String body) throws JsonParseException, JsonProcessingException {
