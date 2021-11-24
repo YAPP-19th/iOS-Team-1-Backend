@@ -173,7 +173,10 @@ public class RoutineDTO {
         public static ResponseRecommendedRoutineMessageDto of(List<Organization> recommendedRoutineList) {
             List<ResponseRecommendedRoutine> data = recommendedRoutineList.stream().map(recommended -> {
                 int index = recommended.getDescription().indexOf("\\n");
-                String description = recommended.getDescription().substring(0, index);
+                String description = recommended.getDescription();
+                if(index != -1) {
+                    description = recommended.getDescription().substring(0, index);
+                }
                 return ResponseRecommendedRoutine.builder()
                         .title(recommended.getTitle())
                         .category(recommended.getCategory())
