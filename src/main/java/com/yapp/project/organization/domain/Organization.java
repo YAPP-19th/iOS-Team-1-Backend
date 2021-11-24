@@ -76,8 +76,10 @@ public class Organization {
 
     private LocalTime endTime;
 
+    @Lob
     private String description;
 
+    @Lob
     private String recommend;
 
     public OrgDto.OrgResponse toResponseDto(){
