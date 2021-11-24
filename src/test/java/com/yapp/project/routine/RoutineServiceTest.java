@@ -2,8 +2,11 @@ package com.yapp.project.routine;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.test.account.AccountTemplate;
+import com.yapp.project.aux.test.organization.OrganizationTemplate;
 import com.yapp.project.config.exception.report.RoutineStartDayBadRequestException;
 import com.yapp.project.config.exception.routine.BadRequestRoutineException;
+import com.yapp.project.organization.domain.Organization;
+import com.yapp.project.organization.domain.repository.OrganizationRepository;
 import com.yapp.project.retrospect.domain.Retrospect;
 import com.yapp.project.retrospect.domain.RetrospectRepository;
 import com.yapp.project.routine.domain.Routine;
@@ -23,8 +26,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -38,6 +42,8 @@ public class RoutineServiceTest {
     private RoutineRepository routineRepository;
     @Mock
     private RetrospectRepository retrospectRepository;
+    @Mock
+    private OrganizationRepository organizationRepository;
 
     @Test
     void testCreateRoutineSuccess() {
@@ -254,4 +260,26 @@ public class RoutineServiceTest {
             routineService.getRoutineDaysRate(account, start);
         });
     }
+
+    @Test
+    void testGetRecommendedRoutine() {
+        // given
+        List<Organization> recommendedList = new ArrayList<>();
+        Organization test1 = OrganizationTemplate.makeTestOrganization();
+        Organization test2 = OrganizationTemplate.makeTestOrganization("환기 하기", "생활");
+        recommendedList.add(test1); recommendedList.add(test2);
+
+        // mocking
+        given(organizationRepository.findAll()).willReturn(recommendedList);
+
+        // when
+        List<RoutineDTO.ResponseRecommendedRoutine> data = routineService.getRecommendedRoutine().getData();
+
+        // then
+        assertAll(
+                () -> assertEquals(data.get(0).getCategory(), "미라클모닝"),
+                () -> assertEquals(data.get(1).getCategory(), "생활")
+        );
+   }
+
 }

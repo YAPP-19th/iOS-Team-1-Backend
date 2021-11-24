@@ -6,6 +6,8 @@ import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.config.exception.report.RoutineStartDayBadRequestException;
 import com.yapp.project.config.exception.routine.BadRequestRoutineException;
+import com.yapp.project.organization.domain.Organization;
+import com.yapp.project.organization.domain.repository.OrganizationRepository;
 import com.yapp.project.retrospect.domain.Result;
 import com.yapp.project.retrospect.domain.Retrospect;
 import com.yapp.project.retrospect.domain.RetrospectRepository;
@@ -31,7 +33,17 @@ public class RoutineService {
 
     private final RoutineRepository routineRepository;
     private final RetrospectRepository retrospectRepository;
+    private final OrganizationRepository organizationRepository;
     private static final int WEEK_LENGTH = 7;
+
+
+    @Transactional(readOnly = true)
+    public RoutineDTO.ResponseRecommendedRoutineMessageDto getRecommendedRoutine() {
+        List<Organization> organList = organizationRepository.findAll();
+        List<Organization> recommendedList = organList.stream().filter(organization ->
+                !organization.getCategory().equals("기상")).collect(Collectors.toList());
+        return RoutineDTO.ResponseRecommendedRoutineMessageDto.of(recommendedList);
+    }
 
     @Transactional(readOnly = true)
     public RoutineDTO.ResponseDaysRoutineRateMessageDto getRoutineDaysRate(Account account, LocalDate start) {
