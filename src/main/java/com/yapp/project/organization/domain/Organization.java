@@ -28,6 +28,8 @@ public class Organization {
         this.shoot = clause.getShoot();
         this.beginTime = clause.getBeginTime();
         this.endTime = clause.getEndTime();
+        this.description = clause.getDescription();
+        this.recommend = clause.getRecommend();
         this.updatedAt = DateUtil.KST_LOCAL_DATE_NOW();
 
     }
@@ -74,6 +76,10 @@ public class Organization {
 
     private LocalTime endTime;
 
+    private String description;
+
+    private String recommend;
+
     public OrgDto.OrgResponse toResponseDto(){
         return OrgDto.OrgResponse.builder().id(id)
                 .title(title).rate(rate)
@@ -83,7 +89,7 @@ public class Organization {
     public OrgDto.OrgDetailResponse toDetailResponseDto(){
         return OrgDto.OrgDetailResponse.builder().id(id)
                 .shoot(shoot).participant(missions.size()).rate(rate).title(title)
-                .category(category).beginTime(beginTime).endTime(endTime).build();
+                .category(category).beginTime(beginTime).endTime(endTime).description(description).recommend(recommend).build();
     }
 
     public void updateCurrentCount(){

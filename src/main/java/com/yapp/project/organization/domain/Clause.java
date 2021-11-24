@@ -15,4 +15,6 @@ public class Clause {
     private String shoot;
     private LocalTime beginTime;
     private LocalTime endTime;
+    private String description;
+    private String recommend;
 }
