@@ -72,7 +72,7 @@ public class ReportNotificationConfig {
     @Bean
     @StepScope
     public ListItemReader<Account> reportNotificationReader() {
-        List<Account> accounts = accountRepository.findAll();
+        List<Account> accounts = accountRepository.findAllByIsAlarmIsTrue();
         return new ListItemReader<>(accounts);
     }
 
