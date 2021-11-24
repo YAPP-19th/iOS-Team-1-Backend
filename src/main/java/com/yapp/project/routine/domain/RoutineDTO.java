@@ -17,11 +17,11 @@ public class RoutineDTO {
 
     @Getter
     public static class ResponseRecommendedRoutine {
-//        @ApiModelProperty(value = "타이틀", example = "")
+        @ApiModelProperty(value = "타이틀", example = "감사한 일 쓰기")
         private String title;
-//        @ApiModelProperty(value = "설명", example = "1")
+        @ApiModelProperty(value = "설명", example = "감사한 일, 소중한 대상을 떠올리며 적어보세요.")
         private String description;
-//        @ApiModelProperty(value = "카테고리", example = "0")
+        @ApiModelProperty(value = "카테고리", example = "미라클모닝")
         private String category;
 
         @Builder
