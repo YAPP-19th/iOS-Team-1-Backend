@@ -23,6 +23,8 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.yapp.project.aux.content.RoutineContent.*;
+
 @Service
 @RequiredArgsConstructor
 public class RoutineService {
@@ -62,7 +64,7 @@ public class RoutineService {
         checkIsMine(account, routine);
         routine.deleteRoutine();
         routineRepository.save(routine);
-        return Message.builder().msg("삭제 성공").status(StatusEnum.ROUTINE_OK).build();
+        return Message.builder().msg(ROUTINE_DELETE_OK).status(StatusEnum.ROUTINE_OK).build();
     }
 
     @Transactional
@@ -73,7 +75,7 @@ public class RoutineService {
         routine.updateRoutine(updateRoutine);
         updateDayList(updateRoutine, routine);
         return RoutineDTO.ResponseRoutineMessageDto.builder()
-                .message(Message.builder().msg("수정 성공").status(StatusEnum.ROUTINE_OK).build())
+                .message(Message.builder().msg(ROUTINE_UPDATE_OK).status(StatusEnum.ROUTINE_OK).build())
                 .data(RoutineDTO.ResponseRoutineDto.builder().routine(routineRepository.save(routine)).build())
                 .build();
     }
@@ -83,7 +85,7 @@ public class RoutineService {
         List<Routine> routineList = routineRepository // Sort.by("days").descending(): sequence가 0인 루틴은 최신 등록순
                 .findAllByIsDeleteIsFalseAndAccountAndDaysDayOrderByDaysSequence(account, day, Sort.by("days").descending());
         return RoutineDTO.ResponseRoutineListMessageDto.builder()
-                .message(Message.builder().msg("요일별 조회 성공").status(StatusEnum.ROUTINE_OK).build())
+                .message(Message.builder().msg(ROUTINE_BY_DAY_OK).status(StatusEnum.ROUTINE_OK).build())
                 .data(routineList.stream().map(routine -> RoutineDTO.ResponseRoutineDto.builder()
                         .routine(routine).build()).collect(Collectors.toList()))
                 .build();
@@ -94,7 +96,7 @@ public class RoutineService {
         Routine routine = findIsExistByIdAndIsNotDelete(routineId);
         checkIsMine(account, routine);
         return RoutineDTO.ResponseRoutineMessageDto.builder()
-                .message(Message.builder().msg("조회 성공").status(StatusEnum.ROUTINE_OK).build())
+                .message(Message.builder().msg(ROUTINE_OK).status(StatusEnum.ROUTINE_OK).build())
                 .data(RoutineDTO.ResponseRoutineDto.builder().routine(routine).build())
                 .build();
     }
@@ -107,7 +109,7 @@ public class RoutineService {
                 .newRoutine(newRoutine).build();
         setDays(newRoutine.getDays(), routine);
         return RoutineDTO.ResponseRoutineMessageDto.builder()
-                .message(Message.builder().msg("생성 성공").status(StatusEnum.ROUTINE_OK).build())
+                .message(Message.builder().msg(ROUTINE_CREATE_OK).status(StatusEnum.ROUTINE_OK).build())
                 .data(RoutineDTO.ResponseRoutineDto.builder().routine(routineRepository.save(routine)).build())
                 .build();
     }

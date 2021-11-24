@@ -2,10 +2,7 @@ package com.yapp.project.routine.domain;
 
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
-import com.yapp.project.report.domain.MonthRoutineReport;
-import com.yapp.project.report.domain.dto.ReportDTO;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.models.auth.In;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -13,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.yapp.project.aux.content.ReportContent.DAY_ROUTINE_RATE_OK;
+import static com.yapp.project.aux.content.RoutineContent.DAY_ROUTINE_RATE_OK;
 
 public class RoutineDTO {
 
@@ -107,7 +104,7 @@ public class RoutineDTO {
             this.title = routine.getTitle();
             this.goal = routine.getGoal();
             this.startTime = routine.getStartTime().toString();
-            this.days = routine.getDays().stream().map(day -> day.getDay()).collect(Collectors.toList());
+            this.days = routine.getDays().stream().map(RoutineDay::getDay).collect(Collectors.toList());
             this.category = routine.getCategory();
         }
     }
