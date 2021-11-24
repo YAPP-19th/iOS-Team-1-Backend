@@ -76,8 +76,10 @@ public class Organization {
 
     private LocalTime endTime;
 
+    @Column(columnDefinition="TEXT")
     private String description;
 
+    @Column(columnDefinition="TEXT")
     private String recommend;
 
     public OrgDto.OrgResponse toResponseDto(){
