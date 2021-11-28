@@ -16,6 +16,8 @@ public interface MissionRepository extends JpaRepository<Mission,Long> {
     List<Mission> findAllByAccountAndIsDeleteIsFalseAndIsFinishIsTrue(Account account);
     List<Mission> findAllByIsDeleteIsFalseAndIsAlarmIsTrueAndStartTimeEquals(LocalTime startTime);
     List<Mission> findAllByIsDeleteIsFalse();
+    List<Mission> findAllByIsDeleteIsFalseAndIsFinishIsFalse();
+    List<Mission> findAllByAccount(Account account);
     Optional<Mission> findMissionByAccountAndId(Account account, Long missionId);
     Optional<Mission> findMissionByAccountAndOrganization_IdAndIsFinishIsFalseAndIsDeleteIsFalse(Account account, Long organizationId);
 }

@@ -1,6 +1,7 @@
 package com.yapp.project.capture.domain;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -12,6 +13,7 @@ import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATETIME_NOW;
 @Entity
 @NoArgsConstructor
 @ToString
+@Getter
 public class CaptureImage {
 
     @Builder
@@ -31,5 +33,6 @@ public class CaptureImage {
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Capture capture;
 }

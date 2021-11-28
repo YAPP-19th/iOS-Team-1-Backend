@@ -5,9 +5,6 @@ import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.aux.content.MissionContent;
-import com.yapp.project.capture.domain.Capture;
-import com.yapp.project.capture.domain.CaptureImage;
-import com.yapp.project.capture.domain.repository.CaptureImageRepository;
 import com.yapp.project.config.exception.mission.AlreadyMissionExistException;
 import com.yapp.project.config.exception.mission.MissionNotFoundException;
 import com.yapp.project.mission.domain.Cron;
@@ -33,7 +30,6 @@ import java.util.stream.Collectors;
 public class MissionService {
     private final MissionRepository missionRepository;
     private final OrganizationRepository organizationRepository;
-    private final CaptureImageRepository captureImageRepository;
 
     @Transactional
     public Message createMission(MissionRequest request, Account account){
@@ -76,13 +72,7 @@ public class MissionService {
     @Transactional
     public Message deleteMyMission(Long missionId){
         Mission mission = missionRepository.findById(missionId).orElseThrow(MissionNotFoundException::new);
-        List<Capture> captures = mission.getCaptures();
-        for (Capture capture : captures){
-            List<CaptureImage> captureImage = capture.getCaptureImage();
-            captureImageRepository.deleteAllInBatch(captureImage);
-            capture.remove();
-        }
-        mission.remove();
+        missionRepository.delete(mission);
         return Message.of(StatusEnum.MISSION_OK, MissionContent.MISSION_DELETE_SUCCESS);
     }
 

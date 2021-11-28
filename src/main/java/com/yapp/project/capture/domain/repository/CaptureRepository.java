@@ -1,6 +1,7 @@
 package com.yapp.project.capture.domain.repository;
 
 import com.yapp.project.capture.domain.Capture;
+import com.yapp.project.mission.domain.Mission;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -16,4 +17,5 @@ public interface CaptureRepository extends JpaRepository<Capture, Long> {
     Optional<List<Capture>> findByOrganization_IdAndIsDeleteIsFalseOrderByCreatedAtDesc(Pageable pageRequest, Long organizationId);
     Optional<List<Capture>> findByOrganization_IdAndIsDeleteIsFalseOrderByCreatedAt(Pageable pageRequest, Long organizationId);
     Optional<List<Capture>> findCapturesByIdIn(List<Long> ids);
+    List<Capture> findAllByMission(Mission mission);
 }

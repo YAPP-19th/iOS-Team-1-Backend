@@ -42,7 +42,7 @@ public class CaptureController {
     @ApiOperation(value = "끝난 미션 관련 나의 이미지들 삭제하기", tags = "미션_관련_사진")
     @DeleteMapping
     public CaptureResponseMessage deleteCaptureImages(DeleteIdListRequest request){
-        return captureService.deleteCaptureImages(request);
+        return captureService.deleteCaptures(request);
     }
 
     @ApiOperation(value = "미션 관련 나의 이미지들 가져오기", tags = "미션_관련_사진", notes = CaptureNotes.GET_CAPTURE_NOTES)

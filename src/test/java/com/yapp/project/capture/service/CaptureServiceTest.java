@@ -183,8 +183,9 @@ class CaptureServiceTest{
         List<Long> captureIds = captures.stream().map(Capture::getId).collect(Collectors.toList());
         DeleteIdListRequest request = DeleteIdListRequest.builder()
                 .captureIdLists(captureIds).build();
+        given(captureRepository.findCapturesByIdIn(captureIds)).willReturn(Optional.of(captures));
         //when
-        CaptureResponseMessage message = captureService.deleteCaptureImages(request);
+        CaptureResponseMessage message = captureService.deleteCaptures(request);
         //then
         assertThat(message.getMessage().getStatus()).isEqualTo(StatusEnum.CAPTURE_OK);
         assertThat(message.getMessage().getMsg()).isEqualTo(CaptureContent.CAPTURE_DELETE_SUCCESS);
