@@ -3,7 +3,6 @@ package com.yapp.project.mission.domain;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.aux.common.Utils;
-import com.yapp.project.capture.domain.Capture;
 import com.yapp.project.mission.domain.dto.MissionDto;
 import com.yapp.project.organization.domain.Organization;
 import lombok.Builder;
@@ -61,13 +60,9 @@ public class Mission {
     @ToString.Exclude
     private Account account;
 
-    @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "mission", cascade = {CascadeType.ALL,CascadeType.REMOVE}, orphanRemoval = true)
     @ToString.Exclude
     private final List<Cron> weeks = new ArrayList<>();
-
-    @OneToMany(mappedBy = "mission", fetch = FetchType.EAGER)
-    @ToString.Exclude
-    private final List<Capture> captures = new ArrayList<>();
 
     private LocalDate startDate;
 

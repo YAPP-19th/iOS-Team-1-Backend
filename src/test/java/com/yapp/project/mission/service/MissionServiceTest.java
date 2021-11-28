@@ -8,6 +8,7 @@ import com.yapp.project.aux.test.account.AccountTemplate;
 import com.yapp.project.aux.test.mission.MissionTemplate;
 import com.yapp.project.aux.test.organization.OrganizationTemplate;
 import com.yapp.project.capture.domain.repository.CaptureImageRepository;
+import com.yapp.project.capture.service.CaptureService;
 import com.yapp.project.config.exception.mission.AlreadyMissionExistException;
 import com.yapp.project.aux.content.MissionContent;
 import com.yapp.project.config.exception.mission.MissionNotFoundException;
@@ -46,8 +47,12 @@ class MissionServiceTest {
     @Mock
     private OrganizationRepository organizationRepository;
 
+    @Mock
+    private CaptureService captureService;
+
     @InjectMocks
     private MissionService missionService;
+
 
 
     @Test

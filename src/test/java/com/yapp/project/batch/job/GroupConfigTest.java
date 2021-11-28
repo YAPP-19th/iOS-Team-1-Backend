@@ -3,6 +3,7 @@ package com.yapp.project.batch.job;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.repository.AccountRepository;
+import com.yapp.project.account.service.AccountService;
 import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.aux.test.account.AccountTemplate;
 import com.yapp.project.aux.test.mission.MissionTemplate;
@@ -39,6 +40,9 @@ class GroupConfigTest {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private AccountService accountService;
+
     @Test
     void test_그룹관련_배치_테스트() throws Exception {
         //given
@@ -70,5 +74,7 @@ class GroupConfigTest {
         Mission dbFinishMission = missionRepository.findMissionByAccountAndId(account2,finishMission.getId()).orElse(null);
         assertThat(dbFinishMission).isNotNull();
         assertThat(dbFinishMission.getIsFinish()).isTrue();
+        accountService.removeAccount(account);
+        accountService.removeAccount(account2);
     }
 }

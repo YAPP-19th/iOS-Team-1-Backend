@@ -68,12 +68,20 @@ public class CaptureService {
 
 
     @Transactional
-    public CaptureResponseMessage deleteCaptureImages(DeleteIdListRequest request){
+    public CaptureResponseMessage deleteCaptures(DeleteIdListRequest request){
         List<Long> captureIds = request.getCaptureIdLists();
         List<Capture> captures = captureRepository.findCapturesByIdIn(captureIds).orElse(null);
-        removeCaptureImageLists(captures);
+        assert captures != null;
+        deleteCaptureImages(captures);
         CaptureSuccessResponse data = CaptureSuccessResponse.builder().result(true).build();
         return CaptureResponseMessage.of(StatusEnum.CAPTURE_OK, CAPTURE_DELETE_SUCCESS, data);
+    }
+
+    private void deleteCaptureImages(List<Capture> captures){
+        for(Capture capture: captures){
+            captureImageRepository.deleteAllInBatch(capture.getCaptureImage());
+            capture.remove();
+        }
     }
 
     @Transactional(readOnly = true)
@@ -84,18 +92,6 @@ public class CaptureService {
         CaptureListResponse data = CaptureListResponse.builder().captures(captureResponses).build();
         return CaptureListResponseMessage.of(StatusEnum.CAPTURE_OK, CAPTURE_LIST_SUCCESS, data);
     }
-
-
-    private void removeCaptureImageLists(List<Capture> captures){
-        if (captures!=null){
-            for (Capture capture : captures){
-                capture.remove();
-                List<CaptureImage> images = capture.getCaptureImage();
-                captureImageRepository.deleteAllInBatch(images);
-            }
-        }
-    }
-
 
     private Capture saveCapture(Mission mission, String imagePath){
         int currentRank = mission.getOrganization().getCount();

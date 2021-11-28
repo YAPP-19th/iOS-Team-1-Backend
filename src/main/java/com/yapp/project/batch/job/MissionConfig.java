@@ -4,11 +4,13 @@ import com.yapp.project.aux.alert.AlertService;
 import com.yapp.project.aux.alert.SlackChannel;
 import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.capture.domain.Capture;
+import com.yapp.project.capture.domain.repository.CaptureRepository;
 import com.yapp.project.mission.domain.Cron;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.mission.domain.repository.MissionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -34,6 +36,7 @@ public class MissionConfig {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final MissionRepository missionRepository;
+    private final CaptureRepository captureRepository;
     private final AlertService alertService;
 
     @Bean(name="missionJob")
@@ -58,7 +61,7 @@ public class MissionConfig {
     @StepScope
     public ListItemReader<Mission> missionCountReader(){
         log.info("미션 성공/실패 횟수를 읽고 있습니다.");
-        List<Mission> missions = missionRepository.findAllByIsDeleteIsFalse();
+        List<Mission> missions = missionRepository.findAllByIsDeleteIsFalseAndIsFinishIsFalse();
         String guide = "총 미션 갯수는 "+missions.size()+"개 입니다.";
         log.info(guide);
         alertService.slackSendMessage(SlackChannel.BATCH,guide);
@@ -68,8 +71,8 @@ public class MissionConfig {
     public ItemProcessor<Mission,Mission> updateMissionProcessor(){
         return new ItemProcessor<Mission, Mission>() {
             @Override
-            public Mission process(Mission item) throws Exception {
-                List<Capture> list = item.getCaptures();
+            public Mission process(@NotNull Mission item) throws Exception {
+                List<Capture> list = captureRepository.findAllByMission(item);
                 Capture capture = list.get(list.size() -1);
                 if (!capture.getCreatedAt().toLocalDate().isEqual(DateUtil.KST_LOCAL_DATE_YESTERDAY())) {
                     log.info("어제 인증샷 찍지 않은 사람들 검거 완료");

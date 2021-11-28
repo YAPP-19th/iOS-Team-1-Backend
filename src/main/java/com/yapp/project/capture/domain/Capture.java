@@ -45,8 +45,8 @@ public class Capture {
     @ManyToOne(targetEntity = Organization.class, fetch = FetchType.LAZY)
     private Organization organization;
 
-    @OneToMany(mappedBy = "capture", fetch = FetchType.EAGER)
-    private List<CaptureImage> captureImage = new ArrayList<>();
+    @OneToMany(mappedBy = "capture", fetch = FetchType.EAGER, cascade = {CascadeType.ALL, CascadeType.REMOVE}, orphanRemoval = true)
+    private final List<CaptureImage> captureImage = new ArrayList<>();
 
     private Integer rank;
 
@@ -63,12 +63,11 @@ public class Capture {
                 .build();
     }
 
-    public void remove(){
-        isDelete=true;
-    }
-
     public void updateCaptureImage(CaptureImage images){
         captureImage.add(images);
     }
 
+    public void remove(){
+        this.isDelete=true;
+    }
 }
