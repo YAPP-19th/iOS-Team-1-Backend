@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 
 import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATE_NOW;
 import static com.yapp.project.aux.common.SnapShotUtil.saveImages;
+import static com.yapp.project.aux.content.RetrospectContent.*;
 
 
 @Service
@@ -51,23 +52,23 @@ public class RetrospectService {
         Optional<Retrospect> preRetrospect = retrospectRepository.findByRoutineAndDate(routine,
                 LocalDate.parse(retrospectResult.getDate()));
         Retrospect retrospect = preRetrospect.orElseGet(() ->
-                Retrospect.builder().routine(routine).isReport(false).build());
+                Retrospect.builder().routine(routine).isReport(false).date(retrospectResult.getDate()).build());
         retrospect.updateResult(retrospectResult.getResult());
         Retrospect saveRetrospect = retrospectRepository.save(retrospect);
-        return RetrospectDTO.ResponseRetrospectMessage.of(StatusEnum.RETROSPECT_OK , "회고 수행 여부 설정 성공", saveRetrospect);
+        return RetrospectDTO.ResponseRetrospectMessage.of(StatusEnum.RETROSPECT_OK , RETROSPECT_RESULT_SET_OK, saveRetrospect);
     }
 
     @Transactional(readOnly = true)
     public RetrospectDTO.ResponseRetrospectListMessage getRetrospectList(LocalDate date, Account account) {
         List<Retrospect> retrospectList = retrospectRepository.findAllByDateAndRoutineAccount(date, account);
-        return RetrospectDTO.ResponseRetrospectListMessage.of(StatusEnum.RETROSPECT_OK, "요일 기준 회고 전체 조회 성공", retrospectList);
+        return RetrospectDTO.ResponseRetrospectListMessage.of(StatusEnum.RETROSPECT_OK, RETROSPECT_GET_ALL_BY_DAY_OK, retrospectList);
     }
 
     @Transactional(readOnly = true)
     public RetrospectDTO.ResponseRetrospectMessage getRetrospect(Long retrospectId, Account account) {
         Retrospect retrospect = retrospectRepository.findById(retrospectId).orElseThrow(NotFoundRetrospectException::new);
         routineService.checkIsMine(account, retrospect.getRoutine());
-        return RetrospectDTO.ResponseRetrospectMessage.of(StatusEnum.RETROSPECT_OK, "회고 단일 조회 성공", retrospect);
+        return RetrospectDTO.ResponseRetrospectMessage.of(StatusEnum.RETROSPECT_OK, RETROSPECT_GET_BY_ID_OK, retrospect);
     }
 
     @Transactional
@@ -75,7 +76,7 @@ public class RetrospectService {
         Retrospect retrospect = retrospectRepository.findById(retrospectId).orElseThrow(NotFoundRetrospectException::new);
         routineService.checkIsMine(account, retrospect.getRoutine());
         retrospectRepository.delete(retrospect);
-        return Message.builder().msg("삭제 성공").status(StatusEnum.RETROSPECT_OK).build();
+        return Message.builder().msg(RETROSPECT_DELETE_BY_OK).status(StatusEnum.RETROSPECT_OK).build();
     }
 
     @Transactional
@@ -87,14 +88,14 @@ public class RetrospectService {
                 LocalDate.parse(requestRetrospect.getDate()));
         Retrospect retrospect = preRetrospect.orElseGet(() ->
                 Retrospect.builder().routine(routine).content(requestRetrospect.getContent())
-                        .isReport(false).result(Result.NOT).build());
+                        .isReport(false).result(Result.NOT).date(requestRetrospect.getDate()).build());
         if(imagePath != null) {
             retrospect.updateRetrospect(requestRetrospect.getContent(), snapshotRepository.save(Snapshot.builder().url(imagePath).build()));
         } else {
             retrospect.updateRetrospect(requestRetrospect.getContent());
         }
         Retrospect saveRetrospect = retrospectRepository.save(retrospect);
-        return RetrospectDTO.ResponseRetrospectMessage.of(StatusEnum.RETROSPECT_OK, "회고 작성 성공", saveRetrospect);
+        return RetrospectDTO.ResponseRetrospectMessage.of(StatusEnum.RETROSPECT_OK, RETROSPECT_CREATE_OK, saveRetrospect);
     }
 
     @Transactional
@@ -112,7 +113,7 @@ public class RetrospectService {
         }
         retrospect.updateRetrospect(updateRetrospect.getContent());
         Retrospect saveRetrospect = retrospectRepository.save(retrospect);
-        return RetrospectDTO.ResponseRetrospectMessage.of(StatusEnum.RETROSPECT_OK,"회고 수정 성공", saveRetrospect);
+        return RetrospectDTO.ResponseRetrospectMessage.of(StatusEnum.RETROSPECT_OK,RETROSPECT_UPDATE_OK, saveRetrospect);
     }
 
     private void checkIsUpdateValidity(Retrospect retrospect) {
@@ -132,8 +133,7 @@ public class RetrospectService {
     private boolean checkDateIsInRoutineDate(Routine routine, LocalDate date) {
         DayOfWeek dayOfWeek = date.getDayOfWeek();
         List<String> dateList = routine.getDays().stream().map(x -> x.getDay().toString()).collect(Collectors.toList());
-        boolean isContains = dateList.contains(dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.US).toUpperCase());
-        return isContains;
+        return dateList.contains(dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.US).toUpperCase());
     }
 
     private boolean checkDateIsBeforeTwoDayFromNow(LocalDate date) {

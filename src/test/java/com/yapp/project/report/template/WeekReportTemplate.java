@@ -134,7 +134,7 @@ public class WeekReportTemplate {
     }
 
     public static Retrospect makeRetrospect(Routine routine, Result result, String date) {
-        Retrospect retrospect = Retrospect.builder().result(result).routine(routine).build();
+        Retrospect retrospect = Retrospect.builder().result(result).routine(routine).date(date).build();
         retrospect.updateTestData(id++, LocalDate.parse(date));
         return retrospect;
     }

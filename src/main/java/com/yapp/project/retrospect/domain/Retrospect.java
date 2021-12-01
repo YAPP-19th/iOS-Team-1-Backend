@@ -43,14 +43,14 @@ public class Retrospect {
     private LocalDateTime createdAt;
 
     @Builder
-    public Retrospect(Routine routine, Snapshot image, String content, Result result, Boolean isReport){
+    public Retrospect(Routine routine, Snapshot image, String content, Result result, Boolean isReport, String date){
         this.routine = routine;
         this.image = image;
         this.content = content;
         this.result = result;
         this.isReport = isReport;
         this.createdAt = KST_LOCAL_DATETIME_NOW();
-        this.date = KST_LOCAL_DATE_NOW();
+        this.date = LocalDate.parse(date);
     }
 
     public void updateRetrospect(String content, Snapshot image) {

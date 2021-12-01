@@ -45,7 +45,7 @@ public class RoutineTemplate {
 
     public static List<Retrospect> makeCoffeeRetrospectList(Routine coffeeRoutine) {
         List<Retrospect> retrospectList = new ArrayList<>();
-        Retrospect sunDay = Retrospect.builder().content("").routine(coffeeRoutine).result(Result.DONE).build();
+        Retrospect sunDay = Retrospect.builder().content("").routine(coffeeRoutine).result(Result.DONE).date("2021-10-24").build();
         sunDay.updateTestData(retrospectId++, LocalDate.parse("2021-10-24"));
         retrospectList.add(sunDay);
         return retrospectList;
@@ -65,7 +65,7 @@ public class RoutineTemplate {
 
     public static List<Retrospect> makeReadingRetrospectList(Routine readingRoutine) {
         List<Retrospect> retrospectList = new ArrayList<>();
-        Retrospect friDay = Retrospect.builder().content("").routine(readingRoutine).result(Result.DONE).build();
+        Retrospect friDay = Retrospect.builder().content("").routine(readingRoutine).result(Result.DONE).date("2021-10-22").build();
         friDay.updateTestData(retrospectId++, LocalDate.parse("2021-10-22"));
         retrospectList.add(friDay);
         return retrospectList;
@@ -85,9 +85,9 @@ public class RoutineTemplate {
 
     public static List<Retrospect> makeRunningRetrospectList(Routine runningRoutine) {
         List<Retrospect> retrospectList = new ArrayList<>();
-        Retrospect wedDay = Retrospect.builder().content("").routine(runningRoutine).result(Result.DONE).build();
+        Retrospect wedDay = Retrospect.builder().content("").routine(runningRoutine).result(Result.DONE).date("2021-10-20").build();
         wedDay.updateTestData(retrospectId++, LocalDate.parse("2021-10-20"));
-        Retrospect friDay = Retrospect.builder().content("").routine(runningRoutine).result(Result.TRY).build();
+        Retrospect friDay = Retrospect.builder().content("").routine(runningRoutine).result(Result.TRY).date("2021-10-21").build();
         friDay.updateTestData(retrospectId++, LocalDate.parse("2021-10-21"));
         retrospectList.add(wedDay); retrospectList.add(friDay);
         return retrospectList;
@@ -108,11 +108,11 @@ public class RoutineTemplate {
 
     public static List<Retrospect> makeWaterRetrospectList(Routine waterRoutine) {
         List<Retrospect> retrospectList = new ArrayList<>();
-        Retrospect tueDay = Retrospect.builder().content("").routine(waterRoutine).result(Result.DONE).build();
+        Retrospect tueDay = Retrospect.builder().content("").routine(waterRoutine).result(Result.DONE).date("2021-10-19").build();
         tueDay.updateTestData(retrospectId++, LocalDate.parse("2021-10-19"));
-        Retrospect thuDay = Retrospect.builder().content("").routine(waterRoutine).result(Result.TRY).build();
+        Retrospect thuDay = Retrospect.builder().content("").routine(waterRoutine).result(Result.TRY).date("2021-10-21").build();
         thuDay.updateTestData(retrospectId++, LocalDate.parse("2021-10-21"));
-        Retrospect satDay = Retrospect.builder().content("").routine(waterRoutine).result(Result.DONE).build();
+        Retrospect satDay = Retrospect.builder().content("").routine(waterRoutine).result(Result.DONE).date("2021-10-23").build();
         satDay.updateTestData(retrospectId++, LocalDate.parse("2021-10-23"));
         retrospectList.add(tueDay); retrospectList.add(thuDay); retrospectList.add(satDay);
         return retrospectList;
