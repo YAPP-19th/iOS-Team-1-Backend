@@ -5,6 +5,8 @@ import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.aux.content.MissionContent;
+import com.yapp.project.capture.domain.Capture;
+import com.yapp.project.capture.domain.repository.CaptureRepository;
 import com.yapp.project.config.exception.mission.AlreadyMissionExistException;
 import com.yapp.project.config.exception.mission.MissionNotFoundException;
 import com.yapp.project.mission.domain.Cron;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
 public class MissionService {
     private final MissionRepository missionRepository;
     private final OrganizationRepository organizationRepository;
+    private final CaptureRepository captureRepository;
 
     @Transactional
     public Message createMission(MissionRequest request, Account account){
@@ -94,6 +97,35 @@ public class MissionService {
             }
         }
         return response;
+    }
+
+    public boolean deleteMyMissionIncludeCaptures(List<Mission> list){
+        if (!list.isEmpty()) {
+            for (Mission mission: list){
+                List<Capture> captures = captureRepository.findAllByMission(mission);
+                captureRepository.deleteAll(captures);
+            }
+            missionRepository.deleteAll(list);
+            return true;
+        }
+        return false;
+    }
+
+    public void setFinishIfYesterdayIsLastDay(Mission mission){
+        mission.finishMission();
+        missionRepository.save(mission);
+    }
+
+    public List<Mission> getMissionIsDeleteIsFalse(){
+        return missionRepository.findAllByIsDeleteIsFalse();
+    }
+
+    public List<Mission> findAllByIsDeleteIsFalseAndIsFinishIsFalse(){
+        return missionRepository.findAllByIsDeleteIsFalseAndIsFinishIsFalse();
+    }
+
+    public void saveAllMissions(List<Mission> missions){
+        missionRepository.saveAll(missions);
     }
 
     private void findTodayMission(Mission mission, LocalDateTime dateTime, List<Mission> response) {

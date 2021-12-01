@@ -5,9 +5,12 @@ import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.aux.test.account.AccountTemplate;
+import com.yapp.project.aux.test.capture.CaptureTemplate;
 import com.yapp.project.aux.test.mission.MissionTemplate;
 import com.yapp.project.aux.test.organization.OrganizationTemplate;
+import com.yapp.project.capture.domain.Capture;
 import com.yapp.project.capture.domain.repository.CaptureImageRepository;
+import com.yapp.project.capture.domain.repository.CaptureRepository;
 import com.yapp.project.capture.service.CaptureService;
 import com.yapp.project.config.exception.mission.AlreadyMissionExistException;
 import com.yapp.project.aux.content.MissionContent;
@@ -43,6 +46,9 @@ class MissionServiceTest {
 
     @Mock
     private CaptureImageRepository captureImageRepository;
+
+    @Mock
+    private CaptureRepository captureRepository;
 
     @Mock
     private OrganizationRepository organizationRepository;
@@ -217,6 +223,21 @@ class MissionServiceTest {
             assertThat(result.size()).isOne();
             assertThat(result).contains(mission);
         }
+    }
+
+    @Test
+    void test_미션들_삭제_했을_때_사진들도_함께() {
+        // given
+        Account account = AccountTemplate.makeTestAccount();
+        Organization organization = OrganizationTemplate.makeTestOrganization();
+        Mission mission = MissionTemplate.makeMission(account,organization);
+        Capture capture = CaptureTemplate.makeCapture(mission);
+        given(captureRepository.findAllByMission(mission)).willReturn(List.of(capture));
+        // when
+        boolean result = missionService.deleteMyMissionIncludeCaptures(List.of(mission));
+        // then
+        assertThat(result).isTrue();
+
     }
 
     @Test

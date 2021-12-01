@@ -5,9 +5,11 @@ import com.yapp.project.aux.alert.SlackChannel;
 import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.capture.domain.Capture;
 import com.yapp.project.capture.domain.repository.CaptureRepository;
+import com.yapp.project.capture.service.CaptureService;
 import com.yapp.project.mission.domain.Cron;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.mission.domain.repository.MissionRepository;
+import com.yapp.project.mission.service.MissionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -35,8 +37,8 @@ import java.util.Locale;
 public class MissionConfig {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
-    private final MissionRepository missionRepository;
-    private final CaptureRepository captureRepository;
+    private final MissionService missionService;
+    private final CaptureService captureService;
     private final AlertService alertService;
 
     @Bean(name="missionJob")
@@ -61,7 +63,7 @@ public class MissionConfig {
     @StepScope
     public ListItemReader<Mission> missionCountReader(){
         log.info("미션 성공/실패 횟수를 읽고 있습니다.");
-        List<Mission> missions = missionRepository.findAllByIsDeleteIsFalseAndIsFinishIsFalse();
+        List<Mission> missions = missionService.findAllByIsDeleteIsFalseAndIsFinishIsFalse();
         String guide = "총 미션 갯수는 "+missions.size()+"개 입니다.";
         log.info(guide);
         alertService.slackSendMessage(SlackChannel.BATCH,guide);
@@ -72,7 +74,7 @@ public class MissionConfig {
         return new ItemProcessor<Mission, Mission>() {
             @Override
             public Mission process(@NotNull Mission item) throws Exception {
-                List<Capture> list = captureRepository.findAllByMission(item);
+                List<Capture> list = captureService.findAllByMission(item);
                 Capture capture = list.get(list.size() -1);
                 if (!capture.getCreatedAt().toLocalDate().isEqual(DateUtil.KST_LOCAL_DATE_YESTERDAY())) {
                     log.info("어제 인증샷 찍지 않은 사람들 검거 완료");
@@ -91,9 +93,9 @@ public class MissionConfig {
     public ItemWriter<Mission> missionItemWriter(){
         return new ItemWriter<Mission>() {
             @Override
-            public void write(List<? extends Mission> items) throws Exception {
+            public void write(@NotNull List<? extends Mission> items) throws Exception {
                 log.info("어제 못한 미션 실패 횟수 카운트 1증가 완료");
-                missionRepository.saveAll(items);
+                missionService.saveAllMissions((List<Mission>) items);
             }
         };
     }
