@@ -312,7 +312,7 @@ public class AuthService {
         Account account = accountRepository.findByEmail(email)
                 .orElseThrow(NotFoundUserInformationException::new);
         updateAccountInformation(account,loginRequest.getFcmToken());
-
+        account.updateFcmToken(loginRequest.getFcmToken());
         return getTokenDto(loginRequest);
     }
 
