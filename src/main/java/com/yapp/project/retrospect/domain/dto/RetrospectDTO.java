@@ -24,7 +24,7 @@ public class RetrospectDTO {
     public static class RequestRetrospectResult {
         @ApiModelProperty(value = "루틴ID 보내주세요.", example = "2", required = true)
         private Long routineId;
-        @ApiModelProperty(value = "회고 작성일 보내주세요.", example = "2021-10-13", required = true)
+        @ApiModelProperty(value = "루틴의 수행일 보내주세요.\n만약 11일 루틴인데 12일 작성한다면 11일을 보내주세요", example = "2021-10-13", required = true)
         private String date;
         @ApiModelProperty(value = "수행 결과 보내주세요.", example = "DONE", required = true)
         private Result result;
@@ -52,7 +52,7 @@ public class RetrospectDTO {
         private Long routineId;
         @ApiModelProperty(value = "회고 내용 보내주세요.", example = "알찬 러닝이었다.", required = true)
         private String content;
-        @ApiModelProperty(value = "회고 작성일 보내주세요.", example = "2021-10-13", required = true)
+        @ApiModelProperty(value = "루틴의 수행일 보내주세요.\n만약 11일 루틴인데 12일 작성한다면 11일을 보내주세요", example = "2021-10-13", required = true)
         private String date;
         @ApiModelProperty(value = "이미지 파일 보내주세요.", example = "multipart/form-data형식으로 보내주세요", required = true)
         private MultipartFile image;
@@ -66,7 +66,7 @@ public class RetrospectDTO {
         private Long id;
         @ApiModelProperty(value = "회고 내용", example = "알찬 러닝이었다.")
         private String content;
-        @ApiModelProperty(value = "회고 작성일", example = "2021-10-21")
+        @ApiModelProperty(value = "루틴 수행일", example = "2021-10-21")
         private LocalDate date;
         @ApiModelProperty(value = "이미지 경로", example = "이미지 경로입니다.")
         private String image;
