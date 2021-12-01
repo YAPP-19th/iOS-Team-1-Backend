@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.yapp.project.aux.content.RoutineContent.DAY_ROUTINE_RATE_OK;
+import static com.yapp.project.aux.content.RoutineContent.RECOMMENDED_ROUTINE_OK;
 
 public class RoutineDTO {
 
@@ -183,7 +184,7 @@ public class RoutineDTO {
                         .description(description).build();
             }).collect(Collectors.toList());
             return ResponseRecommendedRoutineMessageDto.builder().message(
-                    Message.builder().status(StatusEnum.RECOMMENDED_ROUTINE_OK).msg("추천 루틴 조회를 성공하였습니다.").build()
+                    Message.builder().status(StatusEnum.RECOMMENDED_ROUTINE_OK).msg(RECOMMENDED_ROUTINE_OK).build()
             ).data(data).build();
         }
     }
