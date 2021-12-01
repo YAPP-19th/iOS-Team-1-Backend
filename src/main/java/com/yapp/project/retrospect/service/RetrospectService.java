@@ -51,7 +51,7 @@ public class RetrospectService {
         Optional<Retrospect> preRetrospect = retrospectRepository.findByRoutineAndDate(routine,
                 LocalDate.parse(retrospectResult.getDate()));
         Retrospect retrospect = preRetrospect.orElseGet(() ->
-                Retrospect.builder().routine(routine).isReport(false).build());
+                Retrospect.builder().routine(routine).isReport(false).date(retrospectResult.getDate()).build());
         retrospect.updateResult(retrospectResult.getResult());
         Retrospect saveRetrospect = retrospectRepository.save(retrospect);
         return RetrospectDTO.ResponseRetrospectMessage.of(StatusEnum.RETROSPECT_OK , "회고 수행 여부 설정 성공", saveRetrospect);
@@ -87,7 +87,7 @@ public class RetrospectService {
                 LocalDate.parse(requestRetrospect.getDate()));
         Retrospect retrospect = preRetrospect.orElseGet(() ->
                 Retrospect.builder().routine(routine).content(requestRetrospect.getContent())
-                        .isReport(false).result(Result.NOT).build());
+                        .isReport(false).result(Result.NOT).date(requestRetrospect.getDate()).build());
         if(imagePath != null) {
             retrospect.updateRetrospect(requestRetrospect.getContent(), snapshotRepository.save(Snapshot.builder().url(imagePath).build()));
         } else {
@@ -132,8 +132,7 @@ public class RetrospectService {
     private boolean checkDateIsInRoutineDate(Routine routine, LocalDate date) {
         DayOfWeek dayOfWeek = date.getDayOfWeek();
         List<String> dateList = routine.getDays().stream().map(x -> x.getDay().toString()).collect(Collectors.toList());
-        boolean isContains = dateList.contains(dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.US).toUpperCase());
-        return isContains;
+        return dateList.contains(dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.US).toUpperCase());
     }
 
     private boolean checkDateIsBeforeTwoDayFromNow(LocalDate date) {

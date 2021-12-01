@@ -62,9 +62,9 @@ class RetrospectServiceTest {
             Routine fakeRoutine = Routine.builder().account(account).newRoutine(newRoutine).id(1L).build();
             List<RoutineDay> newDays = days.stream().map(day -> RoutineDay.builder().day(day).sequence(0L).routine(fakeRoutine).build()).collect(Collectors.toList());
             fakeRoutine.addDays(newDays);
-            Retrospect fakeRetrospect = Retrospect.builder().routine(fakeRoutine).isReport(false).result(Result.NOT).build();
+            Retrospect fakeRetrospect = Retrospect.builder().routine(fakeRoutine).isReport(false).result(Result.NOT).date("2021-10-12").build();
             Snapshot fakeSnapShot = Snapshot.builder().url("테스트 경로").build();
-            Retrospect fakeRetrospectSnapShot = Retrospect.builder().routine(fakeRoutine).isReport(false).result(Result.NOT).build();
+            Retrospect fakeRetrospectSnapShot = Retrospect.builder().routine(fakeRoutine).isReport(false).result(Result.NOT).date("2021-10-12").build();
             fakeRetrospectSnapShot.updateRetrospect("테스트 회고 내용", fakeSnapShot);
             RetrospectDTO.RequestRetrospect fakeRequestRetrospect =
                     RetrospectDTO.RequestRetrospect.builder().routineId(1L).date("2021-10-12").content("테스트 회고 내용").build();
@@ -99,11 +99,11 @@ class RetrospectServiceTest {
         days.add(Week.TUE);
         RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", "생활");
         Routine fakeRoutine = Routine.builder().account(account).newRoutine(newRoutine).id(1L).build();
-        Retrospect fakeRetrospect = Retrospect.builder().routine(fakeRoutine).isReport(false).result(Result.NOT).build();
+        Retrospect fakeRetrospect = Retrospect.builder().routine(fakeRoutine).isReport(false).result(Result.NOT).date("2021-11-29").build();
         fakeRetrospect.updateRetrospect("테스트 회고 내용");
         RetrospectDTO.RequestUpdateRetrospect fakeUpdateRetrospect = RetrospectDTO.RequestUpdateRetrospect.builder().retrospectId(1L).content("테스트 회고 수정").build();
 
-        Retrospect fakeRetrospect2 = Retrospect.builder().routine(fakeRoutine).isReport(false).result(Result.NOT).build();
+        Retrospect fakeRetrospect2 = Retrospect.builder().routine(fakeRoutine).isReport(false).result(Result.NOT).date("2021-11-29").build();
         fakeRetrospect2.updateRetrospect("테스트 회고 수정");
 
         // mocking
@@ -124,9 +124,7 @@ class RetrospectServiceTest {
         RetrospectDTO.RequestUpdateRetrospect fakeUpdateRetrospect = RetrospectDTO.RequestUpdateRetrospect.builder().retrospectId(2L).content("테스트 회고 수정").build();
 
         // when then
-        assertThrows(NotFoundRetrospectException.class, () -> {
-            retrospectService.updateRetrospect(fakeUpdateRetrospect, account);
-        });
+        assertThrows(NotFoundRetrospectException.class, () -> retrospectService.updateRetrospect(fakeUpdateRetrospect, account));
     }
 
     @Test
@@ -141,7 +139,7 @@ class RetrospectServiceTest {
             Routine fakeRoutine = Routine.builder().account(account).newRoutine(newRoutine).id(1L).build();
             List<RoutineDay> newDays = days.stream().map(day -> RoutineDay.builder().day(day).sequence(0L).routine(fakeRoutine).build()).collect(Collectors.toList());
             fakeRoutine.addDays(newDays);
-            Retrospect fakeRetrospect = Retrospect.builder().routine(fakeRoutine).isReport(false).result(Result.NOT).build();
+            Retrospect fakeRetrospect = Retrospect.builder().routine(fakeRoutine).isReport(false).result(Result.NOT).date("2021-10-12").build();
             fakeRetrospect.updateRetrospect("테스트 회고 내용");
             RetrospectDTO.RequestRetrospectResult fakeResult =
                     RetrospectDTO.RequestRetrospectResult.builder().routineId(1L).date("2021-10-12").result(Result.DONE).build();
@@ -168,7 +166,7 @@ class RetrospectServiceTest {
 
         RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", "생활");
         Routine fakeRoutine = Routine.builder().account(account).newRoutine(newRoutine).id(1L).build();
-        Retrospect fakeRetrospect = Retrospect.builder().routine(fakeRoutine).isReport(false).result(Result.NOT).build();
+        Retrospect fakeRetrospect = Retrospect.builder().routine(fakeRoutine).isReport(false).result(Result.NOT).date("2021-10-12").build();
         fakeRetrospect.updateRetrospect("테스트 회고 내용");
         RetrospectDTO.RequestRetrospectResult fakeResult =
                 RetrospectDTO.RequestRetrospectResult.builder().routineId(1L).date("2021-10-12").result(Result.DONE).build();
@@ -177,8 +175,6 @@ class RetrospectServiceTest {
         given(routineService.findIsExistByIdAndIsNotDelete(any())).willReturn(fakeRoutine);
 
         // when then
-        assertThrows(BadRequestRetrospectException.class, () -> {
-            retrospectService.setRetrospectResult(fakeResult, account);
-        });
+        assertThrows(BadRequestRetrospectException.class, () -> retrospectService.setRetrospectResult(fakeResult, account));
     }
 }
