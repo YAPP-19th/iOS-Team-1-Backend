@@ -10,12 +10,11 @@ import com.yapp.project.account.util.SecurityUtil;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.aux.content.AccountContent;
-import com.yapp.project.capture.domain.Capture;
-import com.yapp.project.capture.domain.repository.CaptureRepository;
 import com.yapp.project.config.exception.account.NotFoundUserInformationException;
 import com.yapp.project.config.exception.account.PasswordInvalidException;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.mission.domain.repository.MissionRepository;
+import com.yapp.project.mission.service.MissionService;
 import com.yapp.project.report.domain.MonthRoutineReport;
 import com.yapp.project.report.domain.MonthRoutineReportRepository;
 import com.yapp.project.report.domain.WeekReport;
@@ -39,7 +38,7 @@ public class AccountService {
     private final RoutineRepository routineRepository;
     private final WeekReportRepository weekReportRepository;
     private final MonthRoutineReportRepository monthRoutineReportRepository;
-    private final CaptureRepository captureRepository;
+    private final MissionService missionService;
 
 
     @Transactional
@@ -73,7 +72,7 @@ public class AccountService {
     @Transactional
     public Message removeAccount(Account account) {
         List<Mission> list = missionRepository.findAllByAccount(account);
-        deleteMyCaptures(list);
+        missionService.deleteMyMissionIncludeCaptures(list);
         List<Routine> routineList = routineRepository.findAllByIsDeleteIsFalseAndAccount(account);
         List<WeekReport> weekReportList = weekReportRepository.findAllByAccount(account);
         List<MonthRoutineReport> monthRoutineReportList = monthRoutineReportRepository.findAllByAccount(account);
@@ -82,18 +81,6 @@ public class AccountService {
         deleteMonthReport(monthRoutineReportList);
         accountRepository.delete(account);
         return Message.of(StatusEnum.ACCOUNT_OK, AccountContent.ACCOUNT_OK_MSG);
-    }
-    
-    private boolean deleteMyCaptures(List<Mission> list){
-        if (!list.isEmpty()) {
-            for (Mission mission: list){
-                List<Capture> captures = captureRepository.findAllByMission(mission);
-                captureRepository.deleteAll(captures);
-            }
-            missionRepository.deleteAll(list);
-            return true;
-        }
-        return false;
     }
 
     private void deleteMonthReport(List<MonthRoutineReport> monthRoutineReportList) {

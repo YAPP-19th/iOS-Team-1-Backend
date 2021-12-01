@@ -93,6 +93,10 @@ public class CaptureService {
         return CaptureListResponseMessage.of(StatusEnum.CAPTURE_OK, CAPTURE_LIST_SUCCESS, data);
     }
 
+    public List<Capture> findAllByMission(Mission mission){
+        return captureRepository.findAllByMission(mission);
+    }
+
     private Capture saveCapture(Mission mission, String imagePath){
         int currentRank = mission.getOrganization().getCount();
         Integer myRank = currentRank+1;

@@ -1,6 +1,7 @@
 package com.yapp.project.organization.service;
 
 import com.yapp.project.account.domain.Account;
+import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.mission.domain.dao.MissionOrganization;
 import com.yapp.project.mission.domain.repository.MissionRepository;
 import com.yapp.project.organization.domain.Organization;
@@ -53,6 +54,19 @@ public class GroupService {
             organizations = organizationRepository.findByCategoryAndMore(category);
 
         return toOrgResponseList(organizations);
+    }
+
+    public void updateOrganizationCountAndUpdateAt(Organization organization){
+        organization.beforeBatchInitAboutRate();
+        organization.updateUpdatedAtAndCountZero();
+    }
+
+    public void addMissionRateOnGroup(Organization organization, Mission mission){
+        organization.addMissionRateOnGroup(mission.getSuccessCount(), mission.getFailureCount());
+    }
+
+    public void saveAllOrganizations(List<Organization> organizations){
+        organizationRepository.saveAll(organizations);
     }
 
     private ArrayList<Long> getMyOrganizationId(Account account){
