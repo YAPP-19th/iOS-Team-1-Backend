@@ -46,9 +46,9 @@ class GroupConfigTest {
     @Test
     void test_그룹관련_배치_테스트() throws Exception {
         //given
-        Account account = accountRepository.save(AccountTemplate.makeTestAccount2());
-        Account account2 = accountRepository.save(AccountTemplate.makeTestAccount("user2", "hello@example.com"));
-        Organization organization = organizationRepository.save(OrganizationTemplate.makeTestOrganization());
+        Account account = accountRepository.save(AccountTemplate.makeTestAccountForIntegration());
+        Account account2 = accountRepository.save(AccountTemplate.makeTestAccountForIntegration("user2", "hello@example.com"));
+        Organization organization = organizationRepository.save(OrganizationTemplate.makeTestOrganizationForIntegration());
         LocalDate yesterday = DateUtil.KST_LOCAL_DATE_YESTERDAY();
         Mission mission = MissionTemplate.makeMission(account,organization, yesterday.minusDays(5), yesterday.plusDays(2));
         Mission mission2 = MissionTemplate.makeMission(account2,organization,yesterday.minusDays(14), yesterday);

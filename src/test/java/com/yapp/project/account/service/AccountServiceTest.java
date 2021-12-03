@@ -56,7 +56,7 @@ class AccountServiceTest {
     @Test
     @Transactional
     void test_알람토글_변경() {
-        Account account = accountRepository.save(AccountTemplate.makeTestAccount());
+        Account account = accountRepository.save(AccountTemplate.makeTestAccountForIntegration());
         assertThat(account.getIsAlarm()).isFalse();
         accountService.clickAlarmToggle(account);
         assertThat(account.getIsAlarm()).isTrue();
@@ -66,7 +66,7 @@ class AccountServiceTest {
     @Test
     @Transactional
     void getUserInfo() {
-        accountRepository.save(AccountTemplate.makeTestAccount());
+        accountRepository.save(AccountTemplate.makeTestAccountForIntegration());
         AccountDto.UserResponse accountUserResponseDto = accountService.getUserInfo();
         assertThat(accountUserResponseDto.getEmail()).isEqualTo(AccountTemplate.EMAIL);
     }
@@ -74,7 +74,7 @@ class AccountServiceTest {
     @Test
     @Transactional
     void test_비밀번호_재설정(){
-        Account account = accountRepository.save(AccountTemplate.makeTestAccount());
+        Account account = accountRepository.save(AccountTemplate.makeTestAccountForIntegration());
         String prevPassword = account.getPassword();
         AccountDto.ProfilePasswordRequest request = new AccountDto.ProfilePasswordRequest("resetTes23!");
         accountService.resetMyAccountPassword(request, account);
@@ -86,7 +86,7 @@ class AccountServiceTest {
     @Test
     @Transactional
     void test_유저_삭제() {
-        Account account = accountRepository.save(AccountTemplate.makeTestAccount());
+        Account account = accountRepository.save(AccountTemplate.makeTestAccountForIntegration());
         String email = account.getEmail();
         accountService.removeAccount(account);
         Account dbAccount = accountRepository.findByEmail(email).orElse(null);
@@ -100,7 +100,7 @@ class AccountServiceTest {
             dateUtil.when(DateUtil::KST_LOCAL_DATETIME_NOW).thenReturn(LocalDateTime.of(2021,11,9,6,30));
             dateUtil.when(DateUtil::KST_LOCAL_DATE_NOW).thenReturn(LocalDate.of(2021,11,9));
             dateUtil.when(DateUtil::MID_NIGHT).thenReturn(LocalDateTime.of(2021,11,9,0,0)); // 화요일
-            Account account = accountRepository.save(AccountTemplate.makeTestAccount());
+            Account account = accountRepository.save(AccountTemplate.makeTestAccountForIntegration());
             Organization organization = organizationRepository.save(OrganizationTemplate.makeTestOrganization());
             Mission mission = missionRepository.save(MissionTemplate.makeMission(account,organization));
             Capture capture =  captureRepository.save(CaptureTemplate.makeCapture(mission));

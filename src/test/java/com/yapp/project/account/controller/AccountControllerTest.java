@@ -27,7 +27,7 @@ class AccountControllerTest {
 
     @Test
     void getMyAccountInfo() {
-        Account account = AccountTemplate.makeTestAccount();
+        Account account = AccountTemplate.makeTestAccountForIntegration();
         given(accountService.getUserInfo()).willReturn(AccountDto.UserResponse.of(account));
         AccountDto.UserResponseMessage response = accountController.getMyAccountInfo();
         assertThat(response).isNotNull();
