@@ -100,6 +100,10 @@ public class Mission {
         this.id = id;
     }
 
+    public void clickAlarmToggle(){
+        this.isAlarm=!this.isAlarm;
+    }
+
     public Integer getPeriod(){
         LocalDate today = DateUtil.KST_LOCAL_DATE_NOW();
         int period = Period.between(today,this.finishDate).getDays();
@@ -112,6 +116,10 @@ public class Mission {
 
     public void updateFailureCount(){
         this.failureCount+=1;
+    }
+
+    public void setStartTimeForTest(LocalTime time) {
+        this.startTime = time;
     }
 
     public void remove(){
@@ -127,7 +135,7 @@ public class Mission {
         this.failureCount = 0;
         this.isFinish = false;
         this.isDelete = false;
-
+        this.isAlarm = false;
     }
 
     public void setWeeksForTest(List<Cron> weeks){

@@ -14,27 +14,26 @@ import java.util.Optional;
 
 public interface MissionRepository extends JpaRepository<Mission,Long> {
     @EntityGraph(attributePaths = {"organization"})
-    @Query("SELECT DISTINCT m FROM Mission m WHERE m.account = ?1")
+    @Query("SELECT DISTINCT m FROM Mission m WHERE m.account = ?1 and m.isFinish = false  and m.isDelete = false")
     ArrayList<MissionOrganization> findMissionByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(Account account);
 
     @EntityGraph(attributePaths = {"organization"})
-    @Query("SELECT DISTINCT m FROM Mission m ")
+    @Query("SELECT DISTINCT m FROM Mission m where m.isFinish = false and m.isDelete = false and m.account = ?1")
     List<Mission> findAllByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(Account account);
 
     @EntityGraph(attributePaths = {"organization"})
-    @Query("SELECT DISTINCT m FROM Mission m ")
+    @Query("SELECT DISTINCT m FROM Mission m where m.isDelete = false and m.isFinish = true")
     List<Mission> findAllByAccountAndIsDeleteIsFalseAndIsFinishIsTrue(Account account);
 
-    @EntityGraph(attributePaths = {"organization"})
-    @Query("SELECT DISTINCT m FROM Mission m ")
+    @Query("SELECT DISTINCT m FROM Mission m join fetch m.organization where m.isDelete = false and m.isAlarm = true and m.startTime = ?1")
     List<Mission> findAllByIsDeleteIsFalseAndIsAlarmIsTrueAndStartTimeEquals(LocalTime startTime);
 
     @EntityGraph(attributePaths = {"organization"})
-    @Query("SELECT DISTINCT m FROM Mission m ")
+    @Query("SELECT DISTINCT m FROM Mission m where m.isDelete = false ")
     List<Mission> findAllByIsDeleteIsFalse();
 
     @EntityGraph(attributePaths = {"organization"})
-    @Query("SELECT DISTINCT m FROM Mission m ")
+    @Query("SELECT DISTINCT m FROM Mission m WHERE m.isDelete = false and  m.isFinish = false ")
     List<Mission> findAllByIsDeleteIsFalseAndIsFinishIsFalse();
 
     @EntityGraph(attributePaths = {"organization"})
