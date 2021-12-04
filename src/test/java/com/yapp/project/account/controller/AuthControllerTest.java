@@ -58,7 +58,7 @@ class AuthControllerTest {
     @Test
     @Transactional
     void test_회원가입_실패(){
-        Account account = AccountTemplate.makeTestAccount();
+        Account account = AccountTemplate.makeTestAccountForIntegration();
         accountRepository.save(account);
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
         assertThatThrownBy(() ->authController.signup(accountRequestDto)).isInstanceOf(EmailDuplicateException.class)
@@ -68,7 +68,7 @@ class AuthControllerTest {
     @Test
     @Transactional
     void test_로그인_성공() {
-        Account account = AccountTemplate.makeTestAccount();
+        Account account = AccountTemplate.makeTestAccountForIntegration();
         accountRepository.save(account);
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
         ResponseEntity<SocialDto.TokenMessage> response = authController.login(accountRequestDto.toLoginRequest());
@@ -79,7 +79,7 @@ class AuthControllerTest {
     @Test
     @Transactional
     void test_로그인_실페() {
-        Account account = AccountTemplate.makeTestAccount("meaning","meaning@example.com");
+        Account account = AccountTemplate.makeTestAccountForIntegration("meaning","meaning@example.com");
         accountRepository.save(account);
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
         assertThatThrownBy(() -> authController.login(accountRequestDto.toLoginRequest())).isInstanceOf(NotFoundUserInformationException.class)
@@ -89,7 +89,7 @@ class AuthControllerTest {
     @Test
     @Transactional
     void test_로그아웃_성공() {
-        Account account = AccountTemplate.makeTestAccount();
+        Account account = AccountTemplate.makeTestAccountForIntegration();
         accountRepository.save(account);
         ResponseEntity<Message> response = authController.logout();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -98,7 +98,7 @@ class AuthControllerTest {
     @Test
     @Transactional
     void test_로그아웃_실패() {
-        Account account = AccountTemplate.makeTestAccount("meaning","meaning@example.com");
+        Account account = AccountTemplate.makeTestAccountForIntegration("meaning","meaning@example.com");
         accountRepository.save(account);
         assertThatThrownBy(() -> authController.logout()).isInstanceOf(NotFoundUserInformationException.class)
                 .hasMessage(AccountContent.NOT_FOUND_USER_INFORMATION);
@@ -107,7 +107,7 @@ class AuthControllerTest {
     @Test
     @Transactional
     void test_재발급_성공() {
-        Account account = AccountTemplate.makeTestAccount();
+        Account account = AccountTemplate.makeTestAccountForIntegration();
         accountRepository.save(account);
 
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
@@ -132,7 +132,7 @@ class AuthControllerTest {
     @Test
     @Transactional
     void test_재발급_토큰_정보_불일치로_인한_실패() {
-        Account account = AccountTemplate.makeTestAccount();
+        Account account = AccountTemplate.makeTestAccountForIntegration();
         accountRepository.save(account);
 
         TokenRequestDto tokenRequestDto = new TokenRequestDto("");
@@ -144,7 +144,7 @@ class AuthControllerTest {
     @Test
     @Transactional
     void test_재발급_토큰_레디스에_토큰_저장이_안되어_있을_때() {
-        Account account = AccountTemplate.makeTestAccount();
+        Account account = AccountTemplate.makeTestAccountForIntegration();
         accountRepository.save(account);
 
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
@@ -162,7 +162,7 @@ class AuthControllerTest {
     @Test
     @Transactional
     void test_재발급_요청된_RefreshToken과_Redis에_저장된_RefreshToken이_일치하지_않을_때() {
-        Account account = AccountTemplate.makeTestAccount();
+        Account account = AccountTemplate.makeTestAccountForIntegration();
         accountRepository.save(account);
 
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();

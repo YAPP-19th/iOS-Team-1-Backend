@@ -39,6 +39,20 @@ public class MissionTemplate {
         return mission;
     }
 
+    public static Mission makeMissionForIntegration(Account account, Organization organization,
+                                      LocalDate startDate, LocalDate finishDate){
+        Mission mission = Mission.builder().
+                account(account).organization(organization)
+                .startDate(startDate).finishDate(finishDate)
+                .isAlarm(true).startTime(LocalTime.of(6,0)).build();
+        mission.defaultSetting();
+        return mission;
+    }
+
+    public static Mission makeMissionForIntegration(Account account, Organization organization){
+        return makeMissionForIntegration(account,organization,START_DATE,FINISH_DATE);
+    }
+
     public static Mission makeMission(Account account, Organization organization){
         return makeMission(account,organization,START_DATE,FINISH_DATE);
     }
@@ -49,6 +63,10 @@ public class MissionTemplate {
 
     public static MissionDto.MissionRequest makeMissionRequest(String startDate, String finishDate){
         return MissionDto.MissionRequest.builder().id(missionId++).startDate(startDate).finishDate(finishDate).weeks(WEEKS).startTime("06:00").build();
+    }
+
+    public static MissionDto.MissionRequest makeMissionRequestForIntegration(String startDate, String finishDate){
+        return MissionDto.MissionRequest.builder().startDate(startDate).finishDate(finishDate).weeks(WEEKS).startTime("06:00").build();
     }
 
 }

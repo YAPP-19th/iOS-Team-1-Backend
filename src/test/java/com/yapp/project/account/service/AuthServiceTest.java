@@ -118,7 +118,7 @@ class AuthServiceTest {
     @Transactional
     void signupFail() {
         //given
-        Account account = AccountTemplate.makeTestAccount();
+        Account account = AccountTemplate.makeTestAccountForIntegration();
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
         //when
         accountRepository.save(account);
@@ -131,7 +131,7 @@ class AuthServiceTest {
     @Transactional
     void loginSuccess() {
         //given
-        Account account = AccountTemplate.makeTestAccount();
+        Account account = AccountTemplate.makeTestAccountForIntegration();
         accountRepository.save(account);
         AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
         //when
@@ -183,7 +183,7 @@ class AuthServiceTest {
     @Transactional
     void test_인증번호_서버에서_보냈을_때(){
         //given
-        Account account = AccountTemplate.makeTestAccount();
+        Account account = AccountTemplate.makeTestAccountForIntegration();
         accountRepository.save(account);
         String email = account.getEmail();
         AccountDto.EmailRequest request = new AccountDto.EmailRequest(email);
@@ -198,7 +198,7 @@ class AuthServiceTest {
     @Transactional
     void test_인증번호_인증_성공했을_때(){
         //given
-        Account account = AccountTemplate.makeTestAccount();
+        Account account = AccountTemplate.makeTestAccountForIntegration();
         accountRepository.save(account);
         String email = account.getEmail();
         AccountDto.EmailRequest emailRequest = new AccountDto.EmailRequest(email);
@@ -218,7 +218,7 @@ class AuthServiceTest {
     @Transactional
     void test_비밀번호_재설정_성공했을_때(){
         //given
-        Account account = AccountTemplate.makeTestAccount();
+        Account account = AccountTemplate.makeTestAccountForIntegration();
         accountRepository.save(account);
         String email = account.getEmail();
         AccountDto.ResetPasswordRequest request = new AccountDto.ResetPasswordRequest(email, "NewPwd12$@#");

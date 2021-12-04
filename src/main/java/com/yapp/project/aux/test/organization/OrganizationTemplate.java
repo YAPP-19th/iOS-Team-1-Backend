@@ -35,4 +35,18 @@ public class OrganizationTemplate {
         return organization;
     }
 
+    public static Organization makeTestOrganizationForIntegration(){
+        return makeTestOrganizationForIntegration(TITLE,CATEGORY);
+    }
+
+    public static Organization makeTestOrganizationForIntegration(String title){
+        return makeTestOrganizationForIntegration(title,CATEGORY);
+    }
+
+    public static Organization makeTestOrganizationForIntegration(String title, String category){
+        Organization organization = Organization.builder().title(title).category(category).clause(CLAUSE).rate(86).build();
+        organization.defaultSetting();
+        return organization;
+    }
+
 }

@@ -36,6 +36,10 @@ public class AccountTemplate {
         return makeTestAccount(USERNAME,EMAIL,Authority.ROLE_USER, SOCIAL_TYPE);
     }
 
+    public static Account makeTestAccountForIntegration(){
+        return makeTestAccountForIntegration(USERNAME,EMAIL,Authority.ROLE_USER, SOCIAL_TYPE);
+    }
+
     public static Account makeTestAccount2(){
         return makeTestAccount(ANOTHER_USERNAME,ANOTHER_EMAIL,Authority.ROLE_USER, SOCIAL_TYPE);
     }
@@ -52,8 +56,20 @@ public class AccountTemplate {
         return makeTestAccount(username,email,Authority.ROLE_USER, SOCIAL_TYPE);
     }
 
+    public static Account makeTestAccountForIntegration(String username, String email){
+        return makeTestAccountForIntegration(username,email,Authority.ROLE_USER, SOCIAL_TYPE);
+    }
+
     public static Account makeTestAccount(String username, String email, Authority authority, SocialType socialType){
         Account account = Account.builder().id(id++).nickname(username).password(bCryptPasswordEncoder.encode(PASSWORD))
+                .email(email).createdAt(KST_LOCAL_DATETIME_NOW()).lastLogin(KST_LOCAL_DATETIME_NOW())
+                .authority(authority).socialType(socialType).build();
+        account.clickAlarmToggle();
+        return account;
+    }
+
+    public static Account makeTestAccountForIntegration(String username, String email, Authority authority, SocialType socialType){
+        Account account = Account.builder().nickname(username).password(bCryptPasswordEncoder.encode(PASSWORD))
                 .email(email).createdAt(KST_LOCAL_DATETIME_NOW()).lastLogin(KST_LOCAL_DATETIME_NOW())
                 .authority(authority).socialType(socialType).build();
         account.clickAlarmToggle();
