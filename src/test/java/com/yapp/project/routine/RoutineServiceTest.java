@@ -6,7 +6,7 @@ import com.yapp.project.aux.test.organization.OrganizationTemplate;
 import com.yapp.project.config.exception.report.RoutineStartDayBadRequestException;
 import com.yapp.project.config.exception.routine.BadRequestRoutineException;
 import com.yapp.project.organization.domain.Organization;
-import com.yapp.project.organization.domain.repository.OrganizationRepository;
+import com.yapp.project.organization.service.GroupService;
 import com.yapp.project.retrospect.domain.Retrospect;
 import com.yapp.project.retrospect.domain.RetrospectRepository;
 import com.yapp.project.routine.domain.Routine;
@@ -43,7 +43,7 @@ public class RoutineServiceTest {
     @Mock
     private RetrospectRepository retrospectRepository;
     @Mock
-    private OrganizationRepository organizationRepository;
+    private GroupService groupService;
 
     @Test
     void testCreateRoutineSuccess() {
@@ -270,7 +270,7 @@ public class RoutineServiceTest {
         recommendedList.add(test1); recommendedList.add(test2);
 
         // mocking
-        given(organizationRepository.findAll()).willReturn(recommendedList);
+        given(groupService.findAll()).willReturn(recommendedList);
 
         // when
         List<RoutineDTO.ResponseRecommendedRoutine> data = routineService.getRecommendedRoutine().getData();

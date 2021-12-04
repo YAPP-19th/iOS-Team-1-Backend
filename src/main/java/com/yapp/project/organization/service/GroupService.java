@@ -21,10 +21,13 @@ public class GroupService {
     private final OrganizationRepository organizationRepository;
     private final MissionRepository missionRepository;
 
-
+    @Transactional(readOnly = true)
+    public List<Organization> findAll(){
+        return organizationRepository.findAll();
+    }
 
     @Transactional(readOnly = true)
-    public List<OrgDto.OrgResponse> findAll(Account account){
+    public List<OrgDto.OrgResponse> findAllByAccount(Account account){
         ArrayList<Long> excludeOrganization = getMyOrganizationId(account);
 
         List<Organization> organizations;
