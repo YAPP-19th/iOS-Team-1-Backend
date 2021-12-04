@@ -70,6 +70,10 @@ public class Account {
     @ToString.Exclude
     private final List<MonthRoutineReport> monthRoutineReportList = new ArrayList<>();
 
+    public void setIdForTest(Long id) {
+        this.id = id;
+    }
+
     public void updateLastLoginAccount(){
         this.lastLogin = KST_LOCAL_DATETIME_NOW();
     }

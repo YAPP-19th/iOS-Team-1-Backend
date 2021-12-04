@@ -26,10 +26,9 @@ public class Mission {
 
     @Builder
     public Mission(
-            Long id, Organization organization, Account account, LocalDate startDate, LocalDate finishDate,
+            Organization organization, Account account, LocalDate startDate, LocalDate finishDate,
             Boolean isFinish, Boolean isAlarm, LocalTime startTime
     ){
-        this.id = id;
         this.organization = organization;
         this.account = account;
         this.startDate = startDate;
@@ -97,6 +96,10 @@ public class Mission {
         return (this.successCount/(this.failureCount+this.successCount))*100;
     }
 
+    public void setIdForTest(Long id) {
+        this.id = id;
+    }
+
     public Integer getPeriod(){
         LocalDate today = DateUtil.KST_LOCAL_DATE_NOW();
         int period = Period.between(today,this.finishDate).getDays();
@@ -119,8 +122,7 @@ public class Mission {
         this.isFinish=true;
     }
 
-    public void defaultSetting(){
-        // 환경이 테스트임을 확인하는 assertion 이 필요
+    public void defaultSettingForTest(){
         this.successCount = 0;
         this.failureCount = 0;
         this.isFinish = false;
@@ -129,17 +131,10 @@ public class Mission {
     }
 
     public void setWeeksForTest(List<Cron> weeks){
-        // 환경이 테스트임을 확인하는 assertion 이 필요
         this.weeks.addAll(weeks);
     }
 
-    public void setStartDateForTest(LocalTime time){
-        // 환경이 테스트임을 확인하는 assertion 이 필요
-        this.startTime = time;
-    }
-
     public void setCountForTest(){
-        // 환경이 테스트임을 확인하는 assertion 이 필요
         this.successCount = Utils.randomNumber();
         this.failureCount = Utils.randomNumber();
     }

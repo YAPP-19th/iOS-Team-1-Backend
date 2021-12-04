@@ -8,7 +8,6 @@ import com.yapp.project.mission.domain.Mission;
 public class CaptureTemplate {
     private CaptureTemplate() {
     }
-    private static Long id = 1L;
     public static final String URL = "/home/image/model";
     public static Capture makeCapture(Mission mission, String url){
         Integer myAchievementRate = mission.getAchievementRate();
@@ -17,7 +16,7 @@ public class CaptureTemplate {
         Achievement achievement = Achievement.builder().myAchievementRate(myAchievementRate)
                 .groupAchievementRate(groupAchievementRate).build();
         Capture capture = Capture.builder().achievement(achievement).mission(mission).organization(mission.getOrganization())
-                .rank(rank).id(id++).build();
+                .rank(rank).build();
         capture.updateCaptureImage(makeCaptureImage(capture,url));
         return  capture;
     }

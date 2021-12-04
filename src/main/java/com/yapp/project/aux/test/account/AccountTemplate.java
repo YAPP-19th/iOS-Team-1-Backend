@@ -61,10 +61,8 @@ public class AccountTemplate {
     }
 
     public static Account makeTestAccount(String username, String email, Authority authority, SocialType socialType){
-        Account account = Account.builder().id(id++).nickname(username).password(bCryptPasswordEncoder.encode(PASSWORD))
-                .email(email).createdAt(KST_LOCAL_DATETIME_NOW()).lastLogin(KST_LOCAL_DATETIME_NOW())
-                .authority(authority).socialType(socialType).build();
-        account.clickAlarmToggle();
+        Account account = makeTestAccountForIntegration(username,email,authority, socialType);
+        account.setIdForTest(id++);
         return account;
     }
 
