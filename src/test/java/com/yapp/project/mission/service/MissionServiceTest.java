@@ -29,6 +29,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -148,6 +149,7 @@ class MissionServiceTest {
 
 
     @Test
+    @Transactional
     void test_미션_디테일_페이지_내용이_있을_때(){
         //given
         Account account = AccountTemplate.makeTestAccount();

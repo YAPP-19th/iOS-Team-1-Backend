@@ -30,8 +30,8 @@ public class OrganizationTemplate {
     }
 
     public static Organization makeTestOrganization(String title, String category){
-        Organization organization = Organization.builder().id(id++).title(title).category(category).clause(CLAUSE).rate(86).build();
-        organization.defaultSetting();
+        Organization organization = makeTestOrganizationForIntegration(title,category);
+        organization.setIdForTest(id++);
         return organization;
     }
 
@@ -45,7 +45,7 @@ public class OrganizationTemplate {
 
     public static Organization makeTestOrganizationForIntegration(String title, String category){
         Organization organization = Organization.builder().title(title).category(category).clause(CLAUSE).rate(86).build();
-        organization.defaultSetting();
+        organization.defaultSettingForTest();
         return organization;
     }
 

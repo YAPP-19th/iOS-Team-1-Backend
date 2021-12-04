@@ -7,12 +7,12 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface OrganizationRepository extends JpaRepository<Organization,Long> {
-    @Query(value = "SELECT * FROM Organization WHERE category=?1",nativeQuery = true)
+    @Query("SELECT o FROM Organization o WHERE o.category=?1")
     List<Organization> findByCategoryAndMore(String category);
 
-    @Query(value = "SELECT * FROM Organization WHERE category=?1 AND id NOT IN ?2",nativeQuery = true)
+    @Query("SELECT o FROM Organization o WHERE o.category=?1 AND o.id NOT IN ?2")
     List<Organization> findByCategoryAndMoreAndNotIn(String category, List<Long> organizations);
 
-    @Query(value = "SELECT * FROM Organization WHERE id NOT IN ?1", nativeQuery = true)
+    @Query("SELECT o FROM Organization o WHERE o.id NOT IN ?1")
     List<Organization> findOrganizationsNotIn(List<Long> organizations);
 }

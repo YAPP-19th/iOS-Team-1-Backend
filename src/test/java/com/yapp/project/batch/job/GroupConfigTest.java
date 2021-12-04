@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,6 +44,7 @@ class GroupConfigTest {
     @Autowired
     private AccountService accountService;
 
+
     @Test
     void test_그룹관련_배치_테스트() throws Exception {
         //given
@@ -54,7 +56,7 @@ class GroupConfigTest {
         Mission mission2 = MissionTemplate.makeMission(account2,organization,yesterday.minusDays(14), yesterday);
         mission.setCountForTest();
         mission2.setCountForTest();
-        missionRepository.save(mission);
+        Mission firstMission = missionRepository.save(mission);
         Mission finishMission = missionRepository.save(mission2);
 
         JobParameters jobParameters = new JobParametersBuilder()
@@ -74,6 +76,9 @@ class GroupConfigTest {
         Mission dbFinishMission = missionRepository.findMissionByAccountAndId(account2,finishMission.getId()).orElse(null);
         assertThat(dbFinishMission).isNotNull();
         assertThat(dbFinishMission.getIsFinish()).isTrue();
+        //delete
+        missionRepository.deleteAll(List.of(firstMission, finishMission));
+        organizationRepository.delete(organization);
         accountService.removeAccount(account);
         accountService.removeAccount(account2);
     }

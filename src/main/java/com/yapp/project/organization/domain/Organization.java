@@ -20,8 +20,7 @@ import java.util.List;
 public class Organization {
 
     @Builder
-    public Organization(Long id, String title , Integer rate, String category, Clause clause){
-        this.id = id;
+    public Organization(String title , Integer rate, String category, Clause clause){
         this.title = title;
         this.rate = rate;
         this.category = category;
@@ -46,11 +45,11 @@ public class Organization {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "organization")
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private final List<Mission> missions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "organization")
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<Capture> captures = new ArrayList<>();
 
@@ -82,6 +81,10 @@ public class Organization {
     @Column(columnDefinition="TEXT")
     private String recommend;
 
+    public void setIdForTest(Long id) {
+        this.id = id;
+    }
+
     public OrgDto.OrgResponse toResponseDto(){
         return OrgDto.OrgResponse.builder().id(id)
                 .title(title).rate(rate)
@@ -99,7 +102,7 @@ public class Organization {
         this.count+=1;
     }
 
-    public void defaultSetting(){
+    public void defaultSettingForTest(){
         this.count = 0;
         this.rate = 0;
     }
