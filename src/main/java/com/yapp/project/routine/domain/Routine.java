@@ -45,7 +45,7 @@ public class Routine {
     @Column(nullable = false)
     private String category;
 
-    @OneToMany(mappedBy = "routine", fetch = FetchType.EAGER,cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "routine", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoutineDay> days = new ArrayList<>();
 
     @OneToMany(mappedBy = "routine")

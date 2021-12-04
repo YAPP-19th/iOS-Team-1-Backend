@@ -27,7 +27,7 @@ public class OrganizationController {
     @ApiOperation(value = "그룹 전체 리스트")
     @GetMapping
     public ResponseEntity<OrgListResponseMessage> findAll(){
-        List<OrgResponse> data = groupService.findAll(AccountUtil.getAccount());
+        List<OrgResponse> data = groupService.findAllByAccount(AccountUtil.getAccount());
         return new ResponseEntity<>(OrgListResponseMessage.of(StatusEnum.GROUP_OK, GROUP_FIND_SUCCESS, data), HttpStatus.OK);
     }
 

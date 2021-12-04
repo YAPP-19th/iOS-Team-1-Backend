@@ -43,7 +43,7 @@ class GroupServiceTest {
         given(missionRepository.findMissionByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(account)).willReturn(emptyList);
         given(organizationRepository.findAll()).willReturn(organizations);
 
-        List<OrgDto.OrgResponse> res = groupService.findAll(account);
+        List<OrgDto.OrgResponse> res = groupService.findAllByAccount(account);
         assertThat(res.get(0).getTitle()).isEqualTo(organization.getTitle());
     }
 

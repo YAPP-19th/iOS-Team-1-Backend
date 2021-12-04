@@ -6,7 +6,7 @@ import com.yapp.project.aux.test.organization.OrganizationTemplate;
 import com.yapp.project.config.exception.report.RoutineStartDayBadRequestException;
 import com.yapp.project.config.exception.routine.BadRequestRoutineException;
 import com.yapp.project.organization.domain.Organization;
-import com.yapp.project.organization.domain.repository.OrganizationRepository;
+import com.yapp.project.organization.service.GroupService;
 import com.yapp.project.retrospect.domain.Retrospect;
 import com.yapp.project.retrospect.domain.RetrospectRepository;
 import com.yapp.project.routine.domain.Routine;
@@ -43,7 +43,7 @@ public class RoutineServiceTest {
     @Mock
     private RetrospectRepository retrospectRepository;
     @Mock
-    private OrganizationRepository organizationRepository;
+    private GroupService groupService;
 
     @Test
     void testCreateRoutineSuccess() {
@@ -76,9 +76,7 @@ public class RoutineServiceTest {
         RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("", "", days, "07:35", "생활");
 
         // when then
-        assertThrows(BadRequestRoutineException.class, () -> {
-            routineService.createRoutine(newRoutine, account);
-        });
+        assertThrows(BadRequestRoutineException.class, () -> routineService.createRoutine(newRoutine, account));
     }
 
     @Test
@@ -109,9 +107,7 @@ public class RoutineServiceTest {
         Account account = AccountTemplate.makeTestAccount();
 
         // when then
-        assertThrows(NotFoundRoutineException.class, () -> {
-            routineService.getRoutine(1L, account);
-        });
+        assertThrows(NotFoundRoutineException.class, () -> routineService.getRoutine(1L, account));
     }
 
     @Test
@@ -129,9 +125,7 @@ public class RoutineServiceTest {
         given(routineRepository.findByIdAndIsDeleteIsFalse(1L)).willReturn(Optional.of(fakeRoutine));
 
         // when then
-        assertThrows(BadRequestRoutineException.class, () -> {
-            routineService.getRoutine(1L, account2);
-        });
+        assertThrows(BadRequestRoutineException.class, () -> routineService.getRoutine(1L, account2));
     }
 
     @Test
@@ -256,9 +250,7 @@ public class RoutineServiceTest {
         LocalDate start = LocalDate.parse("2021-10-19");
 
         // when then
-        assertThrows(RoutineStartDayBadRequestException.class, () -> {
-            routineService.getRoutineDaysRate(account, start);
-        });
+        assertThrows(RoutineStartDayBadRequestException.class, () -> routineService.getRoutineDaysRate(account, start));
     }
 
     @Test
@@ -270,7 +262,7 @@ public class RoutineServiceTest {
         recommendedList.add(test1); recommendedList.add(test2);
 
         // mocking
-        given(organizationRepository.findAll()).willReturn(recommendedList);
+        given(groupService.findAll()).willReturn(recommendedList);
 
         // when
         List<RoutineDTO.ResponseRecommendedRoutine> data = routineService.getRecommendedRoutine().getData();
