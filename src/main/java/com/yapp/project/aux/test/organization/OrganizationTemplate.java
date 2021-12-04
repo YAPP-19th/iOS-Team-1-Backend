@@ -43,8 +43,17 @@ public class OrganizationTemplate {
         return makeTestOrganizationForIntegration(title,CATEGORY);
     }
 
+    public static Clause makeClauseForIntegration(LocalTime beginTime, LocalTime endTime) {
+        return Clause.builder().beginTime(beginTime).endTime(endTime).shoot(SHOOT)
+                .description(DESCRIPTION).recommend(RECOMMEND).build();
+    }
+
     public static Organization makeTestOrganizationForIntegration(String title, String category){
-        Organization organization = Organization.builder().title(title).category(category).clause(CLAUSE).rate(86).build();
+        return makeTestOrganizationForIntegration(title,category,CLAUSE);
+    }
+
+    public static Organization makeTestOrganizationForIntegration(String title, String category,Clause clause){
+        Organization organization = Organization.builder().title(title).category(category).clause(clause).rate(86).build();
         organization.defaultSettingForTest();
         return organization;
     }
