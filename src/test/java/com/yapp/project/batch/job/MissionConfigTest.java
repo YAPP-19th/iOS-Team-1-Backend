@@ -67,6 +67,10 @@ class MissionConfigTest {
             assertThat(findNoFailureMission).isNotNull();
             assertThat(findFailureMission.getFailureCount()).isGreaterThan(failureMission.getFailureCount());
             assertThat(findFailureMission.getFailureCount()).isEqualTo(failureMission.getFailureCount());
+            //delete
+            missionRepository.deleteAll();
+            organizationRepository.delete(organization);
+            accountRepository.deleteAll();
         } catch (Exception e) {
             assertThat(e).isInstanceOf(Exception.class);
         }
