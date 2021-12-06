@@ -44,7 +44,7 @@ public class RoutineDTO {
         @ApiModelProperty(value = "총", example = "2")
         private Integer totalDone;
         @ApiModelProperty(value = "수행률", example = "50%")
-        private String rate;
+        private int rate;
 
         @Builder
         public ResponseRoutineDaysRate(LocalDate date) {
@@ -62,8 +62,8 @@ public class RoutineDTO {
         public void updateTotalDone() {
             this.totalDone += 1;
         }
-        public void updateRate(String rate) {
-            this.rate = rate.equals("NaN%") ? "0%" : rate;
+        public void updateRate(int rate) {
+            this.rate = rate;
         }
     }
 
@@ -87,7 +87,7 @@ public class RoutineDTO {
         private String goal;
 
         @ApiModelProperty(value = "하는 요일", example = "['MON', 'SUN']", required = true)
-        private List<Week> days = new ArrayList<>();
+        private final List<Week> days = new ArrayList<>();
 
         @ApiModelProperty(value = "하는 시간", example = "07:35", required = true)
         private String startTime;
@@ -155,8 +155,8 @@ public class RoutineDTO {
         private List<ResponseRoutineDaysRate> data;
         public static ResponseDaysRoutineRateMessageDto of(List<ResponseRoutineDaysRate> daysRateList) {
             daysRateList.forEach(x -> {
-                String rate = String.format("%.3f", ((x.getFullyDone() + (x.getPartiallyDone() * 0.5)) / x.getTotalDone()));
-                x.updateRate(rate);
+                double rate = (x.getFullyDone() + (x.getPartiallyDone() * 0.5)) / x.getTotalDone();
+                x.updateRate((int) (rate * 100));
             });
             return ResponseDaysRoutineRateMessageDto.builder().message(
                     Message.builder().status(StatusEnum.DAY_ROUTINE_RATE_OK).msg(DAY_ROUTINE_RATE_OK).build()
