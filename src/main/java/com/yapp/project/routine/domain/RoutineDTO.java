@@ -87,7 +87,7 @@ public class RoutineDTO {
         private String goal;
 
         @ApiModelProperty(value = "하는 요일", example = "['MON', 'SUN']", required = true)
-        private final List<Week> days = new ArrayList<>();
+        private List<Week> days = new ArrayList<>();
 
         @ApiModelProperty(value = "하는 시간", example = "07:35", required = true)
         private String startTime;

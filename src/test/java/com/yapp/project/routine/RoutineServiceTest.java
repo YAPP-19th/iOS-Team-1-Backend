@@ -234,13 +234,15 @@ public class RoutineServiceTest {
 
         // then
         /* 월 ~ 일 */
-        assertThat(result.get(0).getRate()).isEqualTo("0.000");
-        assertThat(result.get(1).getRate()).isEqualTo("0.333");
-        assertThat(result.get(2).getRate()).isEqualTo("0.250");
-        assertThat(result.get(3).getRate()).isEqualTo("0.333");
-        assertThat(result.get(4).getRate()).isEqualTo("0.250");
-        assertThat(result.get(5).getRate()).isEqualTo("0.500");
-        assertThat(result.get(6).getRate()).isEqualTo("0.333");
+        assertAll(
+                () -> assertThat(result.get(0).getRate()).isEqualTo(0),
+                () -> assertThat(result.get(1).getRate()).isEqualTo(33),
+                () -> assertThat(result.get(2).getRate()).isEqualTo(25),
+                () -> assertThat(result.get(3).getRate()).isEqualTo(33),
+                () -> assertThat(result.get(4).getRate()).isEqualTo(25),
+                () -> assertThat(result.get(5).getRate()).isEqualTo(50),
+                () -> assertThat(result.get(6).getRate()).isEqualTo(33)
+        );
     }
 
     @Test
