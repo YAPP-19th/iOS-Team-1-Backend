@@ -90,7 +90,7 @@ public class AuthService {
         String socialId = getSocialIdFromToken(socialRequestDto);
         socialRequestDto.insertId(socialId);
         SocialType socialType = socialRequestDto.getSocialType();
-        String email = socialRequestDto.getEmail();
+        String email = socialRequestDto.extractEmail();
         Account account = accountRepository.findByEmail(email).orElse(null);
         if (account != null){
             TokenDto tokenDto = login(account.toAccountRequestDto(suffix).toLoginRequest());

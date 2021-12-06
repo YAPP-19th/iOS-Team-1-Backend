@@ -17,10 +17,11 @@ public class SocialDto {
     @Getter
     @AllArgsConstructor
     @Builder
+    @ToString
     public static class SocialRequest {
         @ApiModelProperty(value = "소셜타입",example = "KAKAO/APPLE")
         private String socialType;
-        @ApiModelProperty(value = "소셜해당아이디",example = "142342124")
+        @ApiModelProperty(value = "소셜해당아이디",example = "요청 값이 아님")
         private String id;
         @ApiModelProperty(value = "소셜토큰", example = "토큰 값")
         private String token;
@@ -37,7 +38,7 @@ public class SocialDto {
             }
         }
 
-        public String getEmail(){
+        public String extractEmail(){
             if (getSocialType().equals(SocialType.KAKAO)){
                 return id+"@kakao.com";
             }else{
