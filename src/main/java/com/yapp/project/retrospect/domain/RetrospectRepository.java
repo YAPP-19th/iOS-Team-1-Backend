@@ -22,6 +22,6 @@ public interface RetrospectRepository extends JpaRepository<Retrospect, Long> {
     List<Retrospect> findAllByIsReportIsFalseAndRoutineAccount(Account account);
 
     List<Retrospect> findAllByDateBetweenAndRoutine(LocalDate start, LocalDate end, Routine routine);
-
+    @EntityGraph(attributePaths = {"routine"})
     List<Retrospect> findAllByDateBetweenAndRoutineAccount(LocalDate start, LocalDate end, Account account);
 }
