@@ -17,16 +17,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Transactional
 class OrganizationRepositoryTest {
 
     @Autowired
@@ -76,8 +79,9 @@ class OrganizationRepositoryTest {
         List<Organization> totalOrganizations = organizationRepository.findAll();
         List<Organization> orgs = organizationRepository.findOrganizationsNotIn(excludeOrganizationIds);
         assertThat(totalOrganizations.size() - orgs.size()).isEqualTo(1);
-        Organization organization = orgs.get(orgs.size()-1);
-        assertThat(organization.getMissions().size()).isOne();
+        Optional<Organization> organization = orgs.stream().filter(o -> o.getMissions().size()==1).findAny();
+        assertThat(organization).isPresent();
+        assertThat(organization.get().getMissions().size()).isOne();
 
     }
 
