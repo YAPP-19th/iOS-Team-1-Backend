@@ -85,9 +85,11 @@ public class AccountDto {
         private String nickname;
         @ApiModelProperty(value = "프로필",example = "s3/profile/미닝")
         private String profile;
+        @ApiModelProperty(value = "알람여부",example = "true/false")
+        private Boolean isAlarm;
 
         public static UserResponse of(Account account) {
-            return new UserResponse(account.getEmail(), account.getNickname(), account.getProfile());
+            return new UserResponse(account.getEmail(), account.getNickname(), account.getProfile(),account.getIsAlarm());
         }
     }
 

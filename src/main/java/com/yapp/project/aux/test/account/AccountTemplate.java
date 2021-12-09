@@ -70,7 +70,7 @@ public class AccountTemplate {
         Account account = Account.builder().nickname(username).password(bCryptPasswordEncoder.encode(PASSWORD))
                 .email(email).createdAt(KST_LOCAL_DATETIME_NOW()).lastLogin(KST_LOCAL_DATETIME_NOW())
                 .authority(authority).socialType(socialType).build();
-        account.clickAlarmToggle();
+        account.setIsAlarm(false);
         return account;
     }
 

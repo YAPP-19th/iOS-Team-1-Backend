@@ -89,7 +89,7 @@ class MissionRepositoryTest {
             dateUtil.when(DateUtil::KST_LOCAL_DATE_NOW).thenReturn(LocalDate.of(2021,12,4));
             dateUtil.when(DateUtil::MID_NIGHT).thenReturn(LocalDateTime.of(2021,12,4,0,0)); // 토요일
             Account account = AccountTemplate.makeTestAccountForIntegration();
-            account.clickAlarmToggle();
+            account.setIsAlarm(true);
             Clause clause = OrganizationTemplate.makeClauseForIntegration(LocalTime.of(5,0)
                     ,LocalTime.of(8,0));
             Organization organization = OrganizationTemplate

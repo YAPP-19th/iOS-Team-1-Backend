@@ -58,7 +58,7 @@ class AccountServiceTest {
     void test_알람토글_변경() {
         Account account = accountRepository.save(AccountTemplate.makeTestAccountForIntegration());
         assertThat(account.getIsAlarm()).isFalse();
-        accountService.clickAlarmToggle(account);
+        accountService.clickAlarmToggle(account, true);
         assertThat(account.getIsAlarm()).isTrue();
     }
 
