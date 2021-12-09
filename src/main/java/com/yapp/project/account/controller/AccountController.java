@@ -1,8 +1,5 @@
 package com.yapp.project.account.controller;
 
-import static com.yapp.project.account.domain.dto.AccountDto.*;
-import static com.yapp.project.aux.content.AccountContent.ACCOUNT_OK_MSG;
-
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.service.AccountService;
 import com.yapp.project.aux.Message;
@@ -13,7 +10,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.NoSuchAlgorithmException;
+import static com.yapp.project.account.domain.dto.AccountDto.*;
+import static com.yapp.project.aux.content.AccountContent.ACCOUNT_OK_MSG;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,15 +36,15 @@ public class AccountController {
 
     @ApiOperation(value = "유저정보 삭제")
     @DeleteMapping
-    public Message removeAccount() throws NoSuchAlgorithmException {
+    public Message removeAccount() {
         Account account = AccountUtil.getAccount();
         return accountService.removeAccount(account);
     }
 
     @ApiOperation(value = "알람토글 변경")
     @GetMapping
-    public Message clickAlarmToggle() {
+    public Message clickAlarmToggle(@RequestParam("is-on") Boolean isOn) {
         Account account = AccountUtil.getAccount();
-        return accountService.clickAlarmToggle(account);
+        return accountService.clickAlarmToggle(account, isOn);
     }
 }

@@ -90,12 +90,8 @@ public class Account {
         this.password = passwordEncoder.encode(newPassword);
     }
 
-    public void clickAlarmToggle(){
-        if(this.isAlarm == null) {
-            this.isAlarm = false;
-            return;
-        }
-        this.isAlarm = !isAlarm;
+    public void setIsAlarm(Boolean isOn){
+        this.isAlarm = isOn;
     }
 
 }

@@ -42,8 +42,9 @@ public class AccountService {
 
 
     @Transactional
-    public Message clickAlarmToggle(Account account) {
-        account.clickAlarmToggle();
+    public Message clickAlarmToggle(Account account, Boolean on) {
+        Account user = accountRepository.findByEmail(account.getEmail()).orElseThrow(NotFoundUserInformationException::new);
+        user.setIsAlarm(on);
         return Message.of(StatusEnum.ACCOUNT_OK,AccountContent.CHANGE_ALARM_TOGGLE);
     }
 
