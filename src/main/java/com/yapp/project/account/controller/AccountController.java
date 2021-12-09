@@ -43,8 +43,8 @@ public class AccountController {
 
     @ApiOperation(value = "알람토글 변경")
     @GetMapping
-    public Message clickAlarmToggle(@RequestParam Boolean on) {
+    public Message clickAlarmToggle(@RequestParam("is-on") Boolean isOn) {
         Account account = AccountUtil.getAccount();
-        return accountService.clickAlarmToggle(account, on);
+        return accountService.clickAlarmToggle(account, isOn);
     }
 }
