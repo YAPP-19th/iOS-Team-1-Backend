@@ -1,6 +1,7 @@
 package com.yapp.project.account.domain;
 
 import com.yapp.project.account.domain.dto.AccountDto.*;
+import com.yapp.project.notification.domain.Notification;
 import com.yapp.project.report.domain.MonthRoutineReport;
 import com.yapp.project.report.domain.WeekReport;
 import lombok.*;
@@ -61,7 +62,6 @@ public class Account {
         this.isAlarm= isAlarm != null && isAlarm;
     }
 
-
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private final List<WeekReport> weekReportList = new ArrayList<>();
@@ -69,6 +69,10 @@ public class Account {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private final List<MonthRoutineReport> monthRoutineReportList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private final List<Notification> notificationLists = new ArrayList<>();
 
     public void setIdForTest(Long id) {
         this.id = id;
