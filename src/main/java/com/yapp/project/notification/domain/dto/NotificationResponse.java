@@ -32,7 +32,7 @@ public class NotificationResponse {
         private String content;
         @ApiModelProperty(value = "읽음 여부", example = "false")
         private Boolean isRead;
-        @ApiModelProperty(value = "생성일", example = "2021-12-07")
+        @ApiModelProperty(value = "생성일", example = "2021-12-01")
         private LocalDate date;
 
         @Builder
