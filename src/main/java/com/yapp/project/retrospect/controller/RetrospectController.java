@@ -4,6 +4,7 @@ import com.yapp.project.aux.Message;
 import com.yapp.project.aux.common.AccountUtil;
 import com.yapp.project.retrospect.domain.dto.RetrospectDTO;
 import com.yapp.project.retrospect.service.RetrospectService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import static com.yapp.project.aux.common.SnapShotUtil.saveImages;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/retrospect")
+@Api(tags = "회고")
 public class RetrospectController {
 
     private final RetrospectService retrospectService;

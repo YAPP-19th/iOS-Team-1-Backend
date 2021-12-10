@@ -3,6 +3,7 @@ package com.yapp.project.report.controller;
 import com.yapp.project.aux.common.AccountUtil;
 import com.yapp.project.report.domain.dto.ReportDTO;
 import com.yapp.project.report.service.ReportService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +15,8 @@ import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/report/")
+@RequestMapping("/api/v1/report")
+@Api(tags = "리포트")
 public class ReportController {
 
     private final ReportService reportService;

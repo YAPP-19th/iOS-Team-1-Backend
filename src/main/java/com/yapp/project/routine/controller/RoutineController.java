@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/routine")
+@Api(tags = "루틴")
 public class RoutineController {
 
     private final RoutineService routineService;

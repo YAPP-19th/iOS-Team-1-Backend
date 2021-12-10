@@ -2,7 +2,10 @@ package com.yapp.project.batch.job;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.repository.AccountRepository;
+import com.yapp.project.aux.common.DateUtil;
+import com.yapp.project.aux.content.NotificationContent;
 import com.yapp.project.aux.fcm.FireBaseCloudMessageService;
+import com.yapp.project.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -17,6 +20,8 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -28,6 +33,7 @@ public class ReportNotificationConfig {
     private final StepBuilderFactory stepBuilderFactory;
     private final JobBuilderFactory jobBuilderFactory;
     private final FireBaseCloudMessageService fireBaseCloudMessageService;
+    private final NotificationService notificationService;
 
     private final String WEEK_TITLE = "주간 리포트가 도착했습니다 \uD83D\uDC8C";
     private final String MONTH_TITLE = "월간 리포트가 도착했습니다 \uD83D\uDC8C";
@@ -80,6 +86,12 @@ public class ReportNotificationConfig {
         ItemProcessor<Account, Account> itemProcessor = new ItemProcessor<>() {
             @Override
             public Account process(Account account) throws Exception {
+                LocalDate startDate = DateUtil.KST_LOCAL_DATE_NOW().minusDays(2).minusWeeks(1);
+                LocalDate endDate = DateUtil.KST_LOCAL_DATE_NOW().minusDays(3);
+                notificationService.createNotification(
+                        account,
+                        NotificationContent.NOTIFICATION_TITLE,
+                        startDate + "부터 " + endDate + " 까지의 리포트가 도착했습니다.");
                 fireBaseCloudMessageService.
                         sendMessageTo(account.getFcmToken(), WEEK_TITLE, account.getNickname() + WEEK_BODY);
                 return null;
@@ -92,6 +104,11 @@ public class ReportNotificationConfig {
         ItemProcessor<Account, Account> itemProcessor = new ItemProcessor<>() {
             @Override
             public Account process(Account account) throws Exception {
+                LocalDate date = DateUtil.KST_LOCAL_DATE_NOW().minusMonths(1);
+                notificationService.createNotification(
+                        account,
+                        NotificationContent.NOTIFICATION_TITLE,
+                        date.getYear() + "년 " + date.getMonth().getValue() + "월의 리포트가 도착했습니다.");
                 fireBaseCloudMessageService.
                         sendMessageTo(account.getFcmToken(), MONTH_TITLE, account.getNickname() + MONTH_BODY);
                 return null;
