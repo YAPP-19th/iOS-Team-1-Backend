@@ -14,22 +14,16 @@ pipeline {
 
         stage('setting properties') {
           steps {
-            sh 'cp ../properties/test/application.properties ./src/main/resources'
+            sh 'cp ../properties/develop/application.yaml ./src/main/resources'
+            sh 'cp ../properties/test/application.yaml ./src/test/resources'
           }
         }
-
       }
     }
 
     stage('test') {
       steps {
         sh './gradlew clean test'
-      }
-    }
-
-    stage('change properties to develop') {
-      steps {
-        sh 'cp ../properties/develop/application.properties ./src/main/resources'
       }
     }
 
