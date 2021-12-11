@@ -31,7 +31,11 @@ public class Notice {
 
     @PrePersist
     public void prePersist() {
-        this.createdAt = this.createdAt!=null?this.createdAt: DateUtil.KST_LOCAL_DATE_NOW();
+        this.createdAt = DateUtil.KST_LOCAL_DATE_NOW(); //this.createdAt!=null?this.createdAt:
+    }
+
+    public void setContentForTest(String content) {
+        this.content = content;
     }
 
 }
