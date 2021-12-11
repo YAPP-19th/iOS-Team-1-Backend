@@ -3,6 +3,7 @@ package com.yapp.project.mission.domain.repository;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.mission.domain.dao.MissionOrganization;
+import com.yapp.project.organization.domain.Organization;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -37,4 +38,7 @@ public interface MissionRepository extends JpaRepository<Mission,Long> {
 
     Optional<Mission> findMissionByAccountAndId(Account account, Long missionId);
     Optional<Mission> findMissionByAccountAndOrganization_IdAndIsFinishIsFalseAndIsDeleteIsFalse(Account account, Long organizationId);
+
+    @EntityGraph(attributePaths = {"organization"})
+    List<Mission> findAllByOrganization(Organization organization);
 }

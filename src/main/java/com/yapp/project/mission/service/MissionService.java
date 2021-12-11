@@ -128,6 +128,11 @@ public class MissionService {
         missionRepository.saveAll(missions);
     }
 
+    public Integer getParticipantsFromOrganization(Organization organization) {
+        List<Mission> missions = missionRepository.findAllByOrganization(organization);
+        return missions.size();
+    }
+
     private void findTodayMission(Mission mission, LocalDateTime dateTime, List<Mission> response) {
         for (Cron cron : mission.getWeeks()){
             if (cron.getWeek().getIndex() == dateTime.getDayOfWeek().getValue()){

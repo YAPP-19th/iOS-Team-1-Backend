@@ -159,7 +159,7 @@ public class Mission {
                 .title(this.organization.getTitle())
                 .groupAchievementRate(this.organization.getRate())
                 .myAchievementRate(this.getAchievementRate())
-                .participant(this.organization.getMissions().size())
+                .participant(this.organization.getParticipants())
                 .weeks(weeks.stream().map(Cron::getWeek).collect(Collectors.toList()))
                 .period(this.getPeriod())
                 .endDate(finishDate)
