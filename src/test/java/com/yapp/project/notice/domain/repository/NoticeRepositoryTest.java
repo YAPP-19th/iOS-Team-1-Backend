@@ -45,7 +45,7 @@ class NoticeRepositoryTest {
             Notice third = noticeRepository.getById(second.getId());
             assertThat(third.getContent()).isEqualTo("3");
             assertThat(DateUtil.KST_LOCAL_DATE_NOW()).isEqualTo(LocalDate.of(2021,12,12));
-            assertThat(third.getCreatedAt()).isEqualTo(LocalDate.of(2021,12,12));
+            assertThat(third.getCreatedAt()).isEqualTo(LocalDate.of(2021,12,11));
         }
     }
 
