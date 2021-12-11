@@ -3,10 +3,7 @@ package com.yapp.project.notice.domain;
 import com.yapp.project.aux.common.DateUtil;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
@@ -16,6 +13,7 @@ import java.time.LocalDate;
 @ToString
 public class Notice {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
