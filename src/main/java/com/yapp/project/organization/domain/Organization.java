@@ -2,7 +2,6 @@ package com.yapp.project.organization.domain;
 
 import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.capture.domain.Capture;
-import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.organization.domain.dto.OrgDto;
 import lombok.*;
 
@@ -38,6 +37,7 @@ public class Organization {
         this.count = this.count == null ? 0 : this.count;
         this.groupSuccessCount = this.groupSuccessCount == null ? 0 : this.groupSuccessCount;
         this.groupFailCount = this.groupFailCount == null ? 0 : this.groupFailCount;
+        this.participants = this.participants==null ? 0 : this.participants;
     }
 
 
@@ -47,15 +47,13 @@ public class Organization {
 
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
-    private final List<Mission> missions = new ArrayList<>();
-
-    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ToString.Exclude
     private List<Capture> captures = new ArrayList<>();
 
     private String title;
 
     private Integer rate;
+
+    private Integer participants;
 
     private String image;
 
@@ -81,20 +79,8 @@ public class Organization {
     @Column(columnDefinition="TEXT")
     private String recommend;
 
-    public void setIdForTest(Long id) {
-        this.id = id;
-    }
-
-    public OrgDto.OrgResponse toResponseDto(){
-        return OrgDto.OrgResponse.builder().id(id)
-                .title(title).rate(rate)
-                .image(image).participant(missions.size()).build();
-    }
-
-    public OrgDto.OrgDetailResponse toDetailResponseDto(){
-        return OrgDto.OrgDetailResponse.builder().id(id)
-                .shoot(shoot).participant(missions.size()).rate(rate).title(title)
-                .category(category).beginTime(beginTime).endTime(endTime).description(description).recommend(recommend).build();
+    public void updateParticipants(Integer participants) {
+        this.participants = participants;
     }
 
     public void updateCurrentCount(){
@@ -136,4 +122,22 @@ public class Organization {
         this.updatedAt = DateUtil.KST_LOCAL_DATE_NOW();
         this.count=0;
     }
+
+    public OrgDto.OrgResponse toResponseDto(){
+        return OrgDto.OrgResponse.builder().id(id)
+                .title(title).rate(rate)
+                .image(image).participant(participants).build();
+    }
+
+    public OrgDto.OrgDetailResponse toDetailResponseDto(){
+        return OrgDto.OrgDetailResponse.builder().id(id)
+                .shoot(shoot).participant(participants).rate(rate).title(title)
+                .category(category).beginTime(beginTime).endTime(endTime).description(description).recommend(recommend).build();
+    }
+
+    public void setIdForTest(Long id) {
+        this.id = id;
+    }
+
+
 }

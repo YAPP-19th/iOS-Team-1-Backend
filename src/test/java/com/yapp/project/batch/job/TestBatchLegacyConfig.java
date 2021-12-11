@@ -29,7 +29,18 @@ public class TestBatchLegacyConfig {
         return new JobLauncherTestUtils(){
             @Override
             @Autowired
-            public void setJob(@Qualifier("groupJob") Job job) {
+            public void setJob(@Qualifier("missionJob") Job job) {
+                super.setJob(job);
+            }
+        };
+    }
+
+    @Bean
+    public JobLauncherTestUtils jobLauncherTestUtilsForParticipants(){
+        return new JobLauncherTestUtils(){
+            @Override
+            @Autowired
+            public void setJob(@Qualifier("organizationJob") Job job) {
                 super.setJob(job);
             }
         };
