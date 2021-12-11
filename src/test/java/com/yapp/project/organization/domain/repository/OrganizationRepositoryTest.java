@@ -79,10 +79,6 @@ class OrganizationRepositoryTest {
         List<Organization> totalOrganizations = organizationRepository.findAll();
         List<Organization> orgs = organizationRepository.findOrganizationsNotIn(excludeOrganizationIds);
         assertThat(totalOrganizations.size() - orgs.size()).isEqualTo(1);
-        Optional<Organization> organization = orgs.stream().filter(o -> o.getMissions().size()==1).findAny();
-        assertThat(organization).isPresent();
-        assertThat(organization.get().getMissions().size()).isOne();
-
     }
 
     @Test
