@@ -126,3 +126,5 @@ INSERT INTO SAYING (content) VALUES ('나는 실패한 적이 없다 그저 작�
 INSERT INTO SAYING (content) VALUES ('성공이란 열정을 잃지 않고 실패를 거듭할 수 있는 능력이다');
 INSERT INTO SAYING (content) VALUES ('성공의 크기는 열망의 깊이에 좌우된다');
 INSERT INTO SAYING (content) VALUES ('해보지 않고는 당신이 무엇을 해낼 수 있는지 알 수 없다');
+
+INSERT INTO NOTICE (title,content,created_at) VALUES('미닝 출시', '미닝 출시가 되었습니다.', '2021-12-11');
