@@ -19,7 +19,7 @@ public class OrganizationScheduler {
         this.jobLauncher = jobLauncher;
     }
 
-    @Scheduled(cron = "10 * * * * *")
+    @Scheduled(cron = "0 1 * * * *")
     public void groupBatchExecuteJob() throws JobExecutionException{
         jobLauncher.run(job, new JobParametersBuilder()
                             .addString("organizationUpdateRate", DateUtil.KST_LOCAL_DATETIME_NOW().toString())
