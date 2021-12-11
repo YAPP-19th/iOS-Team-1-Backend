@@ -37,10 +37,12 @@ public enum StatusEnum {
     MONTH_REPORT_OK(200, "MONTH_REPORT_OK"),
     DAY_ROUTINE_RATE_OK(200, "DAY_ROUTINE_RATE_OK"),
     DAY_ROUTINE_RATE_BAD_REQUEST(400, "DAY_ROUTINE_RATE_BAD_REQUEST"),
-    RECOMMENDED_ROUTINE_OK(200, "RECOMMENDED_ROUTINE_OK");
+    RECOMMENDED_ROUTINE_OK(200, "RECOMMENDED_ROUTINE_OK"),
+    NOTICE_OK(200,"NOTICE_OK"),
+    NOTICE_NOT_FOUND(200,"NOTICE_NOT_FOUND");
 
-    int statusCode;
-    String code;
+    final int statusCode;
+    final String code;
 
     StatusEnum(int statusCode, String code) {
         this.statusCode = statusCode;
