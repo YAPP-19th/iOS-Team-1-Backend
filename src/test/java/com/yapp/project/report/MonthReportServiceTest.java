@@ -30,7 +30,7 @@ public class MonthReportServiceTest {
     private ReportService reportService;
 
     @Test
-//    @Transactional
+    @Transactional
     void testMonthReportSuccess() {
         //given
         Account account = AccountTemplate.makeTestAccount();
