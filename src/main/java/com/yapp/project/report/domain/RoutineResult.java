@@ -1,5 +1,6 @@
 package com.yapp.project.report.domain;
 
+import com.yapp.project.organization.domain.Category;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +26,8 @@ public class RoutineResult{
 
     private String title;
 
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
     private Long routineId;
 
@@ -38,7 +40,7 @@ public class RoutineResult{
     private LocalDateTime routineCreateAt;
 
     @Builder
-    public RoutineResult(String title, String category, Long routineId, LocalDateTime routineCreateAt) {
+    public RoutineResult(String title, Category category, Long routineId, LocalDateTime routineCreateAt) {
         this.title = title;
         this.category = category;
         this.routineId = routineId;
@@ -55,11 +57,11 @@ public class RoutineResult{
     }
 
     public void addRoutineResultDoneCount(int[] routineResultCount) {
-        this.fullyDoneCount = Long.valueOf(routineResultCount[0]);
-        this.partiallyDoneCount = Long.valueOf(routineResultCount[1]);
+        this.fullyDoneCount = (long) routineResultCount[0];
+        this.partiallyDoneCount = (long) routineResultCount[1];
     }
 
     public void addRoutineNotDoneCount(int notDoneCount) {
-        this.notDoneCount = Long.valueOf(notDoneCount);
+        this.notDoneCount = (long) notDoneCount;
     }
 }

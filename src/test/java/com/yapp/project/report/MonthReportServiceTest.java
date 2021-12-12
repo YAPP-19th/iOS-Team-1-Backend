@@ -49,27 +49,23 @@ public class MonthReportServiceTest {
         // when
         reportService.makeMonthReport(savedAccount);
         ReportDTO.ResponseMonthReportMessage monthReportByYearAndMonth = reportService.getMonthReportByYearAndMonth(savedAccount, year, month);
-        ReportDTO.ResponseMonthReport data = monthReportByYearAndMonth.getData();
-        List<ReportDTO.ResponseMonthRoutineReport> dailyRoutineList =
-                monthReportByYearAndMonth.getData().getResultByCategory().get("daily").getRoutineReportList();
-        List<ReportDTO.ResponseMonthRoutineReport> healthRoutineList =
-                monthReportByYearAndMonth.getData().getResultByCategory().get("health").getRoutineReportList();
-
+        List<Integer> weekRateList = monthReportByYearAndMonth.getData().getWeekRateList();
+        List<ReportDTO.MonthResultByCategory> resultByCategory = monthReportByYearAndMonth.getData().getResultByCategory();
         assertAll(
                 /* Check Week Rate */
-                () -> assertEquals(data.getWeekRateList().get(0), "45%"),
-                () -> assertEquals(data.getWeekRateList().get(1), "30%"),
-                () -> assertEquals(data.getWeekRateList().get(2), "42%"),
-                () -> assertEquals(data.getWeekRateList().get(3), "42%"),
+                () -> assertEquals(weekRateList.get(0), 45),
+                () -> assertEquals(weekRateList.get(1), 30),
+                () -> assertEquals(weekRateList.get(2), 42),
+                () -> assertEquals(weekRateList.get(3), 42),
                 /* Check Category Rate */
-                () -> assertEquals(data.getResultByCategory().get("daily").getRate(), 60),
-                () -> assertEquals(data.getResultByCategory().get("health").getRate(), 40),
+                () -> assertEquals(resultByCategory.get(2).getRate(), 40),
+                () -> assertEquals(resultByCategory.get(3).getRate(), 60),
                 /* Check Routine Result(size) */
-                () -> assertEquals(dailyRoutineList.get(0).getFullyDoneRate(), "50%"), // Coffee
-                () -> assertEquals(dailyRoutineList.get(1).getFullyDoneRate(), "29%"), // Reading
-                () -> assertEquals(dailyRoutineList.get(2).getFullyDoneRate(), "0%"), // Vitamin
-                () -> assertEquals(healthRoutineList.get(0).getFullyDoneRate(), "44%"), // Running
-                () -> assertEquals(healthRoutineList.get(1).getFullyDoneRate(), "52%") // Water
+                () -> assertEquals(resultByCategory.get(2).getRoutineReportList().get(0).getFullyDoneRate(), 44), // Running
+                () -> assertEquals(resultByCategory.get(2).getRoutineReportList().get(1).getFullyDoneRate(), 52), // Water
+                () -> assertEquals(resultByCategory.get(3).getRoutineReportList().get(0).getFullyDoneRate(), 50), // Coffee
+                () -> assertEquals(resultByCategory.get(3).getRoutineReportList().get(1).getFullyDoneRate(), 29), // Reading
+                () -> assertEquals(resultByCategory.get(3).getRoutineReportList().get(2).getFullyDoneRate(), 0) // Vitamin
         );
     }
 }

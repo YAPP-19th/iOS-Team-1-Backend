@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.yapp.project.organization.domain.Category.DAILY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -53,7 +54,7 @@ class RoutineServiceTest {
         List<Week> days = new ArrayList<>();
         days.add(Week.MON);
         days.add(Week.TUE);
-        RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", "생활");
+        RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", DAILY.getIndex());
         Routine fakeRoutine = Routine.builder().account(account).newRoutine(newRoutine).build();
 
         // mocking
@@ -74,7 +75,7 @@ class RoutineServiceTest {
         List<Week> days = new ArrayList<>();
         days.add(Week.MON);
         days.add(Week.TUE);
-        RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("", "", days, "07:35", "생활");
+        RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("", "", days, "07:35", DAILY.getIndex());
 
         // when then
         assertThrows(BadRequestRoutineException.class, () -> routineService.createRoutine(newRoutine, account));
@@ -87,7 +88,7 @@ class RoutineServiceTest {
         List<Week> days = new ArrayList<>();
         days.add(Week.MON);
         days.add(Week.TUE);
-        RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", "생활");
+        RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", DAILY.getIndex());
         Routine fakeRoutine = Routine.builder().account(account).newRoutine(newRoutine).build();
 
         // mocking
@@ -119,7 +120,7 @@ class RoutineServiceTest {
         List<Week> days = new ArrayList<>();
         days.add(Week.MON);
         days.add(Week.TUE);
-        RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", "생활");
+        RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", DAILY.getIndex());
         Routine fakeRoutine = Routine.builder().account(account1).newRoutine(newRoutine).build();
 
         // mocking
@@ -136,8 +137,8 @@ class RoutineServiceTest {
         List<Week> days = new ArrayList<>();
         List<Routine> routines = new ArrayList<>();
         days.add(Week.MON); days.add(Week.TUE);
-        RoutineDTO.RequestRoutineDto newRoutine1 = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", "생활");
-        RoutineDTO.RequestRoutineDto newRoutine2 = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", "생활");
+        RoutineDTO.RequestRoutineDto newRoutine1 = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", DAILY.getIndex());
+        RoutineDTO.RequestRoutineDto newRoutine2 = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", DAILY.getIndex());
         routines.add(Routine.builder().account(account).newRoutine(newRoutine1).build());
         routines.add(Routine.builder().account(account).newRoutine(newRoutine2).build());
 
@@ -157,8 +158,8 @@ class RoutineServiceTest {
         List<Week> days = new ArrayList<>();
         List<Week> newDays = new ArrayList<>();
         days.add(Week.MON); newDays.add(Week.SAT); newDays.add(Week.SUN);
-        RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목표", days, "07:35", "생활");
-        RoutineDTO.RequestRoutineDto mockRoutine = new RoutineDTO.RequestRoutineDto("타이틀 수정", "수정", newDays, "07:35", "생활");
+        RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목표", days, "07:35", DAILY.getIndex());
+        RoutineDTO.RequestRoutineDto mockRoutine = new RoutineDTO.RequestRoutineDto("타이틀 수정", "수정", newDays, "07:35", DAILY.getIndex());
         Routine fakeRoutine = Routine.builder().account(account).newRoutine(newRoutine).build();
         // mocking
         given(routineRepository.findByIdAndIsDeleteIsFalse(1L)).willReturn(Optional.of(fakeRoutine));
@@ -181,8 +182,8 @@ class RoutineServiceTest {
         ArrayList<Long> sequence = new ArrayList<>();
         sequence.add(2L); sequence.add(1L);
         newDays1.add(Week.MON); newDays2.add(Week.MON); newDays2.add(Week.SUN);
-        RoutineDTO.RequestRoutineDto newRoutine1 = new RoutineDTO.RequestRoutineDto("타이틀", "목표", newDays1, "07:35", "생활"); // 1번
-        RoutineDTO.RequestRoutineDto newRoutine2 = new RoutineDTO.RequestRoutineDto("타이틀2", "목표2", newDays2, "07:35", "생활"); // 2번
+        RoutineDTO.RequestRoutineDto newRoutine1 = new RoutineDTO.RequestRoutineDto("타이틀", "목표", newDays1, "07:35", DAILY.getIndex()); // 1번
+        RoutineDTO.RequestRoutineDto newRoutine2 = new RoutineDTO.RequestRoutineDto("타이틀2", "목표2", newDays2, "07:35", DAILY.getIndex()); // 2번
         routines.add(Routine.builder().account(account).newRoutine(newRoutine2).id(0L).build()); // 2번 -> 1번
         routines.add(Routine.builder().account(account).newRoutine(newRoutine1).id(1L).build()); // 1번 -> 2번
 
@@ -261,7 +262,7 @@ class RoutineServiceTest {
         // given
         List<Organization> recommendedList = new ArrayList<>();
         Organization test1 = OrganizationTemplate.makeTestOrganization();
-        Organization test2 = OrganizationTemplate.makeTestOrganization("환기 하기", Category.DAILY);
+        Organization test2 = OrganizationTemplate.makeTestOrganization("환기 하기", DAILY);
         recommendedList.add(test1); recommendedList.add(test2);
 
         // mocking
@@ -272,8 +273,8 @@ class RoutineServiceTest {
 
         // then
         assertAll(
-                () -> assertEquals(data.get(0).getCategory(), Category.MIRACLE.getName()),
-                () -> assertEquals(data.get(1).getCategory(), Category.DAILY.getName())
+                () -> assertEquals(data.get(0).getCategory(), Category.MIRACLE.getIndex()),
+                () -> assertEquals(data.get(1).getCategory(), Category.DAILY.getIndex())
         );
    }
 
