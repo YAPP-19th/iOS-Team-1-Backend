@@ -52,7 +52,7 @@ public class WeekReportServiceTest {
             // when
             WeekReport weekReport = reportService.makeWeekReport(account);
             // then
-            assertThat(weekReport.getRate()).isEqualTo("62%");
+            assertThat(weekReport.getRate()).isEqualTo(62);
         }
     }
 
@@ -71,7 +71,7 @@ public class WeekReportServiceTest {
             // when
             WeekReport weekReport = reportService.makeWeekReport(account);
             // then
-            assertThat(weekReport.getRate()).isEqualTo("66%");
+            assertThat(weekReport.getRate()).isEqualTo(66);
         }
     }
 
@@ -90,7 +90,7 @@ public class WeekReportServiceTest {
             // when
             WeekReport weekReport = reportService.makeWeekReport(account);
             // then
-            assertThat(weekReport.getRate()).isEqualTo("69%");
+            assertThat(weekReport.getRate()).isEqualTo(69);
         }
     }
 
@@ -109,7 +109,7 @@ public class WeekReportServiceTest {
             // when
             WeekReport weekReport = reportService.makeWeekReport(account);
             // then
-            assertThat(weekReport.getRate()).isEqualTo("63%");
+            assertThat(weekReport.getRate()).isEqualTo(63);
         }
     }
 }

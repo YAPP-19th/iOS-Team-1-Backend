@@ -1,6 +1,7 @@
 package com.yapp.project.report.template;
 
 import com.yapp.project.account.domain.Account;
+import com.yapp.project.organization.domain.Category;
 import com.yapp.project.routine.RoutineTemplate;
 import com.yapp.project.retrospect.domain.Result;
 import com.yapp.project.retrospect.domain.Retrospect;
@@ -10,6 +11,9 @@ import com.yapp.project.routine.domain.Week;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.yapp.project.organization.domain.Category.DAILY;
+import static com.yapp.project.organization.domain.Category.HEALTH;
 
 public class WeekReportTemplate {
 
@@ -23,8 +27,8 @@ public class WeekReportTemplate {
         List<Week> readingRoutineDays = new ArrayList<>();
         coffeeRoutineDays.add(Week.MON); coffeeRoutineDays.add(Week.WED); coffeeRoutineDays.add(Week.FRI);
         readingRoutineDays.add(Week.TUE); readingRoutineDays.add(Week.WED); readingRoutineDays.add(Week.THU); readingRoutineDays.add(Week.SAT);
-        Routine coffeeRoutine = RoutineTemplate.makeRoutine(account, "커피 내려 마시기", "커피 마시기", "생활", "2021-09-29 18:31:34", coffeeRoutineDays);
-        Routine readingRoutine = RoutineTemplate.makeRoutine(account, "책 1챕터 읽기", "책 읽기", "생활", "2021-09-30 18:31:34", readingRoutineDays);
+        Routine coffeeRoutine = RoutineTemplate.makeRoutine(account, "커피 내려 마시기", "커피 마시기", DAILY, "2021-09-29 18:31:34", coffeeRoutineDays);
+        Routine readingRoutine = RoutineTemplate.makeRoutine(account, "책 1챕터 읽기", "책 읽기", DAILY, "2021-09-30 18:31:34", readingRoutineDays);
         result.add(coffeeRoutine); result.add(readingRoutine);
         return result;
     }
@@ -34,7 +38,7 @@ public class WeekReportTemplate {
         result.addAll(makeWeek1Routine(account));
         List<Week> newRoutine = new ArrayList<>();
         newRoutine.add(Week.MON); newRoutine.add(Week.WED); newRoutine.add(Week.SAT); newRoutine.add(Week.SUN);
-        Routine runningRoutine = RoutineTemplate.makeRoutine(account, "논스톱 러닝3Km", "달리기", "건강", "2021-10-09 18:31:34", newRoutine);
+        Routine runningRoutine = RoutineTemplate.makeRoutine(account, "논스톱 러닝3Km", "달리기", HEALTH, "2021-10-09 18:31:34", newRoutine);
         result.add(runningRoutine);
         return result;
     }
@@ -44,7 +48,7 @@ public class WeekReportTemplate {
         result.addAll(makeWeek2Routine(account));
         List<Week> newRoutine = new ArrayList<>();
         newRoutine.add(Week.WED); newRoutine.add(Week.SUN);
-        Routine waterRoutine = RoutineTemplate.makeRoutine(account, "물 마시기", "마시기", "생활", "2021-10-13 18:31:34", newRoutine);
+        Routine waterRoutine = RoutineTemplate.makeRoutine(account, "물 마시기", "마시기", DAILY, "2021-10-13 18:31:34", newRoutine);
         result.add(waterRoutine);
         return result;
     }
@@ -55,7 +59,7 @@ public class WeekReportTemplate {
         result.remove(2); // Delete Running Routine
         List<Week> newRoutine = new ArrayList<>();
         newRoutine.add(Week.WED); newRoutine.add(Week.FRI); newRoutine.add(Week.SUN);
-        Routine meditationRoutine = RoutineTemplate.makeRoutine(account, "명상하기", "명상", "생활", "2021-10-22 18:31:34", newRoutine);
+        Routine meditationRoutine = RoutineTemplate.makeRoutine(account, "명상하기", "명상", DAILY, "2021-10-22 18:31:34", newRoutine);
         result.add(meditationRoutine);
         return result;
     }

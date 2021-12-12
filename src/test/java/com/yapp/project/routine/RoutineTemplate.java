@@ -1,6 +1,7 @@
 package com.yapp.project.routine;
 
 import com.yapp.project.account.domain.Account;
+import com.yapp.project.organization.domain.Category;
 import com.yapp.project.retrospect.domain.Result;
 import com.yapp.project.retrospect.domain.Retrospect;
 import com.yapp.project.routine.domain.Routine;
@@ -21,8 +22,8 @@ public class RoutineTemplate {
     private static Long routineId = 1L;
     private static Long retrospectId = 1L;
 
-    public static Routine makeRoutine(Account account, String title, String goal, String category, String createAt, List<Week> days) {
-        RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto(title, goal, days, "07:35", category);
+    public static Routine makeRoutine(Account account, String title, String goal, Category category, String createAt, List<Week> days) {
+        RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto(title, goal, days, "07:35", category.getIndex());
         Routine routine = Routine.builder().newRoutine(newRoutine).id(routineId++).account(account).build();
         List<RoutineDay> routineDays = days.stream().map(day -> RoutineDay.builder().day(day).routine(routine).build()).collect(Collectors.toList());
         routine.addDays(routineDays);
@@ -34,7 +35,7 @@ public class RoutineTemplate {
     public static Routine makeCoffeeRoutine(Account account) {
         List<Week> coffeeDays = new ArrayList<>();
         coffeeDays.add(Week.WED); coffeeDays.add(Week.SUN);
-        RoutineDTO.RequestRoutineDto newRoutine1 = new RoutineDTO.RequestRoutineDto("커피", "커피 내려 마시", coffeeDays, "07:35", "생활");
+        RoutineDTO.RequestRoutineDto newRoutine1 = new RoutineDTO.RequestRoutineDto("커피", "커피 내려 마시", coffeeDays, "07:35", Category.DAILY.getIndex());
         Routine coffeeRoutine = Routine.builder().newRoutine(newRoutine1).id(routineId++).account(account).build();
         List<RoutineDay> routineDays = coffeeDays.stream().map(day -> RoutineDay.builder().day(day).routine(coffeeRoutine).build()).collect(Collectors.toList());
         coffeeRoutine.addDays(routineDays);
@@ -54,7 +55,7 @@ public class RoutineTemplate {
     public static Routine makeReadingRoutine(Account account) {
         List<Week> readingDays = new ArrayList<>();
         readingDays.add(Week.THU); readingDays.add(Week.FRI);
-        RoutineDTO.RequestRoutineDto newRoutine1 = new RoutineDTO.RequestRoutineDto("책읽기", "1챕터씩 읽기", readingDays, "07:35", "생활");
+        RoutineDTO.RequestRoutineDto newRoutine1 = new RoutineDTO.RequestRoutineDto("책읽기", "1챕터씩 읽기", readingDays, "07:35", Category.DAILY.getIndex());
         Routine readingRoutine = Routine.builder().newRoutine(newRoutine1).id(routineId++).account(account).build();
         List<RoutineDay> routineDays = readingDays.stream().map(day -> RoutineDay.builder().day(day).routine(readingRoutine).build()).collect(Collectors.toList());
         readingRoutine.addDays(routineDays);
@@ -74,7 +75,7 @@ public class RoutineTemplate {
     public static Routine makeRunningRoutine(Account account) {
         List<Week> runningDays = new ArrayList<>();
         runningDays.add(Week.TUE); runningDays.add(Week.WED); runningDays.add(Week.THU); runningDays.add(Week.FRI);
-        RoutineDTO.RequestRoutineDto newRoutine1 = new RoutineDTO.RequestRoutineDto("달리기", "논스톱 달리기", runningDays, "07:35", "건강");
+        RoutineDTO.RequestRoutineDto newRoutine1 = new RoutineDTO.RequestRoutineDto("달리기", "논스톱 달리기", runningDays, "07:35", Category.HEALTH.getIndex());
         Routine runningRoutine = Routine.builder().newRoutine(newRoutine1).id(routineId++).account(account).build();
         List<RoutineDay> routineDays = runningDays.stream().map(day -> RoutineDay.builder().day(day).routine(runningRoutine).build()).collect(Collectors.toList());
         runningRoutine.addDays(routineDays);
@@ -97,7 +98,7 @@ public class RoutineTemplate {
         List<Week> waterDays = new ArrayList<>();
         waterDays.add(Week.MON); waterDays.add(Week.TUE); waterDays.add(Week.WED); waterDays.add(Week.THU);
         waterDays.add(Week.FRI); waterDays.add(Week.SAT); waterDays.add(Week.SUN);
-        RoutineDTO.RequestRoutineDto newRoutine1 = new RoutineDTO.RequestRoutineDto("물마시기", "물 꼭 마시기", waterDays, "07:35", "건강");
+        RoutineDTO.RequestRoutineDto newRoutine1 = new RoutineDTO.RequestRoutineDto("물마시기", "물 꼭 마시기", waterDays, "07:35", Category.HEALTH.getIndex());
         Routine waterRoutine = Routine.builder().newRoutine(newRoutine1).id(routineId++).account(account).build();
         List<RoutineDay> routineDays = waterDays.stream().map(day -> RoutineDay.builder().day(day).routine(waterRoutine).build()).collect(Collectors.toList());
         waterRoutine.addDays(routineDays);
@@ -122,7 +123,7 @@ public class RoutineTemplate {
         List<Week> vitaminDays = new ArrayList<>();
         vitaminDays.add(Week.MON); vitaminDays.add(Week.TUE); vitaminDays.add(Week.WED); vitaminDays.add(Week.THU);
         vitaminDays.add(Week.FRI); vitaminDays.add(Week.SAT); vitaminDays.add(Week.SUN);
-        RoutineDTO.RequestRoutineDto newRoutine1 = new RoutineDTO.RequestRoutineDto("비타민 먹기", "비타민 챙겨 먹기", vitaminDays, "07:35", "생활");
+        RoutineDTO.RequestRoutineDto newRoutine1 = new RoutineDTO.RequestRoutineDto("비타민 먹기", "비타민 챙겨 먹기", vitaminDays, "07:35", Category.HEALTH.getIndex());
         Routine vitaminRoutine = Routine.builder().newRoutine(newRoutine1).id(routineId++).account(account).build();
         List<RoutineDay> routineDays = vitaminDays.stream().map(day -> RoutineDay.builder().day(day).routine(vitaminRoutine).build()).collect(Collectors.toList());
         vitaminRoutine.addDays(routineDays);

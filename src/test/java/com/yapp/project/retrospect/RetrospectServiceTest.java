@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATE_NOW;
+import static com.yapp.project.organization.domain.Category.DAILY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,7 +58,7 @@ class RetrospectServiceTest {
             List<Week> days = new ArrayList<>();
             days.add(Week.MON);
             days.add(Week.TUE);
-            RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", "생활");
+            RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", DAILY.getIndex());
             Routine fakeRoutine = Routine.builder().account(account).newRoutine(newRoutine).id(1L).build();
             List<RoutineDay> newDays = days.stream().map(day -> RoutineDay.builder().day(day).sequence(0L).routine(fakeRoutine).build()).collect(Collectors.toList());
             fakeRoutine.addDays(newDays);
@@ -99,7 +99,7 @@ class RetrospectServiceTest {
             days.add(Week.MON);
             days.add(Week.TUE);
             dateUtil.when(DateUtil::KST_LOCAL_DATE_NOW).thenReturn(LocalDate.parse("2021-11-30"));
-            RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", "생활");
+            RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", DAILY.getIndex());
             Routine fakeRoutine = Routine.builder().account(account).newRoutine(newRoutine).id(1L).build();
             Retrospect fakeRetrospect = Retrospect.builder().routine(fakeRoutine).isReport(false).result(Result.NOT).date("2021-11-29").build();
             fakeRetrospect.updateRetrospect("테스트 회고 내용");
@@ -138,7 +138,7 @@ class RetrospectServiceTest {
             List<Week> days = new ArrayList<>();
             days.add(Week.MON); days.add(Week.THU); days.add(Week.WED); days.add(Week.TUE);
             days.add(Week.FRI); days.add(Week.SAT); days.add(Week.SUN);
-            RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", "생활");
+            RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", DAILY.getIndex());
             Routine fakeRoutine = Routine.builder().account(account).newRoutine(newRoutine).id(1L).build();
             List<RoutineDay> newDays = days.stream().map(day -> RoutineDay.builder().day(day).sequence(0L).routine(fakeRoutine).build()).collect(Collectors.toList());
             fakeRoutine.addDays(newDays);
@@ -167,7 +167,7 @@ class RetrospectServiceTest {
         Account account = AccountTemplate.makeTestAccount();
         List<Week> days = new ArrayList<>();
 
-        RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", "생활");
+        RoutineDTO.RequestRoutineDto newRoutine = new RoutineDTO.RequestRoutineDto("타이틀", "목포", days, "07:35", DAILY.getIndex());
         Routine fakeRoutine = Routine.builder().account(account).newRoutine(newRoutine).id(1L).build();
         Retrospect fakeRetrospect = Retrospect.builder().routine(fakeRoutine).isReport(false).result(Result.NOT).date("2021-10-12").build();
         fakeRetrospect.updateRetrospect("테스트 회고 내용");
