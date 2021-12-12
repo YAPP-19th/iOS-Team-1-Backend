@@ -19,7 +19,7 @@ import java.util.List;
 public class Organization {
 
     @Builder
-    public Organization(String title , Integer rate, String category, Clause clause){
+    public Organization(String title , Integer rate, Category category, Clause clause){
         this.title = title;
         this.rate = rate;
         this.category = category;
@@ -57,7 +57,8 @@ public class Organization {
 
     private String image;
 
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
     private String shoot;
 
