@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
@@ -49,7 +48,7 @@ public class ReportService {
         if(monthReportList.isEmpty() && weekReportList.isEmpty()) {
             throw new MonthReportNotFoundMonthException();
         }
-        List<String> weekRateList = weekReportList.stream().map(WeekReport::getRate).collect(Collectors.toList());
+        List<Integer> weekRateList = weekReportList.stream().map(WeekReport::getRate).collect(Collectors.toList());
         return ReportDTO.ResponseMonthReportMessage.of(monthReportList, weekRateList);
     }
 
@@ -94,10 +93,9 @@ public class ReportService {
     }
 
     private List<MonthRoutineReport> getMonthRoutineReportList(Account account, HashSet<Long> routineIdHashSet) {
-        List<MonthRoutineReport> monthRoutineReportList = routineIdHashSet.stream().map(routineId ->
+        return routineIdHashSet.stream().map(routineId ->
                 MonthRoutineReport.builder().account(account).routineId(routineId).build()
         ).collect(Collectors.toList());
-        return monthRoutineReportList;
     }
 
     private List<RoutineResult> getRoutineResultList(List<WeekReport> weekReportList, HashSet<Long> routineIdHashSet) {
@@ -176,19 +174,15 @@ public class ReportService {
     }
 
     private List<RoutineResult> getRoutineResults(List<Routine> routineList) {
-        List<RoutineResult> routineResultList = routineList.stream().map(routine -> {
-            RoutineResult routineResult = RoutineResult.builder()
+        return routineList.stream().map(routine -> RoutineResult.builder()
                     .title(routine.getTitle()).category(routine.getCategory()).routineId(routine.getId())
-                    .routineCreateAt(routine.getCreatedAt()).build();
-            return routineResult;
-        }).collect(Collectors.toList());
-        return routineResultList;
+                    .routineCreateAt(routine.getCreatedAt()).build()).collect(Collectors.toList());
     }
 
     private void setRetrospectBasicData(Account account, int[] result, WeekReport weekReport) {
         weekReport.addBasicData(
                 account,
-                (int) (((result[1] + (result[2] * 0.5)) / (result[0] + (result[1] + result[2]))) * 100) + "%",
+                (int) (((result[1] + (result[2] * 0.5)) / (result[0] + (result[1] + result[2]))) * 100),
                 result[0],
                 result[1],
                 result[2]

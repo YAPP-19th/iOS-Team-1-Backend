@@ -16,7 +16,7 @@ public interface RoutineRepository extends JpaRepository<Routine, Long> {
     List<Routine> findAllByIsDeleteIsFalseAndAccountAndDaysDayOrderByDaysSequence(Account account, Week days, Sort sort);
 
     @EntityGraph(attributePaths = {"days"})
-    @Query("select m from Routine m where m.id= :routineId")
+    @Query("select m from Routine m where m.id= :routineId and m.isDelete = false")
     Optional<Routine> findByIdAndIsDeleteIsFalse(Long routineId);
 
     @EntityGraph(attributePaths = {"days"})

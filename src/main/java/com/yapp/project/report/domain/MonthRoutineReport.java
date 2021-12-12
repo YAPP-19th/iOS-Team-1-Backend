@@ -2,15 +2,12 @@ package com.yapp.project.report.domain;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.common.DateUtil;
+import com.yapp.project.organization.domain.Category;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.Month;
-import java.time.Year;
-import java.time.format.TextStyle;
-import java.util.Locale;
 
 @Entity
 @Getter
@@ -28,7 +25,8 @@ public class MonthRoutineReport {
 
     private Long routineId;
 
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
     private Long fullyDoneCount;
 
@@ -57,7 +55,7 @@ public class MonthRoutineReport {
         this.notDoneCount += notDoneCount;
     }
 
-    public void updateRoutineTitleAndCategory(String title, String category) {
+    public void updateRoutineTitleAndCategory(String title, Category category) {
         this.title = title;
         this.category = category;
     }

@@ -1,6 +1,7 @@
 package com.yapp.project.routine.domain;
 
 import com.yapp.project.account.domain.Account;
+import com.yapp.project.organization.domain.Category;
 import com.yapp.project.retrospect.domain.Retrospect;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,7 +44,8 @@ public class Routine {
     private Boolean isDelete;
 
     @Column(nullable = false)
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
     @OneToMany(mappedBy = "routine", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoutineDay> days = new ArrayList<>();
@@ -58,7 +60,7 @@ public class Routine {
         this.goal = newRoutine.getGoal();
         this.startTime = LocalTime.parse(newRoutine.getStartTime());
         this.isDelete = false;
-        this.category = newRoutine.getCategory();
+        this.category = Category.indexToCategory(newRoutine.getCategory());
         this.createdAt = KST_LOCAL_DATETIME_NOW();
         this.id = id;
     }
@@ -72,7 +74,7 @@ public class Routine {
         this.goal = updateRoutine.getGoal();
         this.startTime = LocalTime.parse(updateRoutine.getStartTime());
         this.isDelete = false;
-        this.category = updateRoutine.getCategory();
+        this.category = Category.indexToCategory(updateRoutine.getCategory());
     }
 
     public void deleteRoutine() {

@@ -25,7 +25,7 @@ public class WeekReport {
     @OneToMany(mappedBy = "weekReport", cascade = CascadeType.ALL)
     private List<RoutineResult> routineResults = new ArrayList<>();
 
-    private String rate;
+    private Integer rate;
 
     private int fullyDoneCount;
 
@@ -47,7 +47,7 @@ public class WeekReport {
         this.isReport = false;
     }
 
-    public void addBasicData(Account account, String rate, int notDoneCount, int fullyDoneCount, int partiallyDoneCount) {
+    public void addBasicData(Account account, Integer rate, int notDoneCount, int fullyDoneCount, int partiallyDoneCount) {
         this.account = account;
         this.rate = rate;
         this.notDoneCount = notDoneCount;

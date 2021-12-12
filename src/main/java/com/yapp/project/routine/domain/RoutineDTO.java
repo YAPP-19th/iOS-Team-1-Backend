@@ -23,11 +23,11 @@ public class RoutineDTO {
         private String title;
         @ApiModelProperty(value = "설명", example = "감사한 일, 소중한 대상을 떠올리며 적어보세요.")
         private String description;
-        @ApiModelProperty(value = "카테고리", example = "MIRACLE")
-        private String category;
+        @ApiModelProperty(value = "카테고리", example = "0")
+        private Integer category;
 
         @Builder
-        public ResponseRecommendedRoutine(String title, String description, String category) {
+        public ResponseRecommendedRoutine(String title, String description, Integer category) {
             this.title = title;
             this.description = description;
             this.category = category;
@@ -44,8 +44,8 @@ public class RoutineDTO {
         private Integer partiallyDone;
         @ApiModelProperty(value = "총", example = "2")
         private Integer totalDone;
-        @ApiModelProperty(value = "수행률", example = "50%")
-        private int rate;
+        @ApiModelProperty(value = "수행률", example = "50")
+        private Integer rate;
 
         @Builder
         public ResponseRoutineDaysRate(LocalDate date) {
@@ -81,10 +81,10 @@ public class RoutineDTO {
     @Setter
     @AllArgsConstructor
     public static class RequestRoutineDto {
-        @ApiModelProperty(value = "타이틀", example = "단어 외우기", required = true)
+        @ApiModelProperty(value = "타이틀", example = "명상", required = true)
         private String title;
 
-        @ApiModelProperty(value = "목표", example = "티끌 모아 태산! 오늘부터 시작해보는건 어때요?", required = true)
+        @ApiModelProperty(value = "목표", example = "고요히 자기 자신을 느껴보는 시간입니다.", required = true)
         private String goal;
 
         @ApiModelProperty(value = "하는 요일", example = "['MON', 'SUN']", required = true)
@@ -93,8 +93,8 @@ public class RoutineDTO {
         @ApiModelProperty(value = "하는 시간", example = "07:35", required = true)
         private String startTime;
 
-        @ApiModelProperty(value = "카테고리", example = "생활", required = true)
-        private String category;
+        @ApiModelProperty(value = "카테고리", example = "0", required = true)
+        private Integer category;
     }
 
     @Getter
@@ -103,10 +103,10 @@ public class RoutineDTO {
         @ApiModelProperty(value = "루틴ID", example = "1")
         private Long id;
 
-        @ApiModelProperty(value = "타이틀", example = "단어 외우기")
+        @ApiModelProperty(value = "타이틀", example = "명상")
         private String title;
 
-        @ApiModelProperty(value = "목표", example = "티끌 모아 태산! 오늘부터 시작해보는건 어때요?")
+        @ApiModelProperty(value = "목표", example = "고요히 자기 자신을 느껴보는 시간입니다.")
         private String goal;
 
         @ApiModelProperty(value = "하는 요일", example = "['MON', 'SUN']")
@@ -115,8 +115,8 @@ public class RoutineDTO {
         @ApiModelProperty(value = "하는 시간", example = "07:35")
         private String startTime;
 
-        @ApiModelProperty(value = "카테고리", example = "DAILY")
-        private String category;
+        @ApiModelProperty(value = "카테고리", example = "0")
+        private Integer category;
 
         @Builder
         public ResponseRoutineDto(Routine routine) {
@@ -125,7 +125,7 @@ public class RoutineDTO {
             this.goal = routine.getGoal();
             this.startTime = routine.getStartTime().toString();
             this.days = routine.getDays().stream().map(RoutineDay::getDay).collect(Collectors.toList());
-            this.category = routine.getCategory();
+            this.category = routine.getCategory().getIndex();
         }
     }
 
@@ -181,7 +181,7 @@ public class RoutineDTO {
                 }
                 return ResponseRecommendedRoutine.builder()
                         .title(recommended.getTitle())
-                        .category(recommended.getCategory().getName())
+                        .category(recommended.getCategory().getIndex())
                         .description(description).build();
             }).collect(Collectors.toList());
             return ResponseRecommendedRoutineMessageDto.builder().message(
