@@ -54,8 +54,8 @@ public class MissionDto {
     @Builder
     @ToString
     public static class MissionDetailResponse{
-        @ApiModelProperty(value = "그룹_카테고리",example = "MIRACLE")
-        private Category category;
+        @ApiModelProperty(value = "그룹_카테고리",example = "0")
+        private Integer category;
         @ApiModelProperty(value = "그룹_타이틀",example = "명상")
         private String title;
         @ApiModelProperty(value = "그룹_성취율",example = "80")
@@ -110,8 +110,8 @@ public class MissionDto {
         private String title;
         @ApiModelProperty(value = "나의_성취율",example = "80")
         private Integer achievementRate;
-        @ApiModelProperty(value = "카테고리",example = "MIRACLE")
-        private Category category;
+        @ApiModelProperty(value = "카테고리",example = "0")
+        private Integer category;
     }
 
     @Getter

@@ -4,21 +4,19 @@ import lombok.Getter;
 
 @Getter
 public enum Category {
-    MIRACLE("미라클모닝", "MIRACLE", 0),
-    SELF("자기개발", "SELF", 1),
-    HEALTH("건강","HEALTH", 2),
-    DAILY("생활", "DAILY", 3),
-    MORNING("기상", "MORNING", 4),
-    ETC("기타","ETC",5);
+    MIRACLE("MIRACLE", 0),
+    SELF( "SELF", 1),
+    HEALTH("HEALTH", 2),
+    DAILY( "DAILY", 3),
+    MORNING( "MORNING", 4),
+    ETC("ETC",5);
 
     private static final int SIZE = 6;
-    private final String korCategory;
-    private final String engCategory;
+    private final String name;
     private final Integer index;
 
-    Category(String korCategory, String engCategory, Integer index) {
-        this.korCategory = korCategory;
-        this.engCategory = engCategory;
+    Category(String name, Integer index) {
+        this.name = name;
         this.index = index;
     }
 
@@ -53,8 +51,7 @@ public enum Category {
     @Override
     public String toString() {
         return "Category{" +
-                "korCategory='" + korCategory + '\'' +
-                ", engCategory='" + engCategory + '\'' +
+                "name='" + name + '\'' +
                 ", index=" + index +
                 '}';
     }

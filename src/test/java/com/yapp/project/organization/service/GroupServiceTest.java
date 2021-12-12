@@ -56,7 +56,7 @@ class GroupServiceTest {
         assertThat(response.getTitle()).isEqualTo(organization.getTitle());
         assertThat(response.getBeginTime()).isEqualTo(organization.getBeginTime());
         assertThat(response.getEndTime()).isEqualTo(organization.getEndTime());
-        assertThat(response.getCategory()).isEqualTo(Category.MIRACLE);
+        assertThat(response.getCategory()).isEqualTo(Category.MIRACLE.getIndex());
     }
 
     @Test

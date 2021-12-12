@@ -114,7 +114,7 @@ class MissionServiceTest {
         assertThat(message.getMessage().getStatus()).isEqualTo(StatusEnum.MISSION_OK);
         assertThat(message.getData().get(0).getTitle()).isEqualTo("확언하기");
         System.out.println(message.getData().get(0).getCategory());
-        assertThat(message.getData().get(0).getCategory()).isEqualTo(Category.MIRACLE);
+        assertThat(message.getData().get(0).getCategory()).isEqualTo(Category.MIRACLE.getIndex());
         assertThat(message.getData().get(1).getTitle()).isEqualTo("시각화");
         assertThat(message.getData().get(2).getTitle()).isEqualTo("감사한 일 쓰기");
     }
@@ -146,7 +146,7 @@ class MissionServiceTest {
         assertThat(message).isNotNull();
         assertThat(message.getMessage().getMsg()).isEqualTo(MissionContent.FIND_MY_MISSION_LISTS_FINISH);
         assertThat(message.getData().size()).isEqualTo(2);
-        assertThat(message.getData().get(0).getCategory()).isEqualTo(Category.MIRACLE);
+        assertThat(message.getData().get(0).getCategory()).isEqualTo(Category.MIRACLE.getIndex());
     }
 
 
@@ -167,7 +167,7 @@ class MissionServiceTest {
         assertThat(responseMessage.getData().getPeriod()).isEqualTo(7);
         assertThat(responseMessage.getData().getBeginTime()).isEqualTo(OrganizationTemplate.BEGIN_TIME);
         assertThat(responseMessage.getData().getEndTime()).isEqualTo(OrganizationTemplate.END_TIME);
-        assertThat(responseMessage.getData().getCategory()).isEqualTo(Category.MIRACLE);
+        assertThat(responseMessage.getData().getCategory()).isEqualTo(Category.MIRACLE.getIndex());
     }
 
     @Test

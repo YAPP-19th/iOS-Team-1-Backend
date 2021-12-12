@@ -272,8 +272,8 @@ class RoutineServiceTest {
 
         // then
         assertAll(
-                () -> assertEquals(data.get(0).getCategory(), Category.MIRACLE.getEngCategory()),
-                () -> assertEquals(data.get(1).getCategory(), Category.DAILY.getEngCategory())
+                () -> assertEquals(data.get(0).getCategory(), Category.MIRACLE.getName()),
+                () -> assertEquals(data.get(1).getCategory(), Category.DAILY.getName())
         );
    }
 

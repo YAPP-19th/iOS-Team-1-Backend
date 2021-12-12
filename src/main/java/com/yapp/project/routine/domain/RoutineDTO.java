@@ -181,7 +181,7 @@ public class RoutineDTO {
                 }
                 return ResponseRecommendedRoutine.builder()
                         .title(recommended.getTitle())
-                        .category(recommended.getCategory().getEngCategory())
+                        .category(recommended.getCategory().getName())
                         .description(description).build();
             }).collect(Collectors.toList());
             return ResponseRecommendedRoutineMessageDto.builder().message(

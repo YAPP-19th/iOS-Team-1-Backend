@@ -54,7 +54,7 @@ public class GroupService {
 
         List<Organization> organizations;
         if (!excludeOrganization.isEmpty())
-            organizations= organizationRepository.findByCategoryAndMoreAndNotIn(category.getEngCategory(), excludeOrganization);
+            organizations= organizationRepository.findByCategoryAndMoreAndNotIn(category.getName(), excludeOrganization);
         else
             organizations = organizationRepository.findByCategoryAndMore(category);
 

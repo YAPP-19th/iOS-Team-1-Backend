@@ -133,7 +133,7 @@ public class Organization {
     public OrgDto.OrgDetailResponse toDetailResponseDto(){
         return OrgDto.OrgDetailResponse.builder().id(id)
                 .shoot(shoot).participant(participants).rate(rate).title(title)
-                .category(category).beginTime(beginTime).endTime(endTime).description(description).recommend(recommend).build();
+                .category(category.getIndex()).beginTime(beginTime).endTime(endTime).description(description).recommend(recommend).build();
     }
 
     public void setIdForTest(Long id) {

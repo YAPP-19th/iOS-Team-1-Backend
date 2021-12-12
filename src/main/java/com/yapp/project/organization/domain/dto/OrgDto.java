@@ -38,8 +38,8 @@ public class OrgDto {
         private String image;
         @ApiModelProperty(value = "참여자",example = "25")
         private Integer participant;
-        @ApiModelProperty(value = "카테고리",example = "MIRACLE")
-        private  Category category;
+        @ApiModelProperty(value = "카테고리",example = "0")
+        private  Integer category;
     }
 
     @Getter
@@ -77,8 +77,8 @@ public class OrgDto {
         private Integer rate;
         @ApiModelProperty(value = "찍어주세요",example = "명상을 할 조용한 장소")
         private String shoot;
-        @ApiModelProperty(value = "카테고리",example = "MIRACLE")
-        private Category category;
+        @ApiModelProperty(value = "카테고리",example = "0")
+        private Integer category;
         @ApiModelProperty(value = "참여자",example = "25")
         private Integer participant;
         @ApiModelProperty(value = "시작시간", example = "5")
