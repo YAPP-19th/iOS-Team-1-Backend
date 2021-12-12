@@ -14,7 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class MonthReportServiceTest {
@@ -29,7 +30,7 @@ public class MonthReportServiceTest {
     private ReportService reportService;
 
     @Test
-    @Transactional
+//    @Transactional
     void testMonthReportSuccess() {
         //given
         Account account = AccountTemplate.makeTestAccount();
@@ -48,14 +49,27 @@ public class MonthReportServiceTest {
         // when
         reportService.makeMonthReport(savedAccount);
         ReportDTO.ResponseMonthReportMessage monthReportByYearAndMonth = reportService.getMonthReportByYearAndMonth(savedAccount, year, month);
-        List<ReportDTO.ResponseMonthRoutineReport> data = monthReportByYearAndMonth.getData().getMonthRoutineReportList();
+        ReportDTO.ResponseMonthReport data = monthReportByYearAndMonth.getData();
+        List<ReportDTO.ResponseMonthRoutineReport> dailyRoutineList =
+                monthReportByYearAndMonth.getData().getResultByCategory().get("daily").getRoutineReportList();
+        List<ReportDTO.ResponseMonthRoutineReport> healthRoutineList =
+                monthReportByYearAndMonth.getData().getResultByCategory().get("health").getRoutineReportList();
 
-        // then
-        assertThat(data.get(0).getFullyDoneRate()).isEqualTo("50%"); // Coffee - FullyDone
-        assertThat(data.get(1).getFullyDoneRate()).isEqualTo("29%"); // Reading - FullyDone
-        assertThat(data.get(2).getFullyDoneRate()).isEqualTo("44%"); // Running - FullyDone
-        assertThat(data.get(3).getFullyDoneRate()).isEqualTo("52%"); // Water - FullyDone
-        assertThat(data.get(4).getFullyDoneRate()).isEqualTo("0%");  // Vitamin - FullyDone
+        assertAll(
+                /* Check Week Rate */
+                () -> assertEquals(data.getWeekRateList().get(0), "45%"),
+                () -> assertEquals(data.getWeekRateList().get(1), "30%"),
+                () -> assertEquals(data.getWeekRateList().get(2), "42%"),
+                () -> assertEquals(data.getWeekRateList().get(3), "42%"),
+                /* Check Category Rate */
+                () -> assertEquals(data.getResultByCategory().get("daily").getRate(), 60),
+                () -> assertEquals(data.getResultByCategory().get("health").getRate(), 40),
+                /* Check Routine Result(size) */
+                () -> assertEquals(dailyRoutineList.get(0).getFullyDoneRate(), "50%"), // Coffee
+                () -> assertEquals(dailyRoutineList.get(1).getFullyDoneRate(), "29%"), // Reading
+                () -> assertEquals(dailyRoutineList.get(2).getFullyDoneRate(), "0%"), // Vitamin
+                () -> assertEquals(healthRoutineList.get(0).getFullyDoneRate(), "44%"), // Running
+                () -> assertEquals(healthRoutineList.get(1).getFullyDoneRate(), "52%") // Water
+        );
     }
-
 }

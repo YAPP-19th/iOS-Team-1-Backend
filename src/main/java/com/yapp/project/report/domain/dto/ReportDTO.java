@@ -12,6 +12,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,18 +21,37 @@ import static com.yapp.project.aux.content.ReportContent.WEEK_REPORT_OK;
 
 public class ReportDTO {
 
+    private static final int categoryCnt = 6;
+    private static final HashMap<String, String> category = new HashMap<>() {
+        { put("미라클모닝", "miracle"); put("자기개발", "self"); put("건강", "health");
+            put("생활", "daily"); put("기타", "etc");} };
+    private static final HashMap<String, List<ResponseMonthRoutineReport>> routineResult = new HashMap<>(categoryCnt);
+    private static final HashMap<String, ResponseMonthByCategory> resultByCategory = new HashMap<>(categoryCnt);
+
+    @Getter
+    public static class ResponseMonthByCategory {
+        @ApiModelProperty(value = "카테고리 비율", example = "30")
+        private final int rate;
+        private final List<ResponseMonthRoutineReport> routineReportList;
+        @Builder
+        public ResponseMonthByCategory(int rate, List<ResponseMonthRoutineReport> routineReportList) {
+            this.rate = rate;
+            this.routineReportList = routineReportList;
+        }
+    }
+
     @Getter
     public static class ResponseMonthRoutineReport {
         @ApiModelProperty(value = "루틴이름", example = "물 1잔 꼭 챙겨마시기!")
-        private String title;
+        private final String title;
         @ApiModelProperty(value = "카테고리", example = "생활")
-        private String category;
+        private final String category;
         @ApiModelProperty(value = "완료 수행률", example = "50%")
-        private String fullyDoneRate;
+        private final String fullyDoneRate;
         @ApiModelProperty(value = "부분완료 수행률", example = "0%")
-        private String partiallyDoneRate;
+        private final String partiallyDoneRate;
         @ApiModelProperty(value = "미완료 수행률", example = "50%")
-        private String notDoneRate;
+        private final String notDoneRate;
 
         @Builder
         public ResponseMonthRoutineReport(MonthRoutineReport report) {
@@ -105,13 +125,13 @@ public class ReportDTO {
     @Getter
     public static class ResponseMonthReport {
         @ApiModelProperty(value = "주차별 수행률", example = "['30%', '40%', '67%', '48%']")
-        List<String> weekRateList = new ArrayList<>();
-        List<ResponseMonthRoutineReport> monthRoutineReportList = new ArrayList<>();
+        List<String> weekRateList;
+        HashMap<String, ResponseMonthByCategory> resultByCategory;
 
         @Builder
-        public ResponseMonthReport(List<String> weekRateList, List<ResponseMonthRoutineReport> monthRoutineReportList) {
+        public ResponseMonthReport(List<String> weekRateList, HashMap<String, ResponseMonthByCategory> resultByCategory) {
             this.weekRateList = weekRateList;
-            this.monthRoutineReportList = monthRoutineReportList;
+            this.resultByCategory = resultByCategory;
         }
     }
 
@@ -123,16 +143,35 @@ public class ReportDTO {
         private Message message;
         private ResponseMonthReport data;
 
-        public static ResponseMonthReportMessage of(List<MonthRoutineReport> monthReportList, List<String> weekRateList) {
+        public static ResponseMonthReportMessage of(List<MonthRoutineReport> monthReportList,
+                                                    List<String> weekRateList) {
             List<ResponseMonthRoutineReport> routineReportList = monthReportList.stream().map(monthRoutineReport ->
                     ResponseMonthRoutineReport.builder().report(monthRoutineReport).build()
             ).collect(Collectors.toList());
-            ResponseMonthReport responseMonthReport = ResponseMonthReport.builder().weekRateList(weekRateList)
-                    .monthRoutineReportList(routineReportList).build();
-
+            HashMap<String, ResponseMonthByCategory> listByCategory = createResponseByCategoryList(routineReportList);
+            ResponseMonthReport data = ResponseMonthReport.builder()
+                    .weekRateList(weekRateList).resultByCategory(listByCategory).build();
             return ResponseMonthReportMessage.builder().message(
                     Message.builder().status(StatusEnum.MONTH_REPORT_OK).msg(MONTH_REPORT_OK).build()
-            ).data(responseMonthReport).build();
+            ).data(data).build();
+        }
+
+        private static HashMap<String, ResponseMonthByCategory> createResponseByCategoryList(
+                List<ResponseMonthRoutineReport> routineReportList) {
+            initialize(routineResult);
+            routineReportList.forEach(x -> routineResult.get(x.getCategory()).add(x));
+            routineResult.forEach((key, value)-> {
+                int rate = (int) (((double)value.size() / routineReportList.size()) * 100);
+                ResponseMonthByCategory responseByCategory = ResponseMonthByCategory.builder()
+                        .rate(rate).routineReportList(value).build();
+                resultByCategory.put(category.get(key), responseByCategory);
+            });
+            return resultByCategory;
+        }
+
+        private static void initialize(HashMap<String, List<ResponseMonthRoutineReport>> routineResult) {
+            category.forEach((key, value) ->
+                    routineResult.put(key, new ArrayList<>()));
         }
     }
 
