@@ -1,5 +1,6 @@
 package com.yapp.project.aux.test.organization;
 
+import com.yapp.project.organization.domain.Category;
 import com.yapp.project.organization.domain.Clause;
 import com.yapp.project.organization.domain.Organization;
 
@@ -10,7 +11,7 @@ public class OrganizationTemplate {
     }
     private static Long id = 1L;
     public static final String TITLE = "명상";
-    public static final String CATEGORY = "미라클모닝";
+    public static final Category CATEGORY = Category.MIRACLE;
     public static final LocalTime BEGIN_TIME = LocalTime.of(0,0);
     public static final LocalTime END_TIME = LocalTime.of(23,59, 59);
     public static final String DESCRIPTION = "고요히 자기 자신을 느껴보는 시간입니다.";
@@ -29,7 +30,7 @@ public class OrganizationTemplate {
         return makeTestOrganization(title,CATEGORY);
     }
 
-    public static Organization makeTestOrganization(String title, String category){
+    public static Organization makeTestOrganization(String title, Category category){
         Organization organization = makeTestOrganizationForIntegration(title,category);
         organization.setIdForTest(id++);
         return organization;
@@ -48,11 +49,11 @@ public class OrganizationTemplate {
                 .description(DESCRIPTION).recommend(RECOMMEND).build();
     }
 
-    public static Organization makeTestOrganizationForIntegration(String title, String category){
+    public static Organization makeTestOrganizationForIntegration(String title, Category category){
         return makeTestOrganizationForIntegration(title,category,CLAUSE);
     }
 
-    public static Organization makeTestOrganizationForIntegration(String title, String category,Clause clause){
+    public static Organization makeTestOrganizationForIntegration(String title, Category category,Clause clause){
         Organization organization = Organization.builder().title(title).category(category).clause(clause).rate(86).build();
         organization.defaultSettingForTest();
         return organization;

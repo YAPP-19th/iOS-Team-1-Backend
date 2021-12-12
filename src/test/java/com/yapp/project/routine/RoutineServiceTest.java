@@ -5,6 +5,7 @@ import com.yapp.project.aux.test.account.AccountTemplate;
 import com.yapp.project.aux.test.organization.OrganizationTemplate;
 import com.yapp.project.config.exception.report.RoutineStartDayBadRequestException;
 import com.yapp.project.config.exception.routine.BadRequestRoutineException;
+import com.yapp.project.organization.domain.Category;
 import com.yapp.project.organization.domain.Organization;
 import com.yapp.project.organization.service.GroupService;
 import com.yapp.project.retrospect.domain.Retrospect;
@@ -33,7 +34,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-public class RoutineServiceTest {
+class RoutineServiceTest {
 
     @InjectMocks
     private RoutineService routineService;
@@ -260,7 +261,7 @@ public class RoutineServiceTest {
         // given
         List<Organization> recommendedList = new ArrayList<>();
         Organization test1 = OrganizationTemplate.makeTestOrganization();
-        Organization test2 = OrganizationTemplate.makeTestOrganization("환기 하기", "생활");
+        Organization test2 = OrganizationTemplate.makeTestOrganization("환기 하기", Category.DAILY);
         recommendedList.add(test1); recommendedList.add(test2);
 
         // mocking
@@ -271,8 +272,8 @@ public class RoutineServiceTest {
 
         // then
         assertAll(
-                () -> assertEquals(data.get(0).getCategory(), "미라클모닝"),
-                () -> assertEquals(data.get(1).getCategory(), "생활")
+                () -> assertEquals(data.get(0).getCategory(), Category.MIRACLE.getName()),
+                () -> assertEquals(data.get(1).getCategory(), Category.DAILY.getName())
         );
    }
 

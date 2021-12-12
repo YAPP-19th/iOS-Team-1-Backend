@@ -49,8 +49,8 @@ class OrganizationRepositoryTest {
 
     @Test
     void test_카테고리로_그룹_조회(){
-        Organization organization = makeTestOrganization();
-        organizationRepository.save(organization);
+        Organization organization = makeTestOrganizationForIntegration();
+        Organization dbOrganization = organizationRepository.save(organization);
         List<Organization> organizations = organizationRepository.findByCategoryAndMore(CATEGORY);
         assertThat(organizations.get(0).getCategory()).isEqualTo(CATEGORY);
     }

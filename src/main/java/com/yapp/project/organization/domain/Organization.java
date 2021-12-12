@@ -19,7 +19,7 @@ import java.util.List;
 public class Organization {
 
     @Builder
-    public Organization(String title , Integer rate, String category, Clause clause){
+    public Organization(String title , Integer rate, Category category, Clause clause){
         this.title = title;
         this.rate = rate;
         this.category = category;
@@ -57,7 +57,8 @@ public class Organization {
 
     private String image;
 
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
     private String shoot;
 
@@ -132,7 +133,7 @@ public class Organization {
     public OrgDto.OrgDetailResponse toDetailResponseDto(){
         return OrgDto.OrgDetailResponse.builder().id(id)
                 .shoot(shoot).participant(participants).rate(rate).title(title)
-                .category(category).beginTime(beginTime).endTime(endTime).description(description).recommend(recommend).build();
+                .category(category.getIndex()).beginTime(beginTime).endTime(endTime).description(description).recommend(recommend).build();
     }
 
     public void setIdForTest(Long id) {

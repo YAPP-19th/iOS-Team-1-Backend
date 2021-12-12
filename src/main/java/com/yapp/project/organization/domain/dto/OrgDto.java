@@ -2,6 +2,7 @@ package com.yapp.project.organization.domain.dto;
 
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.organization.domain.Category;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,6 +38,8 @@ public class OrgDto {
         private String image;
         @ApiModelProperty(value = "참여자",example = "25")
         private Integer participant;
+        @ApiModelProperty(value = "카테고리",example = "0")
+        private  Integer category;
     }
 
     @Getter
@@ -74,8 +77,8 @@ public class OrgDto {
         private Integer rate;
         @ApiModelProperty(value = "찍어주세요",example = "명상을 할 조용한 장소")
         private String shoot;
-        @ApiModelProperty(value = "카테고리",example = "미라클모닝")
-        private String category;
+        @ApiModelProperty(value = "카테고리",example = "0")
+        private Integer category;
         @ApiModelProperty(value = "참여자",example = "25")
         private Integer participant;
         @ApiModelProperty(value = "시작시간", example = "5")

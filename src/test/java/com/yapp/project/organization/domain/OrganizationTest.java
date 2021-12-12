@@ -21,6 +21,6 @@ class OrganizationTest {
     void test_toDetailResponseDto(){
         OrgDto.OrgDetailResponse response = organization.toDetailResponseDto();
         assertThat(response.getId()).isEqualTo(organization.getId());
-        assertThat(response.getCategory()).isEqualTo(organization.getCategory());
+        assertThat(response.getCategory()).isEqualTo(organization.getCategory().getIndex());
     }
 }

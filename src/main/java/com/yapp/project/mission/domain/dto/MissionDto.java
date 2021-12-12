@@ -5,6 +5,7 @@ import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.mission.domain.Mission;
+import com.yapp.project.organization.domain.Category;
 import com.yapp.project.organization.domain.Organization;
 import com.yapp.project.routine.domain.Week;
 import io.swagger.annotations.ApiModelProperty;
@@ -53,8 +54,8 @@ public class MissionDto {
     @Builder
     @ToString
     public static class MissionDetailResponse{
-        @ApiModelProperty(value = "그룹_카테고리",example = "미라클모닝")
-        private String category;
+        @ApiModelProperty(value = "그룹_카테고리",example = "0")
+        private Integer category;
         @ApiModelProperty(value = "그룹_타이틀",example = "명상")
         private String title;
         @ApiModelProperty(value = "그룹_성취율",example = "80")
@@ -109,6 +110,8 @@ public class MissionDto {
         private String title;
         @ApiModelProperty(value = "나의_성취율",example = "80")
         private Integer achievementRate;
+        @ApiModelProperty(value = "카테고리",example = "0")
+        private Integer category;
     }
 
     @Getter

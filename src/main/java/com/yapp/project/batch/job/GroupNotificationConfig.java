@@ -6,6 +6,7 @@ import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.aux.fcm.FireBaseCloudMessageService;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.mission.service.MissionService;
+import com.yapp.project.organization.domain.Category;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.batch.core.Job;
@@ -86,17 +87,14 @@ public class GroupNotificationConfig {
     }
 
     public ItemProcessor<Mission, Account> missionWakeUpNotificationProcessor(){
-        return new ItemProcessor<Mission, Account>() {
-            @Override
-            public Account process(Mission item) throws Exception {
-                Account account = item.getAccount();
-                String category = item.getOrganization().getCategory();
-                fireBaseCloudMessageService.
-                        sendMessageTo(account.getFcmToken(),
-                                START_ALARM_TITLE,
-                                START_ALARM_CONTENT_PREFIX+category+START_ALARM_CONTENT_SUFFIX);
-                return null;
-            }
+        return item -> {
+            Account account = item.getAccount();
+            Category category = item.getOrganization().getCategory();
+            fireBaseCloudMessageService.
+                    sendMessageTo(account.getFcmToken(),
+                            START_ALARM_TITLE,
+                            START_ALARM_CONTENT_PREFIX + category + START_ALARM_CONTENT_SUFFIX);
+            return null;
         };
     }
 
@@ -127,27 +125,19 @@ public class GroupNotificationConfig {
     }
 
     public ItemProcessor<Mission, Account> missionFinishNotificationProcessor() {
-        return new ItemProcessor<Mission, Account>() {
-            @Override
-            public Account process(@NotNull Mission item) throws Exception {
-                Account account = item.getAccount();
-                String category = item.getOrganization().getTitle();
-                fireBaseCloudMessageService.
-                        sendMessageTo(account.getFcmToken(), category+ FINISH_TITLE, FINISH_CONTENT);
-                return null;
-            }
+        return item -> {
+            Account account = item.getAccount();
+            String category = item.getOrganization().getTitle();
+            fireBaseCloudMessageService.
+                    sendMessageTo(account.getFcmToken(), category+ FINISH_TITLE, FINISH_CONTENT);
+            return null;
         };
     }
 
 
 
     public ItemWriter<Account> missionFinishNotificationWriter(){
-        return new ItemWriter<Account>() {
-            @Override
-            public void write(@NotNull List<? extends Account> items) throws Exception {
-             alertService.slackSendMessage("미션 종료된 사람들에게 메세지 보내기 완료");
-            }
-        };
+        return items -> alertService.slackSendMessage("미션 종료된 사람들에게 메세지 보내기 완료");
     }
 
 

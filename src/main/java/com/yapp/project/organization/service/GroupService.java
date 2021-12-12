@@ -4,6 +4,7 @@ import com.yapp.project.account.domain.Account;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.mission.domain.dao.MissionOrganization;
 import com.yapp.project.mission.domain.repository.MissionRepository;
+import com.yapp.project.organization.domain.Category;
 import com.yapp.project.organization.domain.Organization;
 import com.yapp.project.organization.domain.dto.OrgDto;
 import com.yapp.project.organization.domain.repository.OrganizationRepository;
@@ -47,12 +48,13 @@ public class GroupService {
     }
 
     @Transactional(readOnly = true)
-    public List<OrgDto.OrgResponse> findByCategory(String category, Account account){
+    public List<OrgDto.OrgResponse> findByCategory(Integer categoryIndex, Account account){
+        Category category = Category.indexToCategory(categoryIndex);
         ArrayList<Long> excludeOrganization = getMyOrganizationId(account);
 
         List<Organization> organizations;
         if (!excludeOrganization.isEmpty())
-            organizations= organizationRepository.findByCategoryAndMoreAndNotIn(category, excludeOrganization);
+            organizations= organizationRepository.findByCategoryAndMoreAndNotIn(category.getName(), excludeOrganization);
         else
             organizations = organizationRepository.findByCategoryAndMore(category);
 

@@ -33,7 +33,7 @@ public class OrganizationController {
 
     @ApiOperation(value = "그룹 카테고리 리스트")
     @GetMapping("/category/{category}")
-    public ResponseEntity<OrgListResponseMessage> findByCategory(@PathVariable("category") String category){
+    public ResponseEntity<OrgListResponseMessage> findByCategory(@PathVariable("category") Integer category){
         List<OrgResponse> data = groupService.findByCategory(category, AccountUtil.getAccount());
         return new ResponseEntity<>(OrgListResponseMessage.of(StatusEnum.GROUP_OK, GROUP_FIND_SUCCESS, data), HttpStatus.OK);
     }

@@ -15,6 +15,7 @@ import static com.yapp.project.aux.content.RoutineContent.DAY_ROUTINE_RATE_OK;
 import static com.yapp.project.aux.content.RoutineContent.RECOMMENDED_ROUTINE_OK;
 
 public class RoutineDTO {
+    private RoutineDTO() {}
 
     @Getter
     public static class ResponseRecommendedRoutine {
@@ -22,7 +23,7 @@ public class RoutineDTO {
         private String title;
         @ApiModelProperty(value = "설명", example = "감사한 일, 소중한 대상을 떠올리며 적어보세요.")
         private String description;
-        @ApiModelProperty(value = "카테고리", example = "미라클모닝")
+        @ApiModelProperty(value = "카테고리", example = "MIRACLE")
         private String category;
 
         @Builder
@@ -114,7 +115,7 @@ public class RoutineDTO {
         @ApiModelProperty(value = "하는 시간", example = "07:35")
         private String startTime;
 
-        @ApiModelProperty(value = "카테고리", example = "생활")
+        @ApiModelProperty(value = "카테고리", example = "DAILY")
         private String category;
 
         @Builder
@@ -180,7 +181,7 @@ public class RoutineDTO {
                 }
                 return ResponseRecommendedRoutine.builder()
                         .title(recommended.getTitle())
-                        .category(recommended.getCategory())
+                        .category(recommended.getCategory().getName())
                         .description(description).build();
             }).collect(Collectors.toList());
             return ResponseRecommendedRoutineMessageDto.builder().message(

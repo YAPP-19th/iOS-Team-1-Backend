@@ -1,6 +1,7 @@
 package com.yapp.project.notice.controller;
 
 import com.yapp.project.notice.service.NoticeService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import static com.yapp.project.notice.domain.dto.NoticeDto.NoticeListResponseMes
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/notice")
+@Api(tags = "공지사항")
 public class NoticeController {
     private final NoticeService noticeService;
 

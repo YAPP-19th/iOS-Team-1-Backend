@@ -7,6 +7,7 @@ import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.test.account.AccountTemplate;
 import com.yapp.project.mission.domain.dao.MissionOrganization;
 import com.yapp.project.mission.domain.repository.MissionRepository;
+import com.yapp.project.organization.domain.Category;
 import com.yapp.project.organization.domain.Organization;
 import com.yapp.project.organization.domain.dto.OrgDto;
 import com.yapp.project.organization.domain.repository.OrganizationRepository;
@@ -55,6 +56,7 @@ class GroupServiceTest {
         assertThat(response.getTitle()).isEqualTo(organization.getTitle());
         assertThat(response.getBeginTime()).isEqualTo(organization.getBeginTime());
         assertThat(response.getEndTime()).isEqualTo(organization.getEndTime());
+        assertThat(response.getCategory()).isEqualTo(Category.MIRACLE.getIndex());
     }
 
     @Test
@@ -64,7 +66,7 @@ class GroupServiceTest {
         List<Organization> organizations = new ArrayList<>();
         organizations.add(organization);
         given(organizationRepository.findByCategoryAndMore(CATEGORY)).willReturn(organizations);
-        List<OrgDto.OrgResponse> res = groupService.findByCategory(CATEGORY, account);
+        List<OrgDto.OrgResponse> res = groupService.findByCategory(CATEGORY.getIndex(), account);
         OrgDto.OrgResponse orgResponse = res.get(0);
         assertThat(organization.getTitle()).isEqualTo(orgResponse.getTitle());
         assertThat(organization.getId()).isEqualTo(orgResponse.getId());
