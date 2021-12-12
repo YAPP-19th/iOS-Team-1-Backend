@@ -2,6 +2,7 @@ package com.yapp.project.report.domain.dto;
 
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.organization.domain.Category;
 import com.yapp.project.report.domain.*;
 import com.yapp.project.retrospect.domain.Result;
 import io.swagger.annotations.ApiModelProperty;
@@ -20,8 +21,6 @@ import static com.yapp.project.aux.content.ReportContent.MONTH_REPORT_OK;
 import static com.yapp.project.aux.content.ReportContent.WEEK_REPORT_OK;
 
 public class ReportDTO {
-
-    private static final int CATEGORY_SIZE = 6;
 
     @Getter
     public static class MonthResultByCategory{
@@ -151,10 +150,10 @@ public class ReportDTO {
         }
 
         private static List<MonthResultByCategory> createMonthResultByCategoryList(List<ResponseMonthRoutineReport> routineReportList) {
-            List<ResponseMonthRoutineReport>[] result = new ArrayList[CATEGORY_SIZE];
+            List<ResponseMonthRoutineReport>[] result = new ArrayList[Category.size()];
             initializeResult(result);
             routineReportList.forEach(x -> result[x.getCategory()].add(x));
-            List<MonthResultByCategory> resultList = new ArrayList<>(CATEGORY_SIZE);
+            List<MonthResultByCategory> resultList = new ArrayList<>(Category.size());
             Arrays.stream(result).forEach(x -> {
                 int rate = (int) (((double) x.size() / routineReportList.size()) * 100);
                 MonthResultByCategory y = MonthResultByCategory.builder()
@@ -165,7 +164,7 @@ public class ReportDTO {
         }
 
         private static void initializeResult(List<ResponseMonthRoutineReport>[] result) {
-            for(int i = 0; i < CATEGORY_SIZE; i++) {
+            for(int i = 0; i < Category.size(); i++) {
                 result[i] = new ArrayList<>();
             }
         }
