@@ -19,6 +19,7 @@ import com.yapp.project.mission.domain.Cron;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.mission.domain.dto.MissionDto;
 import com.yapp.project.mission.domain.repository.MissionRepository;
+import com.yapp.project.organization.domain.Category;
 import com.yapp.project.organization.domain.Organization;
 import com.yapp.project.organization.domain.repository.OrganizationRepository;
 import com.yapp.project.routine.domain.Week;
@@ -94,11 +95,10 @@ class MissionServiceTest {
     void test_현재_진행_중인_미션이_있을_때(){
         //given
         Account account = AccountTemplate.makeTestAccount();
-
         List<Organization> organizations = new ArrayList<>();
-        organizations.add(OrganizationTemplate.makeTestOrganization("확언하기","미라클모닝"));
-        organizations.add(OrganizationTemplate.makeTestOrganization("시각화","미라클모닝"));
-        organizations.add(OrganizationTemplate.makeTestOrganization("감사한 일 쓰기","미라클모닝"));
+        organizations.add(OrganizationTemplate.makeTestOrganization("확언하기", Category.MIRACLE));
+        organizations.add(OrganizationTemplate.makeTestOrganization("시각화",Category.MIRACLE));
+        organizations.add(OrganizationTemplate.makeTestOrganization("감사한 일 쓰기",Category.MIRACLE));
 
         List<Mission> missions = new ArrayList<>();
         missions.add(MissionTemplate.makeMissionRequest().toMission(account,organizations.get(0)));
@@ -113,6 +113,8 @@ class MissionServiceTest {
         //then
         assertThat(message.getMessage().getStatus()).isEqualTo(StatusEnum.MISSION_OK);
         assertThat(message.getData().get(0).getTitle()).isEqualTo("확언하기");
+        System.out.println(message.getData().get(0).getCategory());
+        assertThat(message.getData().get(0).getCategory()).isEqualTo(Category.MIRACLE);
         assertThat(message.getData().get(1).getTitle()).isEqualTo("시각화");
         assertThat(message.getData().get(2).getTitle()).isEqualTo("감사한 일 쓰기");
     }
@@ -123,9 +125,9 @@ class MissionServiceTest {
         //given
         Account account = AccountTemplate.makeTestAccount();
         List<Organization> organizations = new ArrayList<>();
-        organizations.add(OrganizationTemplate.makeTestOrganization("확언하기","미라클모닝"));
-        organizations.add(OrganizationTemplate.makeTestOrganization("시각화","미라클모닝"));
-        organizations.add(OrganizationTemplate.makeTestOrganization("감사한 일 쓰기","미라클모닝"));
+        organizations.add(OrganizationTemplate.makeTestOrganization("확언하기",Category.MIRACLE));
+        organizations.add(OrganizationTemplate.makeTestOrganization("시각화",Category.MIRACLE));
+        organizations.add(OrganizationTemplate.makeTestOrganization("감사한 일 쓰기",Category.MIRACLE));
         List<Mission> missions = new ArrayList<>();
         LocalDate yesterday = DateUtil.KST_LOCAL_DATE_YESTERDAY();
         missions.add(MissionTemplate.makeMissionRequest(yesterday.minusDays(7).toString(),yesterday.toString())
@@ -144,6 +146,7 @@ class MissionServiceTest {
         assertThat(message).isNotNull();
         assertThat(message.getMessage().getMsg()).isEqualTo(MissionContent.FIND_MY_MISSION_LISTS_FINISH);
         assertThat(message.getData().size()).isEqualTo(2);
+        assertThat(message.getData().get(0).getCategory()).isEqualTo(Category.MIRACLE);
     }
 
 
@@ -164,6 +167,7 @@ class MissionServiceTest {
         assertThat(responseMessage.getData().getPeriod()).isEqualTo(7);
         assertThat(responseMessage.getData().getBeginTime()).isEqualTo(OrganizationTemplate.BEGIN_TIME);
         assertThat(responseMessage.getData().getEndTime()).isEqualTo(OrganizationTemplate.END_TIME);
+        assertThat(responseMessage.getData().getCategory()).isEqualTo(Category.MIRACLE);
     }
 
     @Test
@@ -202,7 +206,7 @@ class MissionServiceTest {
             Account account = AccountTemplate.makeTestAccount();
             account.setIsAlarm(true);
             Organization organization = OrganizationTemplate.makeTestOrganization();
-            Organization organization2 = OrganizationTemplate.makeTestOrganization("기상","6시 기상");
+            Organization organization2 = OrganizationTemplate.makeTestOrganization("기상",Category.SELF);
             Mission mission = MissionTemplate.makeMission(account, organization);
             Mission mission2 = MissionTemplate.makeMission(account, organization2);
 
@@ -253,7 +257,7 @@ class MissionServiceTest {
             Account account = AccountTemplate.makeTestAccount();
             account.setIsAlarm(true);
             Organization organization = OrganizationTemplate.makeTestOrganization();
-            Organization organization2 = OrganizationTemplate.makeTestOrganization("기상","7시 기상");
+            Organization organization2 = OrganizationTemplate.makeTestOrganization("기상",Category.MIRACLE);
             LocalDate startDate = DateUtil.KST_LOCAL_DATE_NOW().minusDays(7);
             LocalDate finishDate = DateUtil.KST_LOCAL_DATE_NOW();
             Mission mission = MissionTemplate.makeMission(account,organization,startDate,finishDate);

@@ -149,7 +149,7 @@ public class Mission {
 
     public MissionDto.MissionResponse toMissionResponse(){
         return MissionDto.MissionResponse.builder().image(organization.getImage()).title(organization.getTitle())
-                .achievementRate(this.getAchievementRate()).period(this.getPeriod())
+                .achievementRate(this.getAchievementRate()).period(this.getPeriod()).category(organization.getCategory())
                 .weeks(weeks.stream().map(Cron::getWeek).collect(Collectors.toList())).build();
     }
 
