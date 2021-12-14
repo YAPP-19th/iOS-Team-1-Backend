@@ -45,7 +45,7 @@ public class Routine {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Category category;
+    private RoutineCategory category;
 
     @OneToMany(mappedBy = "routine", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoutineDay> days = new ArrayList<>();
@@ -60,7 +60,7 @@ public class Routine {
         this.goal = newRoutine.getGoal();
         this.startTime = LocalTime.parse(newRoutine.getStartTime());
         this.isDelete = false;
-        this.category = Category.indexToCategory(newRoutine.getCategory());
+        this.category = RoutineCategory.indexToCategory(newRoutine.getCategory());
         this.createdAt = KST_LOCAL_DATETIME_NOW();
         this.id = id;
     }
@@ -74,7 +74,7 @@ public class Routine {
         this.goal = updateRoutine.getGoal();
         this.startTime = LocalTime.parse(updateRoutine.getStartTime());
         this.isDelete = false;
-        this.category = Category.indexToCategory(updateRoutine.getCategory());
+        this.category = RoutineCategory.indexToCategory(updateRoutine.getCategory());
     }
 
     public void deleteRoutine() {

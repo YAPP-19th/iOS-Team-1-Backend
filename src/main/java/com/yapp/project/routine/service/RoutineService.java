@@ -6,6 +6,7 @@ import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.config.exception.report.RoutineStartDayBadRequestException;
 import com.yapp.project.config.exception.routine.BadRequestRoutineException;
+import com.yapp.project.organization.domain.Category;
 import com.yapp.project.organization.domain.Organization;
 import com.yapp.project.organization.service.GroupService;
 import com.yapp.project.retrospect.domain.Result;
@@ -41,7 +42,7 @@ public class RoutineService {
     public RoutineDTO.ResponseRecommendedRoutineMessageDto getRecommendedRoutine() {
         List<Organization> organList = groupService.findAll();
         List<Organization> recommendedList = organList.stream().filter(organization ->
-                !organization.getCategory().equals("기상")).collect(Collectors.toList());
+                !organization.getCategory().equals(Category.MORNING)).collect(Collectors.toList());
         return RoutineDTO.ResponseRecommendedRoutineMessageDto.of(recommendedList);
     }
 
