@@ -10,10 +10,7 @@ import com.yapp.project.organization.domain.Organization;
 import com.yapp.project.organization.service.GroupService;
 import com.yapp.project.retrospect.domain.Retrospect;
 import com.yapp.project.retrospect.domain.RetrospectRepository;
-import com.yapp.project.routine.domain.Routine;
-import com.yapp.project.routine.domain.RoutineDTO;
-import com.yapp.project.routine.domain.RoutineRepository;
-import com.yapp.project.routine.domain.Week;
+import com.yapp.project.routine.domain.*;
 import com.yapp.project.config.exception.routine.NotFoundRoutineException;
 import com.yapp.project.routine.service.RoutineService;
 import org.junit.jupiter.api.Test;
@@ -28,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.yapp.project.organization.domain.Category.DAILY;
+import static com.yapp.project.routine.domain.RoutineCategory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -262,7 +259,7 @@ class RoutineServiceTest {
         // given
         List<Organization> recommendedList = new ArrayList<>();
         Organization test1 = OrganizationTemplate.makeTestOrganization();
-        Organization test2 = OrganizationTemplate.makeTestOrganization("환기 하기", DAILY);
+        Organization test2 = OrganizationTemplate.makeTestOrganization("환기 하기", Category.DAILY);
         recommendedList.add(test1); recommendedList.add(test2);
 
         // mocking
@@ -273,8 +270,8 @@ class RoutineServiceTest {
 
         // then
         assertAll(
-                () -> assertEquals(data.get(0).getCategory(), Category.MIRACLE.getIndex()),
-                () -> assertEquals(data.get(1).getCategory(), Category.DAILY.getIndex())
+                () -> assertEquals(data.get(0).getCategory(), RoutineCategory.MIRACLE.getIndex()),
+                () -> assertEquals(data.get(1).getCategory(), RoutineCategory.DAILY.getIndex())
         );
    }
 

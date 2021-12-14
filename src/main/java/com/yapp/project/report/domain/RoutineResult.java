@@ -1,6 +1,7 @@
 package com.yapp.project.report.domain;
 
 import com.yapp.project.organization.domain.Category;
+import com.yapp.project.routine.domain.RoutineCategory;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +28,7 @@ public class RoutineResult{
     private String title;
 
     @Enumerated(EnumType.STRING)
-    private Category category;
+    private RoutineCategory category;
 
     private Long routineId;
 
@@ -40,7 +41,7 @@ public class RoutineResult{
     private LocalDateTime routineCreateAt;
 
     @Builder
-    public RoutineResult(String title, Category category, Long routineId, LocalDateTime routineCreateAt) {
+    public RoutineResult(String title, RoutineCategory category, Long routineId, LocalDateTime routineCreateAt) {
         this.title = title;
         this.category = category;
         this.routineId = routineId;

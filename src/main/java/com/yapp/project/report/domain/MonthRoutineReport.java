@@ -3,6 +3,7 @@ package com.yapp.project.report.domain;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.organization.domain.Category;
+import com.yapp.project.routine.domain.RoutineCategory;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ public class MonthRoutineReport {
     private Long routineId;
 
     @Enumerated(EnumType.STRING)
-    private Category category;
+    private RoutineCategory category;
 
     private Long fullyDoneCount;
 
@@ -55,7 +56,7 @@ public class MonthRoutineReport {
         this.notDoneCount += notDoneCount;
     }
 
-    public void updateRoutineTitleAndCategory(String title, Category category) {
+    public void updateRoutineTitleAndCategory(String title, RoutineCategory category) {
         this.title = title;
         this.category = category;
     }
