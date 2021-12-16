@@ -34,13 +34,6 @@ pipeline {
       }
     }
 
-    stage('db stop') {
-      steps {
-        sh 'docker rm -fv postgres'
-        sh 'docker rm -fv redis'
-      }
-    }
-
     stage('SSH transfer') {
       steps {
         sshPublisher(failOnError: true, publishers: [
