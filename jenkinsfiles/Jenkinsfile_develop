@@ -1,16 +1,13 @@
 pipeline {
   agent any
   stages {
-        stage('setting properties') {
-          steps {
-            sh 'mkdir ./src/test/resources'
-            sh 'cp ../properties/develop/application.yaml ./src/main/resources'
-            sh 'cp ../properties/test/application.yaml ./src/test/resources'
-          }
-        }
+    stage('setting properties') {
+      steps {
+        sh 'mkdir ./src/test/resources'
+        sh 'cp ../properties/develop/application.yaml ./src/main/resources'
+        sh 'cp ../properties/test/application.yaml ./src/test/resources'
       }
     }
-
     stage('test') {
       steps {
         sh './gradlew clean test'
@@ -36,6 +33,14 @@ pipeline {
         sh 'docker push yapp19th/develop'
       }
     }
+
+    stage('db stop') {
+      steps {
+        sh 'docker rm -fv postgres'
+        sh 'docker rm -fv redis'
+      }
+    }
+
     stage('SSH transfer') {
       steps {
         sshPublisher(failOnError: true, publishers: [
