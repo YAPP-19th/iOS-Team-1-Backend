@@ -96,7 +96,7 @@ public class RoutineService {
 
     @Transactional(readOnly = true)
     public RoutineDTO.ResponseRoutineDateListMessageDto getRoutineList(String date, Account account) {
-        Week day = getWeek(date);
+        Week day = Week.getWeek(date);
         List<Routine> routineList = routineRepository // Sort.by("days").descending(): sequence가 0인 루틴은 최신 등록순
                 .findAllByIsDeleteIsFalseAndAccountAndDaysDayOrderByDaysSequence(account, day, Sort.by("days").descending());
         List<Retrospect> retrospectList = retrospectRepository.
@@ -228,9 +228,5 @@ public class RoutineService {
         }
     }
 
-    @NotNull
-    private Week getWeek(String date) {
-        String strDay = LocalDate.parse(date).getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase();
-        return Week.valueOf(strDay);
-    }
+
 }
