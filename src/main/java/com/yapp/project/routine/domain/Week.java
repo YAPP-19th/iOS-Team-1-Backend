@@ -1,5 +1,11 @@
 package com.yapp.project.routine.domain;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.time.LocalDate;
+import java.time.format.TextStyle;
+import java.util.Locale;
+
 public enum Week {
     MON("MON", 0),
     TUE("TUE", 1),
@@ -23,6 +29,12 @@ public enum Week {
 
     public int getIndex() {
         return index;
+    }
+
+    @NotNull
+    public static Week getWeek(String date) {
+        String strDay = LocalDate.parse(date).getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase();
+        return Week.valueOf(strDay);
     }
 
 }

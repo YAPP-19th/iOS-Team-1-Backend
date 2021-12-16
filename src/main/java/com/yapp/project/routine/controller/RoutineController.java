@@ -32,9 +32,9 @@ public class RoutineController {
     }
 
     @ApiOperation(value = "루틴 요일별 전체 조회", notes = "요일별 루틴 전체 조회하기")
-    @GetMapping("/day/{day}")
-    public RoutineDTO.ResponseRoutineListMessageDto getRoutineList(@PathVariable Week day) {
-        return routineService.getRoutineList(day, AccountUtil.getAccount());
+    @GetMapping("/day/{date}")
+    public RoutineDTO.ResponseRoutineDateListMessageDto getRoutineList(@PathVariable String date) {
+        return routineService.getRoutineList(date, AccountUtil.getAccount());
     }
 
     @ApiOperation(value = "루틴 수정", notes = "루틴 수정하기")
@@ -51,7 +51,7 @@ public class RoutineController {
 
     @ApiOperation(value = "요일 루틴 순서 편집", notes = "요일 루틴 순서 편집하기\n 루틴ID를 순서대로 넘겨주세요")
     @PatchMapping("/sequence/{day}")
-    public RoutineDTO.ResponseRoutineListMessageDto updateRoutineSequence(
+    public Message updateRoutineSequence(
             @PathVariable Week day, @RequestBody RoutineDTO.RequestRoutineSequence sequence) {
         return routineService.updateRoutineSequence(day, sequence.getSequence(), AccountUtil.getAccount());
     }

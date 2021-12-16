@@ -15,6 +15,7 @@ import com.yapp.project.retrospect.domain.RetrospectRepository;
 import com.yapp.project.routine.domain.*;
 import com.yapp.project.config.exception.routine.NotFoundRoutineException;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,12 +64,12 @@ public class RoutineService {
     }
 
     @Transactional
-    public RoutineDTO.ResponseRoutineListMessageDto updateRoutineSequence(Week day, ArrayList<Long> sequence, Account account) {
+    public Message updateRoutineSequence(Week day, ArrayList<Long> sequence, Account account) {
         List<Routine> routineList = findAllIsExistById(sequence);
         routineList.forEach(x -> checkIsMine(account, x));
         updateRoutineDaysSequence(day, sequence, routineList);
         routineRepository.saveAll(routineList);
-        return getRoutineList(day, account);
+        return Message.builder().msg(ROUTINE_UPDATE_OK).status(StatusEnum.ROUTINE_OK).build();
     }
 
     @Transactional
@@ -94,13 +95,16 @@ public class RoutineService {
     }
 
     @Transactional(readOnly = true)
-    public RoutineDTO.ResponseRoutineListMessageDto getRoutineList(Week day, Account account) {
+    public RoutineDTO.ResponseRoutineDateListMessageDto getRoutineList(String date, Account account) {
+        Week day = Week.getWeek(date);
         List<Routine> routineList = routineRepository // Sort.by("days").descending(): sequence가 0인 루틴은 최신 등록순
                 .findAllByIsDeleteIsFalseAndAccountAndDaysDayOrderByDaysSequence(account, day, Sort.by("days").descending());
-        return RoutineDTO.ResponseRoutineListMessageDto.builder()
+        List<Retrospect> retrospectList = retrospectRepository.
+                findAllByDateAndRoutineAccount(DateUtil.convertStr2LocalDate(date), account);
+        return RoutineDTO.ResponseRoutineDateListMessageDto.builder()
                 .message(Message.builder().msg(ROUTINE_BY_DAY_OK).status(StatusEnum.ROUTINE_OK).build())
-                .data(routineList.stream().map(routine -> RoutineDTO.ResponseRoutineDto.builder()
-                        .routine(routine).build()).collect(Collectors.toList()))
+                .data(routineList.stream().map(routine -> RoutineDTO.ResponseRoutineDateDto.builder()
+                        .routine(routine).retrospectList(retrospectList).build()).collect(Collectors.toList()))
                 .build();
     }
 
@@ -223,4 +227,6 @@ public class RoutineService {
             throw new RoutineStartDayBadRequestException();
         }
     }
+
+
 }
