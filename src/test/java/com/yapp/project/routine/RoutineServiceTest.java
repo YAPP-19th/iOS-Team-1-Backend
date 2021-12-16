@@ -1,6 +1,7 @@
 package com.yapp.project.routine;
 
 import com.yapp.project.account.domain.Account;
+import com.yapp.project.aux.Message;
 import com.yapp.project.aux.test.account.AccountTemplate;
 import com.yapp.project.aux.test.organization.OrganizationTemplate;
 import com.yapp.project.config.exception.report.RoutineStartDayBadRequestException;
@@ -143,7 +144,7 @@ class RoutineServiceTest {
         given(routineRepository
                 .findAllByIsDeleteIsFalseAndAccountAndDaysDayOrderByDaysSequence(account, Week.MON, Sort.by("days").descending())).willReturn(routines);
         // when
-        List<RoutineDTO.ResponseRoutineDto> routineList = routineService.getRoutineList(Week.MON, account).getData();
+        List<RoutineDTO.ResponseRoutineDateDto> routineList = routineService.getRoutineList("2021-12-13", account).getData();
         // then
         assertThat(routineList.size()).isEqualTo(routines.size());
     }
@@ -186,14 +187,12 @@ class RoutineServiceTest {
 
         // mocking
         given(routineRepository.findAllById(sequence)).willReturn(routines);
-        given(routineRepository
-                .findAllByIsDeleteIsFalseAndAccountAndDaysDayOrderByDaysSequence(account, Week.MON, Sort.by("days").descending())).willReturn(routines);
 
         // when
-        List<RoutineDTO.ResponseRoutineDto> responseRoutineDtos = routineService.updateRoutineSequence(Week.MON, sequence, account).getData();
+        Message message = routineService.updateRoutineSequence(Week.MON, sequence, account);
 
         // then
-        assertThat(responseRoutineDtos.get(0).getTitle()).isEqualTo(newRoutine2.getTitle());
+        assertThat(message.getMsg()).isEqualTo(message.getMsg(), "루틴을 성공적으로 수정하였습니다.");
     }
 
     @Test

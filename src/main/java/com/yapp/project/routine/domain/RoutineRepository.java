@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface RoutineRepository extends JpaRepository<Routine, Long> {
-
+    @EntityGraph(attributePaths = {"days"})
     List<Routine> findAllByIsDeleteIsFalseAndAccountAndDaysDayOrderByDaysSequence(Account account, Week days, Sort sort);
 
     @EntityGraph(attributePaths = {"days"})
