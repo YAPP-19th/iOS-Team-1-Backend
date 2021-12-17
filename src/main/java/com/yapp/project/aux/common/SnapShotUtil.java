@@ -10,8 +10,10 @@ import java.nio.file.Paths;
 
 import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATE_NOW;
 
+@Deprecated
 public class SnapShotUtil {
     private SnapShotUtil(){}
+    @Deprecated
     public static String saveImages(MultipartFile image, Long id, String filePath) throws IOException {
         int dotIndex = image.getOriginalFilename().lastIndexOf(".");
         String fileName = image.getOriginalFilename().substring(0, dotIndex);

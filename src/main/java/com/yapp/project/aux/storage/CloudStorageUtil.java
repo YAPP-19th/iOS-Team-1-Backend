@@ -1,11 +1,9 @@
 package com.yapp.project.aux.storage;
 
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.storage.Acl;
-import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.storage.*;
 import com.yapp.project.aux.common.DateUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,8 +16,11 @@ import java.util.List;
 @Component
 public class CloudStorageUtil {
 
-    private static final String KEY_PATH = "classpath:storage/minning-335309-b237a3e1bfa5.json";
-    private static final String BUCKET = "minning";
+    @Value("${property.cloud.key.path}")
+    private String KEY_PATH;
+    @Value("${property.cloud.bucket}")
+    private String BUCKET;
+    public static String BASE_URI = "https://storage.googleapis.com/";
     private static final ArrayList<Acl> ACL = new ArrayList<>(List.of(Acl.of(Acl.User.ofAllAuthenticatedUsers(), Acl.Role.READER)));
 
     /**
@@ -45,5 +46,9 @@ public class CloudStorageUtil {
         String fileName = image.getOriginalFilename().substring(0, dotIndex);
         String extension = image.getOriginalFilename().substring(dotIndex);
         return fileName + "_" + DateUtil.KST_LOCAL_DATETIME_NOW() + extension;
+    }
+
+    public static String getImageURL(BlobInfo image) {
+        return BASE_URI + image.getBucket() + "/" + image.getName();
     }
 }
