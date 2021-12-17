@@ -28,7 +28,7 @@ public class ReportScheduler {
         this.alertService = alertService;
     }
 
-    @Scheduled(cron = "0 0 17 * * 2")
+    @Scheduled(cron = "0 0 2 * * 3", zone = "Asia/Seoul")
     public void makeWeekReportJob() throws JobExecutionException{
         alertService.slackSendMessage(SlackChannel.BATCH, WEEK_REPORT_CREATE_START);
         jobLauncher.run(weekReportJob, new JobParametersBuilder()
@@ -37,7 +37,7 @@ public class ReportScheduler {
         alertService.slackSendMessage(SlackChannel.BATCH, WEEK_REPORT_CREATE_END);
     }
 
-    @Scheduled(cron = "0 0 18 ? * 2#1")
+    @Scheduled(cron = "0 0 3 ? * 3#1")
     public void makeMonthReportJob() throws JobExecutionException{
         alertService.slackSendMessage(SlackChannel.BATCH, MONTH_REPORT_CREATE_START);
         jobLauncher.run(monthReportJob, new JobParametersBuilder()

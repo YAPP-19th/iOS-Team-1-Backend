@@ -23,7 +23,7 @@ public class MissionScheduler {
         this.alertService = alertService;
     }
 
-    @Scheduled(cron = "0 1 15 * * *")
+    @Scheduled(cron = "0 1 0 * * *", zone = "Asia/Seoul")
     public void missionBatchExecuteJob() throws JobExecutionException{
         alertService.slackSendMessage(SlackChannel.BATCH,
                 ":arrow_forward:어제 수행한 날인데 수행하지 않은 사람들 실패한 횟수 증가하는 배치작업 시작합니다.");
