@@ -21,7 +21,7 @@ public class CloudStorageUtil {
     @Value("${property.cloud.bucket}")
     private String BUCKET;
     public static String BASE_URI = "https://storage.googleapis.com/";
-    private static final ArrayList<Acl> ACL = new ArrayList<>(List.of(Acl.of(Acl.User.ofAllAuthenticatedUsers(), Acl.Role.READER)));
+    private static final List<Acl> ACL = new ArrayList<>(List.of(Acl.of(Acl.User.ofAllAuthenticatedUsers(), Acl.Role.READER)));
 
     /**
      * @RequestParam
