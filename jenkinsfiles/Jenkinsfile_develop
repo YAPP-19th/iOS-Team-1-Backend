@@ -14,11 +14,15 @@ pipeline {
       }
     }
 
-    stage('set firebase key') {
+    stage('set service key') {
       steps {
         sh 'mkdir ./src/main/resources/firebase'
         sh 'cp ../properties/firebase/firebase_service_key.json ./src/main/resources/firebase'
       }
+      steps {
+              sh 'mkdir ./src/main/resources/storage'
+              sh 'cp ../properties/storage/minning_storage_key.json ./src/main/resources/storage'
+            }
     }
 
     stage('build') {
