@@ -2,6 +2,7 @@ dockerfiles/.env
 src/main/resources/application.yaml
 src/test/resources/application.yaml
 src/main/resources/firebase
+src/main/resources/storage
 .idea
 HELP.md
 .gradle
@@ -23,7 +24,6 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
-.idea
 *.iws
 *.iml
 *.ipr
