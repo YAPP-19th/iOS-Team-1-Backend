@@ -23,7 +23,7 @@ public class GroupScheduler {
         this.alertService = alertService;
     }
 
-    @Scheduled(cron = "0 0 16 * * *")
+    @Scheduled(cron = "0 0 1 * * *", zone = "Asia/Seoul")
     public void groupBatchExecuteJob() throws JobExecutionException{
         alertService.slackSendMessage(SlackChannel.BATCH,":arrow_forward:배치작업 시작합니다.");
         jobLauncher.run(job, new JobParametersBuilder()

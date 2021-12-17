@@ -1,8 +1,10 @@
 package com.yapp.project.retrospect.service;
 
+import com.google.cloud.storage.BlobInfo;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
+import com.yapp.project.aux.storage.CloudStorageUtil;
 import com.yapp.project.config.exception.retrospect.BadRequestRetrospectException;
 import com.yapp.project.config.exception.retrospect.InvalidRetrospectUpdateException;
 import com.yapp.project.config.exception.retrospect.NotFoundRetrospectException;
@@ -15,7 +17,6 @@ import com.yapp.project.routine.service.RoutineService;
 import com.yapp.project.snapshot.domain.Snapshot;
 import com.yapp.project.snapshot.domain.SnapshotRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
@@ -28,7 +29,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATE_NOW;
-import static com.yapp.project.aux.common.SnapShotUtil.saveImages;
 import static com.yapp.project.aux.content.RetrospectContent.*;
 
 
@@ -36,13 +36,12 @@ import static com.yapp.project.aux.content.RetrospectContent.*;
 @RequiredArgsConstructor
 public class RetrospectService {
 
-    @Value("${property.image.path}")
-    private String PREFIX_FILE_SERVER_PATH;
-    private final String FILE_SERVER_PATH = PREFIX_FILE_SERVER_PATH + "retrospect/";
+    private static final String path = "retrospect/";
 
     private final RetrospectRepository retrospectRepository;
     private final SnapshotRepository snapshotRepository;
     private final RoutineService routineService;
+    private final CloudStorageUtil cloudStorageUtil;
 
     @Transactional
     public RetrospectDTO.ResponseRetrospectMessage setRetrospectResult(RetrospectDTO.RequestRetrospectResult retrospectResult, Account account) {
@@ -80,7 +79,7 @@ public class RetrospectService {
     }
 
     @Transactional
-    public RetrospectDTO.ResponseRetrospectMessage createRetrospect(RetrospectDTO.RequestRetrospect requestRetrospect, String imagePath ,Account account) {
+    public RetrospectDTO.ResponseRetrospectMessage createRetrospect(RetrospectDTO.RequestRetrospect requestRetrospect, Account account) throws IOException {
         Routine routine = routineService.findIsExistByIdAndIsNotDelete(requestRetrospect.getRoutineId());
         routineService.checkIsMine(account, routine);
         checkIsDate(routine, LocalDate.parse(requestRetrospect.getDate()));
@@ -89,7 +88,10 @@ public class RetrospectService {
         Retrospect retrospect = preRetrospect.orElseGet(() ->
                 Retrospect.builder().routine(routine).content(requestRetrospect.getContent())
                         .isReport(false).result(Result.NOT).date(requestRetrospect.getDate()).build());
-        if(imagePath != null) {
+        if(requestRetrospect.getImage() != null) {
+            BlobInfo image = cloudStorageUtil.upload(
+                    requestRetrospect.getImage(), path + requestRetrospect.getRoutineId() + "/");
+            String imagePath = CloudStorageUtil.getImageURL(image);
             retrospect.updateRetrospect(requestRetrospect.getContent(), snapshotRepository.save(Snapshot.builder().url(imagePath).build()));
         } else {
             retrospect.updateRetrospect(requestRetrospect.getContent());
@@ -103,13 +105,13 @@ public class RetrospectService {
         Retrospect retrospect = retrospectRepository.findById(updateRetrospect.getRetrospectId()).orElseThrow(NotFoundRetrospectException::new);
         routineService.checkIsMine(account, retrospect.getRoutine());
         checkIsUpdateValidity(retrospect);
-        if(updateRetrospect.getImage() == null) {
-            retrospect.deleteImage();
+        if(updateRetrospect.getImage() != null) {
+            BlobInfo image = cloudStorageUtil.upload(
+                    updateRetrospect.getImage(), path + retrospect.getRoutine().getId() + "/");
+            String imagePath = CloudStorageUtil.getImageURL(image);
+            retrospect.updateRetrospect(snapshotRepository.save(Snapshot.builder().url(imagePath).build()));
         } else {
-            String newImagePath = saveImages(updateRetrospect.getImage(), retrospect.getRoutine().getId(), FILE_SERVER_PATH);
-            if(snapshotRepository.findByUrl(newImagePath).isEmpty()) {
-                retrospect.updateRetrospect(snapshotRepository.save(Snapshot.builder().url(newImagePath).build()));
-            }
+            retrospect.deleteImage();
         }
         retrospect.updateRetrospect(updateRetrospect.getContent());
         Retrospect saveRetrospect = retrospectRepository.save(retrospect);

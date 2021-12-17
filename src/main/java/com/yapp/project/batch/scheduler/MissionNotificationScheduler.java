@@ -28,7 +28,7 @@ public class MissionNotificationScheduler {
         this.alertService = alertService;
     }
 
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 0 9 * * *", zone = "Asia/Seoul")
     public void missionFinishBatchExecuteJob() throws JobExecutionException{
         alertService.slackSendMessage(SlackChannel.BATCH,":arrow_forward:종료된 미션에 대한 배치작업 시작합니다.");
         jobLauncher.run(job, new JobParametersBuilder()
@@ -37,7 +37,7 @@ public class MissionNotificationScheduler {
         alertService.slackSendMessage(SlackChannel.BATCH,":ballot_box_with_check:종료된 미션에 대한 배치작업 끝났습니다.");
     }
 
-    @Scheduled(cron = "0 50 18,19,20,21,22 * * *")
+    @Scheduled(cron = "0 50 3,4,5,6,7 * * *", zone = "Asia/Seoul")
     public void missionFourWakeUpBatchExecuteJob() throws JobExecutionException{
         alertService.slackSendMessage(SlackChannel.BATCH,":arrow_forward:기상 미션에 대한 배치작업 시작합니다.");
         jobLauncher.run(job2, new JobParametersBuilder()
