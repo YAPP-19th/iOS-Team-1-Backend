@@ -17,6 +17,7 @@ import com.yapp.project.routine.service.RoutineService;
 import com.yapp.project.snapshot.domain.Snapshot;
 import com.yapp.project.snapshot.domain.SnapshotRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
@@ -36,7 +37,9 @@ import static com.yapp.project.aux.content.RetrospectContent.*;
 @RequiredArgsConstructor
 public class RetrospectService {
 
-    private static final String path = "retrospect/";
+    @Value("${property.status}")
+    private String STATUS;
+    private static final String path = "/retrospect/";
 
     private final RetrospectRepository retrospectRepository;
     private final SnapshotRepository snapshotRepository;
@@ -90,7 +93,7 @@ public class RetrospectService {
                         .isReport(false).result(Result.NOT).date(requestRetrospect.getDate()).build());
         if(requestRetrospect.getImage() != null) {
             BlobInfo image = cloudStorageUtil.upload(
-                    requestRetrospect.getImage(), path + requestRetrospect.getRoutineId() + "/");
+                    requestRetrospect.getImage(), STATUS + path + requestRetrospect.getRoutineId() + "/");
             String imagePath = CloudStorageUtil.getImageURL(image);
             retrospect.updateRetrospect(requestRetrospect.getContent(), snapshotRepository.save(Snapshot.builder().url(imagePath).build()));
         } else {
@@ -107,7 +110,7 @@ public class RetrospectService {
         checkIsUpdateValidity(retrospect);
         if(updateRetrospect.getImage() != null) {
             BlobInfo image = cloudStorageUtil.upload(
-                    updateRetrospect.getImage(), path + retrospect.getRoutine().getId() + "/");
+                    updateRetrospect.getImage(), STATUS + path + retrospect.getRoutine().getId() + "/");
             String imagePath = CloudStorageUtil.getImageURL(image);
             retrospect.updateRetrospect(snapshotRepository.save(Snapshot.builder().url(imagePath).build()));
         } else {
