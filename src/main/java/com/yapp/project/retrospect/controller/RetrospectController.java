@@ -1,18 +1,17 @@
 package com.yapp.project.retrospect.controller;
 
+import com.google.cloud.storage.BlobInfo;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.common.AccountUtil;
+import com.yapp.project.aux.storage.CloudStorageUtil;
 import com.yapp.project.retrospect.domain.dto.RetrospectDTO;
 import com.yapp.project.retrospect.service.RetrospectService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.time.LocalDate;
-
-import static com.yapp.project.aux.common.SnapShotUtil.saveImages;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,19 +21,13 @@ public class RetrospectController {
 
     private final RetrospectService retrospectService;
 
-    @Value("${property.image.path}")
-    private String path;
+
+    private static final String path = "retrospect/";
 
     @ApiOperation(value = "회고 추가", notes = "json이 아닌 multipart/form-data로 보내주서야 합니다.")
     @PostMapping("/")
     public RetrospectDTO.ResponseRetrospectMessage createRetrospect(RetrospectDTO.RequestRetrospect retrospect) throws IOException {
-        String imagePath;
-        if(retrospect.getImage() == null) {
-            imagePath = null;
-        } else{
-            imagePath = saveImages(retrospect.getImage(), retrospect.getRoutineId(), path+"retrospect/");
-        }
-        return retrospectService.createRetrospect(retrospect, imagePath, AccountUtil.getAccount());
+        return retrospectService.createRetrospect(retrospect, AccountUtil.getAccount());
     }
 
     @ApiOperation(value = "회고 수정", notes = "json이 아닌 multipart/form-data로 보내주서야 합니다.")
