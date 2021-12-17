@@ -21,6 +21,7 @@ pipeline {
         sh 'mkdir ./src/main/resources/storage'
         sh 'cp ../properties/storage/minning_storage_key.json ./src/main/resources/storage'
       }
+    }
     stage('build') {
       steps {
         sh './gradlew clean build -x test'
