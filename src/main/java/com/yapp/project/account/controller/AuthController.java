@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.yapp.project.account.domain.dto.AccountDto.*;
+
 @RestController
 @RequestMapping("api/v1/auth")
 @RequiredArgsConstructor
@@ -20,7 +22,7 @@ public class AuthController {
 
     @ApiOperation(value = "회원가입", tags = "일반 회원 절차")
     @PostMapping("/signup")
-    public ResponseEntity<SocialDto.TokenMessage> signup(@RequestBody AccountDto.UserRequest request){
+    public ResponseEntity<SocialDto.TokenMessage> signup(@RequestBody UserRequest request){
         return new ResponseEntity<>(authService.normalSignUp(request), HttpStatus.OK);
     }
 
@@ -38,7 +40,7 @@ public class AuthController {
 
     @ApiOperation(value = "로그인", tags = "일반 회원 절차")
     @PostMapping("/login")
-    public ResponseEntity<SocialDto.TokenMessage> login(@RequestBody AccountDto.LoginRequest request){
+    public ResponseEntity<SocialDto.TokenMessage> login(@RequestBody LoginRequest request){
         return ResponseEntity.ok(authService.normalLogin(request));
     }
 
@@ -56,25 +58,25 @@ public class AuthController {
 
     @ApiOperation(value = "이메일이 실제로 존재하는 지 확인 후 인증번호 보내기", tags = "비밀번호 재설정 관련")
     @PostMapping("/send")
-    public Message sendAuthenticationNumber(AccountDto.EmailRequest request){
+    public Message sendAuthenticationNumber(@RequestBody EmailRequest request){
         return authService.sendAuthenticationNumber(request);
     }
 
     @ApiOperation(value = "인증번호가 실제로 일치하는 지 확인하는 작업", tags = "비밀번호 재설정 관련")
     @PostMapping("/check/number")
-    public Message checkAuthenticationNumber(AccountDto.AuthenticationNumberRequest request){
+    public Message checkAuthenticationNumber(@RequestBody AuthenticationNumberRequest request){
         return authService.checkAuthenticationNumber(request);
     }
 
     @ApiOperation(value = "비밀번호 재설정하는 작업", tags = "비밀번호 재설정 관련")
     @PostMapping("/set/password")
-    public Message resetPassword(AccountDto.ResetPasswordRequest request){
+    public Message resetPassword(@RequestBody ResetPasswordRequest request){
         return authService.resetPassword(request);
     }
 
     @ApiOperation(value = "이메일 존재 여부")
     @GetMapping("/email/{email}")
-    public AccountDto.EmailValidationResponseMessage validateEmail(@PathVariable String email){
+    public EmailValidationResponseMessage validateEmail(@PathVariable String email){
         return authService.isAlreadyExistEmail(email);
     }
 
