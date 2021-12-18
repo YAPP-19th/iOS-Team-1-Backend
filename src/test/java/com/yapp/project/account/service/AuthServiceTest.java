@@ -18,12 +18,16 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.concurrent.TimeUnit;
 
+import static com.yapp.project.account.domain.dto.AccountDto.*;
+import static com.yapp.project.account.domain.dto.SocialDto.*;
+import static com.yapp.project.aux.test.account.AccountTemplate.*;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
-@WithMockUser(value = AccountTemplate.EMAIL,password = AccountTemplate.PASSWORD)
+@WithMockUser(value = EMAIL,password = PASSWORD)
 class AuthServiceTest {
 
     @Autowired
@@ -38,22 +42,25 @@ class AuthServiceTest {
     @Autowired
     private RedisTemplate<String,String> redisTemplate;
 
+    @Autowired
+    private EntityManager entityManager;
+
     @Test
     @Transactional
     void test_이메일_인증_확인() {
         //given
-        String email = AccountTemplate.EMAIL;
+        String email = EMAIL;
         //when
-        AccountDto.EmailValidationResponseMessage message = authService.isAlreadyExistEmail(email);
+        EmailValidationResponseMessage message = authService.isAlreadyExistEmail(email);
         //then
         assertThat(message).isNotNull();
         assertThat(message.getData().isExist()).isFalse();
 
         //given
-        AccountDto.UserRequest request = AccountTemplate.makeAccountRequestDto();
+        UserRequest request = makeAccountRequestDto();
         authService.normalSignUp(request);
         //when
-        AccountDto.EmailValidationResponseMessage message2 = authService.isAlreadyExistEmail(email);
+        EmailValidationResponseMessage message2 = authService.isAlreadyExistEmail(email);
         //then
         assertThat(message2).isNotNull();
         assertThat(message2.getData().isExist()).isTrue();
@@ -66,13 +73,13 @@ class AuthServiceTest {
     @Transactional
     void test_일반_회원가입_성공했을_때(){
         //given
-        AccountDto.UserRequest request = AccountTemplate.makeAccountRequestDto();
+        UserRequest request = makeAccountRequestDto();
         //when
-        SocialDto.TokenMessage message = authService.normalSignUp(request);
+        TokenMessage message = authService.normalSignUp(request);
         //then
         assertThat(message.getData().getAccessToken()).isNotNull();
 
-        Account account = accountRepository.findByEmail(AccountTemplate.EMAIL).orElse(null);
+        Account account = accountRepository.findByEmail(EMAIL).orElse(null);
         assertThat(account).isNotNull();
         assertThat(account.getFcmToken()).isNotNull();
     }
@@ -82,8 +89,8 @@ class AuthServiceTest {
     @Transactional
     void test_일반_회원가입_실패했을_때(){
         //given
-        AccountDto.UserRequest request = AccountTemplate.makeAccountRequestDto(AccountTemplate.EMAIL,
-                AccountTemplate.USERNAME,"1234");
+        UserRequest request = makeAccountRequestDto(EMAIL,
+                USERNAME,"1234");
         //when -> then
         assertThatThrownBy(() ->authService.normalSignUp(request)).isInstanceOf(PasswordInvalidException.class)
                 .hasMessage(AccountContent.NOT_VALIDATION_PASSWORD);
@@ -94,9 +101,9 @@ class AuthServiceTest {
     @Transactional
     void test_소셜_회원가입_성공했을_때(){
         //given
-        SocialDto.SocialSignUpRequest request = AccountTemplate.makeSocialSignUpRequest();
+        SocialSignUpRequest request = makeSocialSignUpRequest();
         //when
-        SocialDto.TokenMessage message = authService.socialSignUp(request);
+        TokenMessage message = authService.socialSignUp(request);
         //then
         assertThat(tokenProvider.validateToken(message.getData().getAccessToken())).isTrue();
     }
@@ -106,9 +113,9 @@ class AuthServiceTest {
     @Transactional
     void signupSuccess() {
         //given
-        AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto("hello@example.com");
+        UserRequest accountRequestDto = makeAccountRequestDto("hello@example.com");
         //when
-        SocialDto.TokenMessage tokenMessage = authService.normalSignUp(accountRequestDto);
+        TokenMessage tokenMessage = authService.normalSignUp(accountRequestDto);
         //then
         String token = tokenMessage.getData().getAccessToken();
         assertThat(tokenProvider.validateToken(token)).isTrue();
@@ -118,8 +125,8 @@ class AuthServiceTest {
     @Transactional
     void signupFail() {
         //given
-        Account account = AccountTemplate.makeTestAccountForIntegration();
-        AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
+        Account account = makeTestAccountForIntegration();
+        UserRequest accountRequestDto = makeAccountRequestDto();
         //when
         accountRepository.save(account);
         //then
@@ -131,9 +138,9 @@ class AuthServiceTest {
     @Transactional
     void loginSuccess() {
         //given
-        Account account = AccountTemplate.makeTestAccountForIntegration();
+        Account account = makeTestAccountForIntegration();
         accountRepository.save(account);
-        AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
+        UserRequest accountRequestDto = makeAccountRequestDto();
         //when
         TokenDto tokenDto = authService.login(accountRequestDto.toLoginRequest());
         //then
@@ -145,7 +152,7 @@ class AuthServiceTest {
     @Transactional
     void loginFail(){
         //given
-        AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto("fail@example.com"
+        UserRequest accountRequestDto = makeAccountRequestDto("fail@example.com"
                 ,"fail");
         //when -> then
         assertThatThrownBy(() ->authService.login(accountRequestDto.toLoginRequest())).isInstanceOf(NotFoundUserInformationException.class)
@@ -156,13 +163,13 @@ class AuthServiceTest {
     @Transactional
     void reissue() throws InterruptedException {
         //given
-        AccountDto.UserRequest accountRequestDto = AccountTemplate.makeAccountRequestDto();
-        accountRepository.save(AccountTemplate.makeTestAccount());
+        UserRequest accountRequestDto = makeAccountRequestDto();
+        accountRepository.save(makeTestAccount());
         TokenDto tokenDto = authService.login(accountRequestDto.toLoginRequest());
         TokenRequestDto tokenRequestDto = new TokenRequestDto(tokenDto.getRefreshToken());
         TimeUnit.MICROSECONDS.sleep(1);
         //when
-        SocialDto.TokenMessage reissueToken = authService.reissue(tokenRequestDto);
+        TokenMessage reissueToken = authService.reissue(tokenRequestDto);
         //then
         assertThat(tokenDto.getAccessTokenExpiresIn()-reissueToken.getData().getAccessTokenExpiresIn()).isNegative();
     }
@@ -171,7 +178,7 @@ class AuthServiceTest {
     @Transactional
     void logout(){
         //given
-        Account account = AccountTemplate.makeTestAccount();
+        Account account = makeTestAccount();
         accountRepository.save(account);
         //when
         Message message = authService.logout();
@@ -183,10 +190,10 @@ class AuthServiceTest {
     @Transactional
     void test_인증번호_서버에서_보냈을_때(){
         //given
-        Account account = AccountTemplate.makeTestAccountForIntegration();
+        Account account = makeTestAccountForIntegration();
         accountRepository.save(account);
         String email = account.getEmail();
-        AccountDto.EmailRequest request = new AccountDto.EmailRequest(email);
+        EmailRequest request = new EmailRequest(email);
         //when
         Message message = authService.sendAuthenticationNumber(request);
         //then
@@ -198,15 +205,15 @@ class AuthServiceTest {
     @Transactional
     void test_인증번호_인증_성공했을_때(){
         //given
-        Account account = AccountTemplate.makeTestAccountForIntegration();
+        Account account = makeTestAccountForIntegration();
         accountRepository.save(account);
         String email = account.getEmail();
-        AccountDto.EmailRequest emailRequest = new AccountDto.EmailRequest(email);
+        EmailRequest emailRequest = new EmailRequest(email);
         authService.sendAuthenticationNumber(emailRequest);
 
         ValueOperations<String,String> valueOperations = redisTemplate.opsForValue();
         String number = valueOperations.get(PrefixType.PREFIX_TEMP_NUMBER+email);
-        AccountDto.AuthenticationNumberRequest request = new AccountDto.AuthenticationNumberRequest(email, number);
+        AuthenticationNumberRequest request = new AuthenticationNumberRequest(email, number);
         //when
         Message message = authService.checkAuthenticationNumber(request);
         //then
@@ -218,15 +225,31 @@ class AuthServiceTest {
     @Transactional
     void test_비밀번호_재설정_성공했을_때(){
         //given
-        Account account = AccountTemplate.makeTestAccountForIntegration();
+        Account account = makeTestAccountForIntegration();
         accountRepository.save(account);
         String email = account.getEmail();
-        AccountDto.ResetPasswordRequest request = new AccountDto.ResetPasswordRequest(email, "NewPwd12$@#");
+        ResetPasswordRequest request = new ResetPasswordRequest(email, "NewPwd12$@#");
         //when
         Message message = authService.resetPassword(request);
         //then
         assertThat(message.getMsg()).isEqualTo(AccountContent.ACCOUNT_OK_MSG);
         assertThat(message.getStatus()).isEqualTo(StatusEnum.ACCOUNT_OK);
 
+    }
+
+    @Test
+    @Transactional
+    void test_평범한_로그인을_진행할_때() {
+        //given
+        Account account = makeTestAccountForIntegration();
+        Account dbAccount = accountRepository.save(account);
+        LoginRequest request = LoginRequest.builder().email(EMAIL).password(PASSWORD).fcmToken("변경된토큰").build();
+        //when
+        authService.normalLogin(request);
+        entityManager.clear();
+        Account afterAccount = accountRepository.findByEmail(dbAccount.getEmail()).orElse(null);
+        //then
+        assertThat(afterAccount).isNotNull();
+        assertThat(afterAccount.getFcmToken()).isEqualTo("변경된토큰");
     }
 }
