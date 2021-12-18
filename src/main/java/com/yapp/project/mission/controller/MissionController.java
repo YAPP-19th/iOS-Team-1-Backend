@@ -18,7 +18,7 @@ public class MissionController {
 
     @ApiOperation(value = "미션 생성")
     @PostMapping
-    public Message createMission(MissionDto.MissionRequest request){
+    public Message createMission(@RequestBody MissionDto.MissionRequest request){
         return missionService.createMission(request, AccountUtil.getAccount());
     }
 

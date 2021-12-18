@@ -9,10 +9,7 @@ import com.yapp.project.aux.common.Utils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/saying")
@@ -31,7 +28,7 @@ public class SayingController {
 
     @ApiOperation(value = "클라이언트에서 보내 준 오늘의 명언 제대로 썼는지 확인")
     @PostMapping("/check")
-    public SayingResponseMessage checkResult(SayingAccess request){
+    public SayingResponseMessage checkResult(@RequestBody SayingAccess request){
         Account account = AccountUtil.getAccount();
         return sayingService.checkResult(request, account);
     }

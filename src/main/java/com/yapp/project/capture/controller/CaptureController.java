@@ -24,13 +24,13 @@ public class CaptureController {
 
     @ApiOperation(value = "오늘의 미션 인증 처리", tags = "미션_관련_사진")
     @PostMapping
-    public CaptureResponseMessage captureTodayMission(CaptureRequest request) throws IOException {
-        return captureService.captureTodayMission(request);
+    public CaptureResponseMessage captureTodayMission(@RequestBody CaptureRequest request) throws IOException {
+       return captureService.captureTodayMission(request);
     }
 
     @ApiOperation(value = "끝난 미션 관련 나의 이미지들 삭제하기", tags = "미션_관련_사진")
     @DeleteMapping
-    public CaptureResponseMessage deleteCaptureImages(DeleteIdListRequest request){
+    public CaptureResponseMessage deleteCaptureImages(@RequestBody DeleteIdListRequest request){
         return captureService.deleteCaptures(request);
     }
 
