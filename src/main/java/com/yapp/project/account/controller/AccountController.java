@@ -29,7 +29,7 @@ public class AccountController {
 
     @ApiOperation(value = "프로필에서 비밀번호 변경")
     @PostMapping
-    public Message resetMyPassword(ProfilePasswordRequest request){
+    public Message resetMyPassword(@RequestBody ProfilePasswordRequest request){
         Account account = AccountUtil.getAccount();
         return accountService.resetMyAccountPassword(request, account);
     }
