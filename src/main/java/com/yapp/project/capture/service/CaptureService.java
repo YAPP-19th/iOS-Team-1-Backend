@@ -7,6 +7,7 @@ import com.yapp.project.aux.storage.CloudStorageUtil;
 import com.yapp.project.capture.domain.CaptureImage;
 import com.yapp.project.capture.domain.repository.CaptureImageRepository;
 import com.yapp.project.config.exception.capture.AlreadyExistsCaptureException;
+import com.yapp.project.config.exception.capture.InvalidCaptureException;
 import com.yapp.project.config.exception.capture.NotTodayCaptureException;
 import com.yapp.project.config.exception.capture.UploadTimeException;
 import com.yapp.project.config.exception.mission.MissionNotFoundException;
@@ -59,7 +60,7 @@ public class CaptureService {
         Mission mission = missionRepository.findById(missionId).orElseThrow(MissionNotFoundException::new);
         validateMissionCaptureTimeAndDays(mission);
         if (request.getImage() == null) {
-            throw new IOException();
+            throw new InvalidCaptureException();
         }
         String imagePath;
         if (profile.equals("test")){
