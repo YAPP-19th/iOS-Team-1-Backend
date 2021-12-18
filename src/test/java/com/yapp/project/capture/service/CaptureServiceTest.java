@@ -27,6 +27,11 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -36,9 +41,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.yapp.project.aux.content.CaptureContent.CAPTURE_ALREADY_FINISH;
-import static org.mockito.BDDMockito.given;
-import static org.assertj.core.api.Assertions.*;
 import static com.yapp.project.capture.domain.dto.CaptureDto.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class CaptureServiceTest{
@@ -58,9 +64,9 @@ class CaptureServiceTest{
     private CaptureService captureService;
 
     @Test
-    void test_오늘_사진_인증_성공_했을_때() {
+    void test_오늘_사진_인증_성공_했을_때() throws IOException {
         //given
-        String imagePath = "home/image/capture";
+        ReflectionTestUtils.setField(captureService, "profile", "test");
         Account account = AccountTemplate.makeTestAccount();
         Organization organization = OrganizationTemplate.makeTestOrganization();
         Mission mission = MissionTemplate.makeMission(account, organization);
@@ -76,13 +82,16 @@ class CaptureServiceTest{
         given(captureRepository.findByCreatedAtIsAfterAndMission_Id(todayMidnight, missionId)).willReturn(Optional.empty());
         given(missionRepository.findById(missionId)).willReturn(Optional.of(mission));
         //when
-        CaptureResponseMessage message = captureService.captureTodayMission(imagePath, missionId);
+        FileInputStream fis = new FileInputStream("src/main/resources/static/test.jpeg");
+        MockMultipartFile image = new MockMultipartFile("file", fis);
+        CaptureRequest request = CaptureRequest.builder().missionId(missionId).image(image).build();
+        CaptureResponseMessage message = captureService.captureTodayMission(request);
         //then
         assertThat(message.getData().getResult()).isTrue();
     }
 
     @Test
-    void test_오늘_사진_인증_성공_이미_했을_때() {
+    void test_오늘_사진_인증_성공_이미_했을_때() throws IOException {
         //given
         String imagePath = "home/image/capture";
         Account account = AccountTemplate.makeTestAccount();
@@ -95,12 +104,15 @@ class CaptureServiceTest{
         LocalDateTime todayMidnight = LocalDateTime.of(today, midnight);
         given(captureRepository.findByCreatedAtIsAfterAndMission_Id(todayMidnight, missionId)).willReturn(Optional.of(capture));
         //when -> then
-        assertThatThrownBy(() -> captureService.captureTodayMission(imagePath, missionId))
+        FileInputStream fis = new FileInputStream("src/main/resources/static/test.jpeg");
+        MockMultipartFile image = new MockMultipartFile("file", fis);
+        CaptureRequest request = CaptureRequest.builder().missionId(missionId).image(image).build();
+        assertThatThrownBy(() -> captureService.captureTodayMission(request))
                 .isInstanceOf(AlreadyExistsCaptureException.class).hasMessage(CAPTURE_ALREADY_FINISH);
     }
 
     @Test
-    void test_오늘_사진_인증_하는_날이_아닐_때(){
+    void test_오늘_사진_인증_하는_날이_아닐_때() throws IOException {
         try (MockedStatic<DateUtil> dateUtil = Mockito.mockStatic(DateUtil.class)){
             //given
             dateUtil.when(DateUtil::KST_LOCAL_DATETIME_NOW).thenReturn(LocalDateTime.of(2021,11,9,6,30));
@@ -115,7 +127,10 @@ class CaptureServiceTest{
             given(captureRepository.findByCreatedAtIsAfterAndMission_Id(today, missionId)).willReturn(Optional.empty());
             given(missionRepository.findById(missionId)).willReturn(Optional.of(mission));
             //when -> then
-            assertThatThrownBy(() -> captureService.captureTodayMission(imagePath,missionId))
+            FileInputStream fis = new FileInputStream("src/main/resources/static/test.jpeg");
+            MockMultipartFile image = new MockMultipartFile("file", fis);
+            CaptureRequest request = CaptureRequest.builder().missionId(missionId).image(image).build();
+            assertThatThrownBy(() -> captureService.captureTodayMission(request))
                     .isInstanceOf(NotTodayCaptureException.class)
                     .hasMessage(CaptureContent.CAPTURE_NOT_UPLOAD_DAY);
         }
