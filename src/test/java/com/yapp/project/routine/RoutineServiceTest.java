@@ -144,7 +144,7 @@ class RoutineServiceTest {
         given(routineRepository
                 .findAllByIsDeleteIsFalseAndAccountAndDaysDayOrderByDaysSequence(account, Week.MON, Sort.by("days").descending())).willReturn(routines);
         // when
-        List<RoutineDTO.ResponseRoutineDateDto> routineList = routineService.getRoutineList("2021-12-13", account).getData();
+        List<RoutineDTO.ResponseRoutineDto> routineList = routineService.getRoutineList("2021-12-13", account).getData();
         // then
         assertThat(routineList.size()).isEqualTo(routines.size());
     }

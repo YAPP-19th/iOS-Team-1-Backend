@@ -103,7 +103,7 @@ public class RoutineService {
                 findAllByDateAndRoutineAccount(DateUtil.convertStr2LocalDate(date), account);
         return RoutineDTO.ResponseRoutineDateListMessageDto.builder()
                 .message(Message.builder().msg(ROUTINE_BY_DAY_OK).status(StatusEnum.ROUTINE_OK).build())
-                .data(routineList.stream().map(routine -> RoutineDTO.ResponseRoutineDateDto.builder()
+                .data(routineList.stream().map(routine -> RoutineDTO.ResponseRoutineDto.builder()
                         .routine(routine).retrospectList(retrospectList).build()).collect(Collectors.toList()))
                 .build();
     }

@@ -91,7 +91,7 @@ public class RoutineDTO {
         private String goal;
 
         @ApiModelProperty(value = "하는 요일", example = "['MON', 'SUN']", required = true)
-        private List<Week> days = new ArrayList<>();
+        private List<Week> days;
 
         @ApiModelProperty(value = "하는 시간", example = "07:35", required = true)
         private String startTime;
@@ -109,38 +109,6 @@ public class RoutineDTO {
         @ApiModelProperty(value = "타이틀", example = "명상")
         private String title;
 
-        @ApiModelProperty(value = "목표", example = "고요히 자기 자신을 느껴보는 시간입니다.")
-        private String goal;
-
-        @ApiModelProperty(value = "하는 요일", example = "['MON', 'SUN']")
-        private List<Week> days = new ArrayList<>();
-
-        @ApiModelProperty(value = "하는 시간", example = "07:35")
-        private String startTime;
-
-        @ApiModelProperty(value = "카테고리", example = "0")
-        private Integer category;
-
-        @Builder
-        public ResponseRoutineDto(Routine routine) {
-            this.id = routine.getId();
-            this.title = routine.getTitle();
-            this.goal = routine.getGoal();
-            this.startTime = routine.getStartTime().toString();
-            this.days = routine.getDays().stream().map(RoutineDay::getDay).collect(Collectors.toList());
-            this.category = routine.getCategory().getIndex();
-        }
-    }
-
-    @Getter
-    @Setter
-    public static class ResponseRoutineDateDto {
-        @ApiModelProperty(value = "루틴ID", example = "1")
-        private Long id;
-
-        @ApiModelProperty(value = "타이틀", example = "명상")
-        private String title;
-
         @ApiModelProperty(value = "수행여부", example = "DONE")
         private Result result;
 
@@ -148,7 +116,7 @@ public class RoutineDTO {
         private String goal;
 
         @ApiModelProperty(value = "하는 요일", example = "['MON', 'SUN']")
-        private List<Week> days = new ArrayList<>();
+        private List<Week> days;
 
         @ApiModelProperty(value = "하는 시간", example = "07:35")
         private String startTime;
@@ -157,15 +125,20 @@ public class RoutineDTO {
         private Integer category;
 
         @Builder
-        public ResponseRoutineDateDto(Routine routine, List<Retrospect> retrospectList) {
+        public ResponseRoutineDto(Routine routine, List<Retrospect> retrospectList) {
             this.id = routine.getId();
             this.title = routine.getTitle();
             this.goal = routine.getGoal();
             this.startTime = routine.getStartTime().toString();
             this.days = routine.getDays().stream().map(RoutineDay::getDay).collect(Collectors.toList());
             this.category = routine.getCategory().getIndex();
-            Retrospect retrospect = retrospectList.stream()
-                    .filter(x -> Objects.equals(x.getRoutine().getId(), this.id)).findFirst().orElse(null);
+            Retrospect retrospect;
+            if(retrospectList == null) {
+                retrospect = null;
+            } else {
+             retrospect = retrospectList.stream()
+                     .filter(x -> Objects.equals(x.getRoutine().getId(), this.id)).findFirst().orElse(null);
+            }
             this.result = retrospect != null ? retrospect.getResult() : Result.NOT;
         }
     }
@@ -194,7 +167,7 @@ public class RoutineDTO {
     @Builder
     public static class ResponseRoutineDateListMessageDto {
         private Message message;
-        private List<ResponseRoutineDateDto> data;
+        private List<ResponseRoutineDto> data;
     }
 
     @Getter
