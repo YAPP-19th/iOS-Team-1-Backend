@@ -1,7 +1,9 @@
 package com.yapp.project.capture.service;
 
+import com.google.cloud.storage.BlobInfo;
 import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.aux.common.DateUtil;
+import com.yapp.project.aux.storage.CloudStorageUtil;
 import com.yapp.project.capture.domain.CaptureImage;
 import com.yapp.project.capture.domain.repository.CaptureImageRepository;
 import com.yapp.project.config.exception.capture.AlreadyExistsCaptureException;
@@ -16,12 +18,14 @@ import com.yapp.project.capture.domain.repository.CaptureRepository;
 import com.yapp.project.mission.domain.repository.MissionRepository;
 import com.yapp.project.organization.domain.Organization;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.*;
 
 import java.util.Collections;
@@ -35,20 +39,35 @@ import static com.yapp.project.aux.content.CaptureContent.*;
 @Service
 @RequiredArgsConstructor
 public class CaptureService {
+    @Value("${property.status}")
+    private String profile;
+    private static final String path = "/capture/";
     private final CaptureRepository captureRepository;
     private final MissionRepository missionRepository;
     private final CaptureImageRepository captureImageRepository;
+    private final CloudStorageUtil cloudStorageUtil;
 
 
     @Transactional
-    public CaptureResponseMessage captureTodayMission(String imagePath, Long missionId) {
+    public CaptureResponseMessage captureTodayMission(CaptureRequest request) throws IOException {
         LocalDateTime todayMidnight = MID_NIGHT();
+        Long missionId = request.getMissionId();
         Capture todayCapture = captureRepository.findByCreatedAtIsAfterAndMission_Id(todayMidnight, missionId).orElse(null);
         if(todayCapture!=null){
             throw new AlreadyExistsCaptureException();
         }
         Mission mission = missionRepository.findById(missionId).orElseThrow(MissionNotFoundException::new);
         validateMissionCaptureTimeAndDays(mission);
+        if (request.getImage() == null) {
+            throw new IOException();
+        }
+        String imagePath;
+        if (profile.equals("test")){
+            imagePath = "/path/to/file";
+        }else{
+            BlobInfo image = cloudStorageUtil.upload(request.getImage(), profile + path + missionId + "/");
+            imagePath = CloudStorageUtil.getImageURL(image);
+        }
         mission.updateSuccessCount();
         Capture capture = saveCapture(mission, imagePath);
         captureRepository.save(capture);
