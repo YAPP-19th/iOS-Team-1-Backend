@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
 import java.time.LocalDate;
 
 @RestController
@@ -26,7 +27,7 @@ public class ReportController {
             "\n[miracle, self, health, daily, etc]")
     @GetMapping("/month/{year}/{month}")
     public ReportDTO.ResponseMonthReportMessage getMonthReportByYearAndMonth(
-            @PathVariable Integer year, @PathVariable Integer month) {
+            @PathVariable Integer year, @PathVariable Integer month) throws ParseException {
         return reportService.getMonthReportByYearAndMonth(AccountUtil.getAccount(), year, month);
     }
 
