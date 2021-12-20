@@ -18,6 +18,8 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,6 +55,8 @@ public class WeekReportServiceTest {
             WeekReport weekReport = reportService.makeWeekReport(account);
             // then
             assertThat(weekReport.getRate()).isEqualTo(62);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 
@@ -72,6 +76,8 @@ public class WeekReportServiceTest {
             WeekReport weekReport = reportService.makeWeekReport(account);
             // then
             assertThat(weekReport.getRate()).isEqualTo(66);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 
@@ -91,6 +97,8 @@ public class WeekReportServiceTest {
             WeekReport weekReport = reportService.makeWeekReport(account);
             // then
             assertThat(weekReport.getRate()).isEqualTo(69);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 
@@ -110,6 +118,8 @@ public class WeekReportServiceTest {
             WeekReport weekReport = reportService.makeWeekReport(account);
             // then
             assertThat(weekReport.getRate()).isEqualTo(63);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 }

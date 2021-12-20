@@ -14,7 +14,7 @@ public class MonthReportTemplate {
     public static WeekReport makeWeek1(Account account){
         WeekReport week1 = WeekReport.builder().build();
         week1.addIdAndLastDate(id++, "2021-10-10");
-        week1.addBasicData(account, 45, 5, 2, 13);
+        week1.addBasicData(account, 45, 5, 2, 13, 42);
         RoutineResult readBook = RoutineResult.builder().category(RoutineCategory.DAILY).routineId(4L).title("독서").build();
         readBook.addWeekReport(week1); readBook.addRoutineResultDoneCount(new int[]{1, 0});
         readBook.addRoutineNotDoneCount(0);
@@ -40,7 +40,7 @@ public class MonthReportTemplate {
     public static WeekReport makeWeek2(Account account){
         WeekReport week2 = WeekReport.builder().build();
         week2.addIdAndLastDate(id++, "2021-10-17");
-        week2.addBasicData(account, 30, 8, 2, 10);
+        week2.addBasicData(account, 30, 8, 2, 10, 43);
         RoutineResult readBook = RoutineResult.builder().category(RoutineCategory.DAILY).routineId(4L).title("독서").build();
         readBook.addWeekReport(week2); readBook.addRoutineResultDoneCount(new int[]{1, 0});
         readBook.addRoutineNotDoneCount(1);
@@ -66,7 +66,7 @@ public class MonthReportTemplate {
     public static WeekReport makeWeek3(Account account){
         WeekReport week3 = WeekReport.builder().build();
         week3.addIdAndLastDate(id++, "2021-10-24");
-        week3.addBasicData(account, 42, 7, 3, 10);
+        week3.addBasicData(account, 42, 7, 3, 10, 44);
         RoutineResult readBook = RoutineResult.builder().category(RoutineCategory.DAILY).routineId(4L).title("독서").build();
         readBook.addWeekReport(week3); readBook.addRoutineResultDoneCount(new int[]{0, 1});
         readBook.addRoutineNotDoneCount(1);
@@ -92,7 +92,7 @@ public class MonthReportTemplate {
     public static WeekReport makeWeek4(Account account){
         WeekReport week4 = WeekReport.builder().build();
         week4.addIdAndLastDate(id++, "2021-10-31");
-        week4.addBasicData(account, 42, 7, 3, 10);
+        week4.addBasicData(account, 42, 7, 3, 10, 45);
         RoutineResult readBook = RoutineResult.builder().category(RoutineCategory.DAILY).routineId(4L).title("독서").build();
         readBook.addWeekReport(week4); readBook.addRoutineResultDoneCount(new int[]{0, 1});
         readBook.addRoutineNotDoneCount(1);
