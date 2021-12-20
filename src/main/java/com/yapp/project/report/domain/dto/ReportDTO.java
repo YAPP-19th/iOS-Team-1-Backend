@@ -118,7 +118,7 @@ public class ReportDTO {
 
     @Getter
     public static class ResponseMonthReport {
-        @ApiModelProperty(value = "주차별 수행률", example = "[30, 40, 67, 48]")
+        @ApiModelProperty(value = "주차별 수행률", example = "[30, 40, 67, 48, 0]")
         List<Integer> weekRateList = new ArrayList<>();
         List<MonthResultByCategory> resultByCategory = new ArrayList<>();
 
