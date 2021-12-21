@@ -40,6 +40,7 @@ public class ReportService {
 
     private static final DateFormat dateFormatW = new SimpleDateFormat("w");
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private static final int YEAR_OF_WEEK = 52;
 
     @Transactional
     public ReportDTO.ResponseWeekReportMessage getWeekReportLastDate(Account account, LocalDate date) {
@@ -58,26 +59,6 @@ public class ReportService {
         LocalDate tempDate = LocalDate.of(year, month, 1);
         List<Integer> weekRateList = List.of(getWeekRateList(weekReportList, tempDate));
         return ReportDTO.ResponseMonthReportMessage.of(monthReportList, weekRateList);
-    }
-
-    private Integer[] getWeekRateList(List<WeekReport> weekReportList, LocalDate tempDate) throws ParseException {
-        Integer[] weekRateList = new Integer[] {0, 0, 0, 0, 0};
-        Integer lastWeekNum = getLastWeekNum(tempDate);
-        weekReportList.forEach( weekReport -> {
-            int index = (weekReport.getWeekNum() - lastWeekNum) - 1;
-            if(index < 0) {
-                index = (( 52 +  weekReport.getWeekNum()) - lastWeekNum - 1);
-            }
-            weekRateList[index] = weekReport.getRate();
-        });
-        return weekRateList;
-    }
-
-    private Integer getLastWeekNum(LocalDate tempDate) throws ParseException {
-        TemporalAdjuster temporalAdjuster = TemporalAdjusters.dayOfWeekInMonth(1, DayOfWeek.WEDNESDAY);
-        LocalDate date = tempDate.with(temporalAdjuster);
-        String lastWeekStr = dateFormatW.format(dateFormat.parse(String.valueOf(date)));
-        return Integer.parseInt(lastWeekStr);
     }
 
     @Transactional
@@ -217,5 +198,25 @@ public class ReportService {
                 result[2],
                 Integer.parseInt(weekNum)
         );
+    }
+
+    private Integer[] getWeekRateList(List<WeekReport> weekReportList, LocalDate tempDate) throws ParseException {
+        Integer[] weekRateList = new Integer[] {0, 0, 0, 0, 0};
+        Integer lastWeekNum = getLastWeekNum(tempDate);
+        weekReportList.forEach( weekReport -> {
+            int index = (weekReport.getWeekNum() - lastWeekNum) - 1;
+            if(index < 0) {
+                index = (( YEAR_OF_WEEK +  weekReport.getWeekNum()) - lastWeekNum - 1);
+            }
+            weekRateList[index] = weekReport.getRate();
+        });
+        return weekRateList;
+    }
+
+    private Integer getLastWeekNum(LocalDate tempDate) throws ParseException {
+        TemporalAdjuster temporalAdjuster = TemporalAdjusters.dayOfWeekInMonth(1, DayOfWeek.WEDNESDAY);
+        LocalDate date = tempDate.with(temporalAdjuster);
+        String lastWeekStr = dateFormatW.format(dateFormat.parse(String.valueOf(date)));
+        return Integer.parseInt(lastWeekStr);
     }
 }
