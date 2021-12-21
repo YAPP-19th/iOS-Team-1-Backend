@@ -18,9 +18,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
+import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,6 +38,10 @@ public class ReportService {
     private final WeekReportRepository weekReportRepository;
     private final MonthRoutineReportRepository monthRoutineReportRepository;
 
+    private static final DateFormat dateFormatW = new SimpleDateFormat("w");
+    private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private static final int YEAR_OF_WEEK = 52;
+
     @Transactional
     public ReportDTO.ResponseWeekReportMessage getWeekReportLastDate(Account account, LocalDate date) {
         WeekReport weekReport = weekReportRepository.findByAccountAndLastDate(account, date).orElseThrow(WeekReportNotFoundMonthException::new);
@@ -41,14 +49,15 @@ public class ReportService {
     }
 
     @Transactional(readOnly = true)
-    public ReportDTO.ResponseMonthReportMessage getMonthReportByYearAndMonth(Account account, Integer year, Integer month) {
+    public ReportDTO.ResponseMonthReportMessage getMonthReportByYearAndMonth(Account account, Integer year, Integer month) throws ParseException {
         List<MonthRoutineReport> monthReportList = monthRoutineReportRepository.findAllByAccountAndYearAndMonth(account, year, month);
         List<WeekReport> weekReportList =
                 weekReportRepository.findAllByAccountAndMonthReportYearAndMonthReportMonthOrderByLastDate(account, year, month);
         if(monthReportList.isEmpty() && weekReportList.isEmpty()) {
             throw new MonthReportNotFoundMonthException();
         }
-        List<Integer> weekRateList = weekReportList.stream().map(WeekReport::getRate).collect(Collectors.toList());
+        LocalDate tempDate = LocalDate.of(year, month, 1);
+        List<Integer> weekRateList = List.of(getWeekRateList(weekReportList, tempDate));
         return ReportDTO.ResponseMonthReportMessage.of(monthReportList, weekRateList);
     }
 
@@ -65,7 +74,7 @@ public class ReportService {
     }
 
     @Transactional
-    public WeekReport makeWeekReport(Account account) {
+    public WeekReport makeWeekReport(Account account) throws ParseException {
         checkIsReported(account);
         /** index 0 : notDone, 1 : fullyDone, 2 : particularlyDone */
         int[] result = new int[]{0, 0, 0};
@@ -179,14 +188,35 @@ public class ReportService {
                     .routineCreateAt(routine.getCreatedAt()).build()).collect(Collectors.toList());
     }
 
-    private void setRetrospectBasicData(Account account, int[] result, WeekReport weekReport) {
+    private void setRetrospectBasicData(Account account, int[] result, WeekReport weekReport) throws ParseException {
+        String weekNum = dateFormatW.format(dateFormat.parse(String.valueOf(DateUtil.KST_LOCAL_DATE_NOW())));
         weekReport.addBasicData(
                 account,
                 (int) (((result[1] + (result[2] * 0.5)) / (result[0] + (result[1] + result[2]))) * 100),
                 result[0],
                 result[1],
-                result[2]
+                result[2],
+                Integer.parseInt(weekNum)
         );
     }
 
+    private Integer[] getWeekRateList(List<WeekReport> weekReportList, LocalDate tempDate) throws ParseException {
+        Integer[] weekRateList = new Integer[] {0, 0, 0, 0, 0};
+        Integer lastWeekNum = getLastWeekNum(tempDate);
+        weekReportList.forEach( weekReport -> {
+            int index = (weekReport.getWeekNum() - lastWeekNum) - 1;
+            if(index < 0) {
+                index = (( YEAR_OF_WEEK +  weekReport.getWeekNum()) - lastWeekNum - 1);
+            }
+            weekRateList[index] = weekReport.getRate();
+        });
+        return weekRateList;
+    }
+
+    private Integer getLastWeekNum(LocalDate tempDate) throws ParseException {
+        TemporalAdjuster temporalAdjuster = TemporalAdjusters.dayOfWeekInMonth(1, DayOfWeek.WEDNESDAY);
+        LocalDate date = tempDate.with(temporalAdjuster);
+        String lastWeekStr = dateFormatW.format(dateFormat.parse(String.valueOf(date)));
+        return Integer.parseInt(lastWeekStr);
+    }
 }

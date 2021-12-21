@@ -41,18 +41,21 @@ public class WeekReport {
 
     private Integer monthReportMonth;
 
+    private Integer weekNum;
+
     @Builder
     public WeekReport() {
         this.lastDate = DateUtil.KST_LOCAL_DATE_NOW().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)).minusDays(1); // 가장 최근 월요일
         this.isReport = false;
     }
 
-    public void addBasicData(Account account, Integer rate, int notDoneCount, int fullyDoneCount, int partiallyDoneCount) {
+    public void addBasicData(Account account, Integer rate, int notDoneCount, int fullyDoneCount, int partiallyDoneCount, int weekNum) {
         this.account = account;
         this.rate = rate;
         this.notDoneCount = notDoneCount;
         this.fullyDoneCount = fullyDoneCount;
         this.partiallyDoneCount = partiallyDoneCount;
+        this.weekNum = weekNum;
     }
 
     public void addRoutineResult(RoutineResult routineResult) {
