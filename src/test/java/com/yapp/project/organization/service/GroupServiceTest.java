@@ -46,6 +46,7 @@ class GroupServiceTest {
 
         List<OrgDto.OrgResponse> res = groupService.findAllByAccount(account);
         assertThat(res.get(0).getTitle()).isEqualTo(organization.getTitle());
+        assertThat(res.get(0).getCategory()).isEqualTo(organization.getCategory().getIndex());
     }
 
     @Test

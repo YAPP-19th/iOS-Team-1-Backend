@@ -126,7 +126,7 @@ public class Organization {
 
     public OrgDto.OrgResponse toResponseDto(){
         return OrgDto.OrgResponse.builder().id(id)
-                .title(title).rate(rate)
+                .title(title).rate(rate).category(category.getIndex())
                 .image(image).participant(participants).build();
     }
 
