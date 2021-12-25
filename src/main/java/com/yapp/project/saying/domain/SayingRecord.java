@@ -14,14 +14,6 @@ import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATETIME_NOW;
 @Entity
 @NoArgsConstructor
 public class SayingRecord {
-
-    @Builder
-    public SayingRecord(Account account, Saying saying){
-        this.account = account;
-        this.saying = saying;
-        this.createdAt = KST_LOCAL_DATETIME_NOW();
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,4 +25,13 @@ public class SayingRecord {
     private Saying saying;
 
     private LocalDateTime createdAt;
+
+
+    @Builder
+    public SayingRecord(Account account, Saying saying){
+        this.account = account;
+        this.saying = saying;
+        this.createdAt = KST_LOCAL_DATETIME_NOW();
+    }
+
 }

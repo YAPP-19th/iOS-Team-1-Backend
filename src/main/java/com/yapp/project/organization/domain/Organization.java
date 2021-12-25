@@ -18,29 +18,6 @@ import java.util.List;
 @AllArgsConstructor
 public class Organization {
 
-    @Builder
-    public Organization(String title , Integer rate, Category category, Clause clause){
-        this.title = title;
-        this.rate = rate;
-        this.category = category;
-        this.shoot = clause.getShoot();
-        this.beginTime = clause.getBeginTime();
-        this.endTime = clause.getEndTime();
-        this.description = clause.getDescription();
-        this.recommend = clause.getRecommend();
-        this.updatedAt = DateUtil.KST_LOCAL_DATE_NOW();
-
-    }
-
-    @PrePersist
-    public void prePersist(){
-        this.count = this.count == null ? 0 : this.count;
-        this.groupSuccessCount = this.groupSuccessCount == null ? 0 : this.groupSuccessCount;
-        this.groupFailCount = this.groupFailCount == null ? 0 : this.groupFailCount;
-        this.participants = this.participants==null ? 0 : this.participants;
-    }
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -80,6 +57,28 @@ public class Organization {
     @Column(columnDefinition="TEXT")
     private String recommend;
 
+    @Builder
+    public Organization(String title , Integer rate, Category category, Clause clause){
+        this.title = title;
+        this.rate = rate;
+        this.category = category;
+        this.shoot = clause.getShoot();
+        this.beginTime = clause.getBeginTime();
+        this.endTime = clause.getEndTime();
+        this.description = clause.getDescription();
+        this.recommend = clause.getRecommend();
+        this.updatedAt = DateUtil.KST_LOCAL_DATE_NOW();
+
+    }
+
+    @PrePersist
+    public void prePersist(){
+        this.count = 0;
+        this.groupSuccessCount = 0;
+        this.groupFailCount = 0;
+        this.participants = 0;
+    }
+
     public void updateParticipants(Integer participants) {
         this.participants = participants;
     }
@@ -87,11 +86,6 @@ public class Organization {
     public void updateCurrentCount(){
         this.count = count==null? 0: count;
         this.count+=1;
-    }
-
-    public void defaultSettingForTest(){
-        this.count = 0;
-        this.rate = 0;
     }
 
     public Integer getCount(){
@@ -133,12 +127,17 @@ public class Organization {
     public OrgDto.OrgDetailResponse toDetailResponseDto(){
         return OrgDto.OrgDetailResponse.builder().id(id)
                 .shoot(shoot).participant(participants).rate(rate).title(title)
-                .category(category.getIndex()).beginTime(beginTime).endTime(endTime).description(description).recommend(recommend).build();
+                .category(category.getIndex()).beginTime(beginTime).endTime(endTime)
+                .description(description).recommend(recommend).build();
     }
 
     public void setIdForTest(Long id) {
         this.id = id;
     }
 
+    public void defaultSettingForTest(){
+        this.count = 0;
+        this.rate = 0;
+    }
 
 }

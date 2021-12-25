@@ -58,8 +58,8 @@ public class Account {
 
     @PrePersist
     public void prePersist() {
-        this.isDelete= isDelete != null && isDelete;
-        this.isAlarm= isAlarm != null && isAlarm;
+        this.isDelete= false;
+        this.isAlarm= false;
     }
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -93,7 +93,6 @@ public class Account {
     public void resetPassword(PasswordEncoder passwordEncoder, String newPassword){
         this.password = passwordEncoder.encode(newPassword);
     }
-
 
     public void setIdForTest(Long id) {
         this.id = id;

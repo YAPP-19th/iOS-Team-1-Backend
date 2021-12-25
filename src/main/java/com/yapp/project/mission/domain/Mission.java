@@ -23,31 +23,6 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @ToString
 public class Mission {
-
-    @Builder
-    public Mission(
-            Organization organization, Account account, LocalDate startDate, LocalDate finishDate,
-            Boolean isFinish, Boolean isAlarm, LocalTime startTime
-    ){
-        this.organization = organization;
-        this.account = account;
-        this.startDate = startDate;
-        this.finishDate = finishDate;
-        this.isFinish = isFinish;
-        this.isAlarm = isAlarm;
-        this.startTime = startTime;
-    }
-
-    @PrePersist
-    public void prePersist(){
-        this.isFinish = (this.isFinish!=null)&&this.isFinish;
-        this.isDelete = (this.isDelete!=null)&&this.isDelete;
-        this.isAlarm = (this.isAlarm!=null)&&this.isAlarm;
-        this.successCount = this.successCount!=null?this.successCount:0;
-        this.failureCount = this.failureCount!=null?this.failureCount:0;
-    }
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -78,6 +53,29 @@ public class Mission {
     private Boolean isFinish;
 
     private Boolean isDelete;
+
+    @Builder
+    public Mission(
+            Organization organization, Account account, LocalDate startDate, LocalDate finishDate,
+            Boolean isFinish, Boolean isAlarm, LocalTime startTime
+    ){
+        this.organization = organization;
+        this.account = account;
+        this.startDate = startDate;
+        this.finishDate = finishDate;
+        this.isFinish = isFinish;
+        this.isAlarm = isAlarm;
+        this.startTime = startTime;
+    }
+
+    @PrePersist
+    public void prePersist(){
+        this.isFinish = (this.isFinish!=null)&&this.isFinish;
+        this.isDelete = (this.isDelete!=null)&&this.isDelete;
+        this.isAlarm = (this.isAlarm!=null)&&this.isAlarm;
+        this.successCount = this.successCount!=null?this.successCount:0;
+        this.failureCount = this.failureCount!=null?this.failureCount:0;
+    }
 
     public void addDays(List<Cron> days){
         this.weeks.addAll(days);
