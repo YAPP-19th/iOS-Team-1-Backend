@@ -58,11 +58,6 @@ public class Capture {
 
     private LocalDateTime createdAt;
 
-    public CaptureDto.CaptureResponse toCaptureResponse(){
-        return CaptureDto.CaptureResponse.builder().images(captureImage).captureId(id)
-                .build();
-    }
-
     public void updateCaptureImage(CaptureImage images){
         captureImage.add(images);
     }
@@ -70,4 +65,10 @@ public class Capture {
     public void remove(){
         this.isDelete=true;
     }
+
+    public CaptureDto.CaptureResponse toCaptureResponse(){
+        return CaptureDto.CaptureResponse.builder().images(captureImage).captureId(id)
+                .build();
+    }
+
 }

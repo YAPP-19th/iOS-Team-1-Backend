@@ -52,7 +52,7 @@ public class Mission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(targetEntity = Organization.class,fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = Organization.class,fetch = FetchType.LAZY)
     private Organization organization;
 
     @ManyToOne(targetEntity = Account.class, fetch = FetchType.LAZY)
@@ -96,10 +96,6 @@ public class Mission {
         return (this.successCount/(this.failureCount+this.successCount))*100;
     }
 
-    public void setIdForTest(Long id) {
-        this.id = id;
-    }
-
     public void clickAlarmToggle(){
         this.isAlarm=!this.isAlarm;
     }
@@ -130,23 +126,6 @@ public class Mission {
         this.isFinish=true;
     }
 
-    public void defaultSettingForTest(){
-        this.successCount = 0;
-        this.failureCount = 0;
-        this.isFinish = false;
-        this.isDelete = false;
-        this.isAlarm = false;
-    }
-
-    public void setWeeksForTest(List<Cron> weeks){
-        this.weeks.addAll(weeks);
-    }
-
-    public void setCountForTest(){
-        this.successCount = Utils.randomNumber();
-        this.failureCount = Utils.randomNumber();
-    }
-
     public MissionDto.MissionResponse toMissionResponse(){
         return MissionDto.MissionResponse.builder().image(organization.getImage()).title(organization.getTitle())
                 .achievementRate(this.getAchievementRate()).period(this.getPeriod()).category(organization.getCategory().getIndex())
@@ -169,4 +148,26 @@ public class Mission {
                 .nowPeople(this.organization.getCount())
                 .build();
     }
+
+    public void setIdForTest(Long id) {
+        this.id = id;
+    }
+
+    public void defaultSettingForTest(){
+        this.successCount = 0;
+        this.failureCount = 0;
+        this.isFinish = false;
+        this.isDelete = false;
+        this.isAlarm = false;
+    }
+
+    public void setWeeksForTest(List<Cron> weeks){
+        this.weeks.addAll(weeks);
+    }
+
+    public void setCountForTest(){
+        this.successCount = Utils.randomNumber();
+        this.failureCount = Utils.randomNumber();
+    }
+
 }

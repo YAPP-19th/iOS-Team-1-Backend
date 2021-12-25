@@ -25,7 +25,7 @@ public class RoutineDay {
 
     private Long sequence;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routine_id")
     private Routine routine;
 

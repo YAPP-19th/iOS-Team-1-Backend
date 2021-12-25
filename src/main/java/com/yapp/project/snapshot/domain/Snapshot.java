@@ -17,7 +17,7 @@ public class Snapshot {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy = "image")
+    @OneToOne(mappedBy = "image", fetch = FetchType.LAZY)
     @JoinColumn(name = "retrospect_id")
     private Retrospect retrospect;
 

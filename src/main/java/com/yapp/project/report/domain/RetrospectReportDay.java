@@ -16,7 +16,7 @@ public class RetrospectReportDay {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private RoutineResult routineResult;
 
     private String day;
