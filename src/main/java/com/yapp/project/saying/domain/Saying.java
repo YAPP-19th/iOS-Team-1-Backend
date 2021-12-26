@@ -32,7 +32,7 @@ public class Saying {
 
     @PrePersist
     public void prePersist(){
-        this.author = "작자미상";
+        this.author = this.author == null ? "작자미상" : this.author;
     }
 
 }
