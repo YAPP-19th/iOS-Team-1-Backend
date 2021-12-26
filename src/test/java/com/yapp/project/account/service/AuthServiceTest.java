@@ -28,6 +28,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @WithMockUser(value = EMAIL,password = PASSWORD)
+@Transactional
 class AuthServiceTest {
 
     @Autowired
@@ -46,7 +47,6 @@ class AuthServiceTest {
     private EntityManager entityManager;
 
     @Test
-    @Transactional
     void test_이메일_인증_확인() {
         //given
         String email = EMAIL;
@@ -70,7 +70,6 @@ class AuthServiceTest {
 
 
     @Test
-    @Transactional
     void test_일반_회원가입_성공했을_때(){
         //given
         UserRequest request = makeAccountRequestDto();
@@ -86,7 +85,6 @@ class AuthServiceTest {
 
 
     @Test
-    @Transactional
     void test_일반_회원가입_실패했을_때(){
         //given
         UserRequest request = makeAccountRequestDto(EMAIL,
@@ -98,7 +96,6 @@ class AuthServiceTest {
 
 
     @Test
-    @Transactional
     void test_소셜_회원가입_성공했을_때(){
         //given
         SocialSignUpRequest request = makeSocialSignUpRequest();
@@ -110,7 +107,6 @@ class AuthServiceTest {
 
 
     @Test
-    @Transactional
     void signupSuccess() {
         //given
         UserRequest accountRequestDto = makeAccountRequestDto("hello@example.com");
@@ -122,7 +118,6 @@ class AuthServiceTest {
     }
 
     @Test
-    @Transactional
     void signupFail() {
         //given
         Account account = makeTestAccountForIntegration();
@@ -135,7 +130,6 @@ class AuthServiceTest {
     }
 
     @Test
-    @Transactional
     void loginSuccess() {
         //given
         Account account = makeTestAccountForIntegration();
@@ -149,7 +143,6 @@ class AuthServiceTest {
     }
 
     @Test
-    @Transactional
     void loginFail(){
         //given
         UserRequest accountRequestDto = makeAccountRequestDto("fail@example.com"
@@ -160,7 +153,6 @@ class AuthServiceTest {
     }
 
     @Test
-    @Transactional
     void reissue() throws InterruptedException {
         //given
         UserRequest accountRequestDto = makeAccountRequestDto();
@@ -175,7 +167,6 @@ class AuthServiceTest {
     }
 
     @Test
-    @Transactional
     void logout(){
         //given
         Account account = makeTestAccount();
@@ -187,7 +178,6 @@ class AuthServiceTest {
     }
 
     @Test
-    @Transactional
     void test_인증번호_서버에서_보냈을_때(){
         //given
         Account account = makeTestAccountForIntegration();
@@ -202,7 +192,6 @@ class AuthServiceTest {
     }
 
     @Test
-    @Transactional
     void test_인증번호_인증_성공했을_때(){
         //given
         Account account = makeTestAccountForIntegration();
@@ -222,7 +211,6 @@ class AuthServiceTest {
     }
 
     @Test
-    @Transactional
     void test_비밀번호_재설정_성공했을_때(){
         //given
         Account account = makeTestAccountForIntegration();
@@ -238,7 +226,6 @@ class AuthServiceTest {
     }
 
     @Test
-    @Transactional
     void test_평범한_로그인을_진행할_때() {
         //given
         Account account = makeTestAccountForIntegration();
@@ -251,5 +238,16 @@ class AuthServiceTest {
         //then
         assertThat(afterAccount).isNotNull();
         assertThat(afterAccount.getFcmToken()).isEqualTo("변경된토큰");
+    }
+
+    @Test
+    void test_닉네임_중복_허용() {
+        //given
+        Account account1 = makeTestAccountForIntegration();
+        Account dbAccount1 = accountRepository.save(account1);
+        Account account2 = makeTestAccountForIntegration(USERNAME, "another@example.com");
+        //when
+        Account dbAccount2 = accountRepository.save(account2);
+        assertThat(dbAccount1.getNickname()).isEqualTo(dbAccount2.getNickname());
     }
 }
