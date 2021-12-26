@@ -77,7 +77,8 @@ public class RetrospectService {
     public Message deleteRetrospect(Long retrospectId, Account account) {
         Retrospect retrospect = retrospectRepository.findById(retrospectId).orElseThrow(NotFoundRetrospectException::new);
         routineService.checkIsMine(account, retrospect.getRoutine());
-        retrospectRepository.delete(retrospect);
+        retrospect.deleteRetrospect();
+        retrospectRepository.save(retrospect);
         return Message.builder().msg(RETROSPECT_DELETE_BY_OK).status(StatusEnum.RETROSPECT_OK).build();
     }
 
