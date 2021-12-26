@@ -83,6 +83,11 @@ public class Retrospect {
         this.isReport = false;
     }
 
+    public void deleteRetrospect() {
+        this.image = null;
+        this.content = null;
+    }
+
     /** Test */
     public void updateTestData(Long id, LocalDate date) {
         this.id = id;
