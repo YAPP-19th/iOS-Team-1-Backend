@@ -6,12 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATETIME_NOW;
-import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATE_NOW;
 
 @Entity
 @Getter
@@ -23,11 +23,11 @@ public class Retrospect {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routine_id")
     private Routine routine;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "image_id")
     private Snapshot image;
 

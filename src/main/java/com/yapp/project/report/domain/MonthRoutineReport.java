@@ -2,7 +2,6 @@ package com.yapp.project.report.domain;
 
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.aux.common.DateUtil;
-import com.yapp.project.organization.domain.Category;
 import com.yapp.project.routine.domain.RoutineCategory;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +18,7 @@ public class MonthRoutineReport {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Account account;
 
     private String title;

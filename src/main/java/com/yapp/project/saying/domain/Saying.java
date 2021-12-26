@@ -13,6 +13,14 @@ import javax.persistence.*;
 @NoArgsConstructor
 @ToString
 public class Saying {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String content;
+
+    @Column(columnDefinition = "VARCHAR(255) default '작자미상'")
+    private String author;
 
     @Builder
     public Saying(Long id, String content, String author){
@@ -24,15 +32,7 @@ public class Saying {
 
     @PrePersist
     public void prePersist(){
-        this.author = this.author == null ? "작자미상" : this.author;
+        this.author = "작자미상";
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String content;
-
-    @Column(columnDefinition = "VARCHAR(255) default '작자미상'")
-    private String author;
 }

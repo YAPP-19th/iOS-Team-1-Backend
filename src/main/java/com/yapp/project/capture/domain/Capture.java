@@ -18,23 +18,6 @@ import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATETIME_NOW;
 @Entity
 @NoArgsConstructor
 public class Capture {
-
-    @Builder
-    public Capture(Long id, Mission mission, Organization organization, Integer rank, Achievement achievement){
-        this.id = id;
-        this.organization = organization;
-        this.mission = mission;
-        this.rank = rank;
-        this.myAchievementRate = achievement.getMyAchievementRate();
-        this.groupAchievementRate = achievement.getGroupAchievementRate();
-        this.createdAt = KST_LOCAL_DATETIME_NOW();
-    }
-
-    @PrePersist
-    public void prePersist(){
-        this.isDelete= isDelete != null && isDelete;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -58,9 +41,21 @@ public class Capture {
 
     private LocalDateTime createdAt;
 
-    public CaptureDto.CaptureResponse toCaptureResponse(){
-        return CaptureDto.CaptureResponse.builder().images(captureImage).captureId(id)
-                .build();
+
+    @Builder
+    public Capture(Long id, Mission mission, Organization organization, Integer rank, Achievement achievement){
+        this.id = id;
+        this.organization = organization;
+        this.mission = mission;
+        this.rank = rank;
+        this.myAchievementRate = achievement.getMyAchievementRate();
+        this.groupAchievementRate = achievement.getGroupAchievementRate();
+        this.createdAt = KST_LOCAL_DATETIME_NOW();
+    }
+
+    @PrePersist
+    public void prePersist(){
+        this.isDelete= false;
     }
 
     public void updateCaptureImage(CaptureImage images){
@@ -70,4 +65,10 @@ public class Capture {
     public void remove(){
         this.isDelete=true;
     }
+
+    public CaptureDto.CaptureResponse toCaptureResponse(){
+        return CaptureDto.CaptureResponse.builder().images(captureImage).captureId(id)
+                .build();
+    }
+
 }

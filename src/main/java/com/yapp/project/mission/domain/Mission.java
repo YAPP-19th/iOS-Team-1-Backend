@@ -23,36 +23,11 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @ToString
 public class Mission {
-
-    @Builder
-    public Mission(
-            Organization organization, Account account, LocalDate startDate, LocalDate finishDate,
-            Boolean isFinish, Boolean isAlarm, LocalTime startTime
-    ){
-        this.organization = organization;
-        this.account = account;
-        this.startDate = startDate;
-        this.finishDate = finishDate;
-        this.isFinish = isFinish;
-        this.isAlarm = isAlarm;
-        this.startTime = startTime;
-    }
-
-    @PrePersist
-    public void prePersist(){
-        this.isFinish = (this.isFinish!=null)&&this.isFinish;
-        this.isDelete = (this.isDelete!=null)&&this.isDelete;
-        this.isAlarm = (this.isAlarm!=null)&&this.isAlarm;
-        this.successCount = this.successCount!=null?this.successCount:0;
-        this.failureCount = this.failureCount!=null?this.failureCount:0;
-    }
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(targetEntity = Organization.class,fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = Organization.class,fetch = FetchType.LAZY)
     private Organization organization;
 
     @ManyToOne(targetEntity = Account.class, fetch = FetchType.LAZY)
@@ -79,6 +54,29 @@ public class Mission {
 
     private Boolean isDelete;
 
+    @Builder
+    public Mission(
+            Organization organization, Account account, LocalDate startDate, LocalDate finishDate,
+            Boolean isFinish, Boolean isAlarm, LocalTime startTime
+    ){
+        this.organization = organization;
+        this.account = account;
+        this.startDate = startDate;
+        this.finishDate = finishDate;
+        this.isFinish = isFinish;
+        this.isAlarm = isAlarm;
+        this.startTime = startTime;
+    }
+
+    @PrePersist
+    public void prePersist(){
+        this.isFinish = (this.isFinish!=null)&&this.isFinish;
+        this.isDelete = (this.isDelete!=null)&&this.isDelete;
+        this.isAlarm = (this.isAlarm!=null)&&this.isAlarm;
+        this.successCount = this.successCount!=null?this.successCount:0;
+        this.failureCount = this.failureCount!=null?this.failureCount:0;
+    }
+
     public void addDays(List<Cron> days){
         this.weeks.addAll(days);
     }
@@ -94,10 +92,6 @@ public class Mission {
             return 0;
         }
         return (this.successCount/(this.failureCount+this.successCount))*100;
-    }
-
-    public void setIdForTest(Long id) {
-        this.id = id;
     }
 
     public void clickAlarmToggle(){
@@ -130,23 +124,6 @@ public class Mission {
         this.isFinish=true;
     }
 
-    public void defaultSettingForTest(){
-        this.successCount = 0;
-        this.failureCount = 0;
-        this.isFinish = false;
-        this.isDelete = false;
-        this.isAlarm = false;
-    }
-
-    public void setWeeksForTest(List<Cron> weeks){
-        this.weeks.addAll(weeks);
-    }
-
-    public void setCountForTest(){
-        this.successCount = Utils.randomNumber();
-        this.failureCount = Utils.randomNumber();
-    }
-
     public MissionDto.MissionResponse toMissionResponse(){
         return MissionDto.MissionResponse.builder().image(organization.getImage()).title(organization.getTitle())
                 .achievementRate(this.getAchievementRate()).period(this.getPeriod()).category(organization.getCategory().getIndex())
@@ -169,4 +146,26 @@ public class Mission {
                 .nowPeople(this.organization.getCount())
                 .build();
     }
+
+    public void setIdForTest(Long id) {
+        this.id = id;
+    }
+
+    public void defaultSettingForTest(){
+        this.successCount = 0;
+        this.failureCount = 0;
+        this.isFinish = false;
+        this.isDelete = false;
+        this.isAlarm = false;
+    }
+
+    public void setWeeksForTest(List<Cron> weeks){
+        this.weeks.addAll(weeks);
+    }
+
+    public void setCountForTest(){
+        this.successCount = Utils.randomNumber();
+        this.failureCount = Utils.randomNumber();
+    }
+
 }

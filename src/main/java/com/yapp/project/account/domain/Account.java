@@ -58,8 +58,8 @@ public class Account {
 
     @PrePersist
     public void prePersist() {
-        this.isDelete= isDelete != null && isDelete;
-        this.isAlarm= isAlarm != null && isAlarm;
+        this.isDelete= false;
+        this.isAlarm= false;
     }
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -74,8 +74,8 @@ public class Account {
     @ToString.Exclude
     private final List<Notification> notificationLists = new ArrayList<>();
 
-    public void setIdForTest(Long id) {
-        this.id = id;
+    public void setIsAlarm(Boolean isOn){
+        this.isAlarm = isOn;
     }
 
     public void updateLastLoginAccount(){
@@ -94,8 +94,8 @@ public class Account {
         this.password = passwordEncoder.encode(newPassword);
     }
 
-    public void setIsAlarm(Boolean isOn){
-        this.isAlarm = isOn;
+    public void setIdForTest(Long id) {
+        this.id = id;
     }
 
 }

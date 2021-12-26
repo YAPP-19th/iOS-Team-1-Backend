@@ -1,10 +1,10 @@
 package com.yapp.project.report.domain;
 
-import com.yapp.project.organization.domain.Category;
 import com.yapp.project.routine.domain.RoutineCategory;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class RoutineResult{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private WeekReport weekReport;
 
     @OneToMany(mappedBy = "routineResult", cascade = CascadeType.ALL)
