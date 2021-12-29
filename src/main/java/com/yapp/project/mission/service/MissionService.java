@@ -52,8 +52,11 @@ public class MissionService {
         List<MissionResponse> responses = new ArrayList<>();
         for (Mission mission : missionRepository.findAllByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(account)) {
             Capture lastCapture = captureRepository.findFirstByMissionOrderByCreatedAtDesc(mission);
-            LocalDate createdAt = lastCapture.getCreatedAt().toLocalDate();
-            boolean isTodayCertificate = createdAt.isEqual(DateUtil.KST_LOCAL_DATE_NOW());
+            boolean isTodayCertificate = false;
+            if (lastCapture != null){
+                LocalDate createdAt = lastCapture.getCreatedAt().toLocalDate();
+                isTodayCertificate = createdAt.isEqual(DateUtil.KST_LOCAL_DATE_NOW());
+            }
             responses.add(mission.toMissionResponse(isTodayCertificate));
         }
         return MissionResponseMessage.of(StatusEnum.MISSION_OK, MissionContent.FIND_MY_MISSION_LISTS_ING, responses);
