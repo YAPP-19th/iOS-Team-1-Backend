@@ -11,6 +11,7 @@ import java.util.Optional;
 
 
 public interface CaptureRepository extends JpaRepository<Capture, Long> {
+    Capture findFirstByMissionOrderByCreatedAtDesc(Mission mission);
     Optional<List<Capture>> findByMission_IdAndIsDeleteIsFalse(Pageable pageRequest, Long missionId);
     Optional<List<Capture>> findByMission_IdAndIsDeleteIsFalseOrderByCreatedAtDesc(Pageable pageRequest, Long missionId);
     Optional<Capture> findByCreatedAtIsAfterAndMission_Id(LocalDateTime date, Long mission);

@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.util.ArrayList;
@@ -50,7 +51,10 @@ public class MissionService {
     public MissionResponseMessage findAllIsDoing(Account account) {
         List<MissionResponse> responses = new ArrayList<>();
         for (Mission mission : missionRepository.findAllByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(account)) {
-            responses.add(mission.toMissionResponse());
+            Capture lastCapture = captureRepository.findFirstByMissionOrderByCreatedAtDesc(mission);
+            LocalDate createdAt = lastCapture.getCreatedAt().toLocalDate();
+            boolean isTodayCertificate = createdAt.isEqual(DateUtil.KST_LOCAL_DATE_NOW());
+            responses.add(mission.toMissionResponse(isTodayCertificate));
         }
         return MissionResponseMessage.of(StatusEnum.MISSION_OK, MissionContent.FIND_MY_MISSION_LISTS_ING, responses);
     }
@@ -59,7 +63,7 @@ public class MissionService {
     public MissionResponseMessage findAllAlreadyFinish(Account account){
         List<MissionResponse> responses = new ArrayList<>();
         for (Mission mission : missionRepository.findAllByAccountAndIsDeleteIsFalseAndIsFinishIsTrue(account)){
-            responses.add(mission.toMissionResponse());
+            responses.add(mission.toMissionResponse(false));
         }
         return MissionResponseMessage.of(StatusEnum.MISSION_OK, MissionContent.FIND_MY_MISSION_LISTS_FINISH, responses);
     }

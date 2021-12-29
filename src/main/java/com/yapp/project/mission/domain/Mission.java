@@ -124,8 +124,8 @@ public class Mission {
         this.isFinish=true;
     }
 
-    public MissionDto.MissionResponse toMissionResponse(){
-        return MissionDto.MissionResponse.builder().image(organization.getImage()).title(organization.getTitle())
+    public MissionDto.MissionResponse toMissionResponse(boolean isTodayCertificate){
+        return MissionDto.MissionResponse.builder().image(organization.getImage()).title(organization.getTitle()).isTodayCertificate(isTodayCertificate)
                 .achievementRate(this.getAchievementRate()).period(this.getPeriod()).category(organization.getCategory().getIndex())
                 .weeks(weeks.stream().map(Cron::getWeek).collect(Collectors.toList())).build();
     }
