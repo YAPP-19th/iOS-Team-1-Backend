@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.yapp.project.mission.domain.dto.MissionDto.*;
 import static org.mockito.BDDMockito.given;
 import static org.assertj.core.api.Assertions.*;
 
@@ -68,7 +69,7 @@ class MissionServiceTest {
         //given
         Account account = AccountTemplate.makeTestAccount();
         Organization organization = OrganizationTemplate.makeTestOrganization();
-        MissionDto.MissionRequest request = MissionTemplate.makeMissionRequest();
+        MissionRequest request = MissionTemplate.makeMissionRequest();
         given(organizationRepository.getById(request.getId())).willReturn(organization);
         //when
         Message message = missionService.createMission(request,account);
@@ -81,7 +82,7 @@ class MissionServiceTest {
         //given
         Account account = AccountTemplate.makeTestAccount();
         Organization organization = OrganizationTemplate.makeTestOrganization();
-        MissionDto.MissionRequest request = MissionTemplate.makeMissionRequest();
+        MissionRequest request = MissionTemplate.makeMissionRequest();
 
         Mission mission = request.toMission(account,organization);
         given(missionRepository.findMissionByAccountAndOrganization_IdAndIsFinishIsFalseAndIsDeleteIsFalse(account, request.getId()))
@@ -108,7 +109,7 @@ class MissionServiceTest {
         given(missionRepository.findAllByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(account)).willReturn(missions);
 
         //when
-        MissionDto.MissionResponseMessage message = missionService.findAllIsDoing(account);
+        MissionResponseMessage message = missionService.findAllIsDoing(account);
 
         //then
         assertThat(message.getMessage().getStatus()).isEqualTo(StatusEnum.MISSION_OK);
@@ -140,7 +141,7 @@ class MissionServiceTest {
         given(missionRepository.findAllByAccountAndIsDeleteIsFalseAndIsFinishIsTrue(account)).willReturn(missions.subList(0,2));
 
         //when
-        MissionDto.MissionResponseMessage message = missionService.findAllAlreadyFinish(account);
+        MissionResponseMessage message = missionService.findAllAlreadyFinish(account);
         System.out.println(message);
         //then
         assertThat(message).isNotNull();
@@ -161,7 +162,7 @@ class MissionServiceTest {
         given(missionRepository.findMissionByAccountAndId(account,1L))
                 .willReturn(Optional.of(mission));
         //when
-        MissionDto.MissionDetailResponseMessage responseMessage = missionService.findDetailMyMission(account,1L);
+        MissionDetailResponseMessage responseMessage = missionService.findDetailMyMission(account,1L);
         //then
         assertThat(responseMessage.getMessage().getStatus()).isEqualTo(StatusEnum.MISSION_OK);
         assertThat(responseMessage.getData().getPeriod()).isEqualTo(7);
@@ -283,5 +284,34 @@ class MissionServiceTest {
             Mission resMission = res.get(0);
             assertThat(resMission.getFinishDate()).isEqualTo(finishDate);
         }
+    }
+
+    @Test
+    void 내_미션_리스트를_조회할_때_성공한_케이스가_있는경우() {
+        try (MockedStatic<DateUtil> dateUtil = Mockito.mockStatic(DateUtil.class)){
+            //given
+            dateUtil.when(DateUtil::KST_LOCAL_DATETIME_NOW).thenReturn(LocalDateTime.of(2021,12,29,5,0));
+            dateUtil.when(DateUtil::KST_LOCAL_DATE_NOW).thenReturn(LocalDate.of(2021,12,29));
+            dateUtil.when(DateUtil::MID_NIGHT).thenReturn(LocalDateTime.of(2021,12,29,0,0)); // 수요일
+            Account account = AccountTemplate.makeTestAccount();
+            account.setIsAlarm(true);
+            Organization organization = OrganizationTemplate.makeTestOrganization();
+            Mission mission = MissionTemplate.makeMission(account,organization);
+            List<Cron> list = new ArrayList<>();
+            Cron cron = Cron.builder().mission(mission).week(Week.SAT).build();
+            list.add(cron);
+            mission.setWeeksForTest(list);
+            Capture capture =  CaptureTemplate.makeCapture(mission);
+            given(missionRepository.findAllByAccountAndIsFinishIsFalseAndIsDeleteIsFalse(account)).willReturn(List.of(mission));
+            given(captureRepository.findFirstByMissionOrderByCreatedAtDesc(mission)).willReturn(capture);
+            //when
+            MissionResponseMessage response = missionService.findAllIsDoing(account);
+            List<MissionResponse> data = response.getData();
+            //then
+            assertThat(data.size()).isOne();
+            assertThat(data.get(0).isTodayCertificate()).isTrue();
+
+        }
+
     }
 }

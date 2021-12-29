@@ -112,6 +112,8 @@ public class MissionDto {
         private Integer achievementRate;
         @ApiModelProperty(value = "카테고리",example = "0")
         private Integer category;
+        @ApiModelProperty(value = "오늘 인증 여부",example = "true/false")
+        private boolean isTodayCertificate;
     }
 
     @Getter
