@@ -69,6 +69,10 @@ public class WeekReport {
     public void updateMonthReportYearAndMonth() {
         this.monthReportYear = DateUtil.KST_LOCAL_DATE_NOW().getYear();
         this.monthReportMonth = DateUtil.KST_LOCAL_DATE_NOW().getMonth().getValue() - 1;
+        if(this.monthReportMonth == 0) {
+            this.monthReportMonth = 12;
+            this.monthReportYear = DateUtil.KST_LOCAL_DATE_NOW().getYear() - 1;
+        }
     }
 
     public void deleteReport() {

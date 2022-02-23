@@ -4,11 +4,13 @@ import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.repository.AccountRepository;
 import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.aux.test.account.AccountTemplate;
+import com.yapp.project.report.domain.MonthRoutineReport;
 import com.yapp.project.report.domain.WeekReport;
 import com.yapp.project.report.domain.WeekReportRepository;
 import com.yapp.project.report.domain.dto.ReportDTO;
 import com.yapp.project.report.service.ReportService;
 import com.yapp.project.report.template.MonthReportTemplate;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -81,6 +83,22 @@ public class MonthReportServiceTest {
             );
         } catch (ParseException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("12월 월리포트 발급되는 케이스")
+    void makeMonthReportWhenLastMonth() {
+        try(MockedStatic<DateUtil> dateUtil = Mockito.mockStatic(DateUtil.class)) {
+            Account account = AccountTemplate.makeTestAccount();
+            Account savedAccount = accountRepository.save(account);
+            dateUtil.when(DateUtil::KST_LOCAL_DATE_NOW).thenReturn(LocalDate.parse("2022-01-05"));
+            MonthRoutineReport monthRoutineReport = MonthRoutineReport.builder().account(savedAccount).routineId(1L).build();
+            assertAll(
+                    () -> assertEquals(2021, monthRoutineReport.getYear()),
+                    () -> assertEquals(12, monthRoutineReport.getMonth())
+            );
         }
     }
 }

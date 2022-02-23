@@ -42,11 +42,15 @@ public class MonthRoutineReport {
     public MonthRoutineReport(Account account, Long routineId) {
         this.account = account;
         this.routineId = routineId;
-        this.year = DateUtil.KST_LOCAL_DATE_NOW().getYear();
-        this.month = DateUtil.KST_LOCAL_DATE_NOW().getMonth().getValue() - 1;
         this.fullyDoneCount = 0L;
         this.partiallyDoneCount = 0L;
         this.notDoneCount = 0L;
+        this.year = DateUtil.KST_LOCAL_DATE_NOW().getYear();
+        this.month = DateUtil.KST_LOCAL_DATE_NOW().getMonth().getValue() - 1;
+        if(this.month == 0) {
+            this.month = 12;
+            this.year = DateUtil.KST_LOCAL_DATE_NOW().getYear() - 1;
+        }
     }
 
     public void updateMonthRoutineResultCount(Long fullyDoneCount, Long partiallyDoneCount, Long notDoneCount) {
@@ -62,5 +66,21 @@ public class MonthRoutineReport {
 
     public void deleteReport() {
         this.account = null;
+    }
+
+    @Override
+    public String toString() {
+        return "MonthRoutineReport{" +
+                "id=" + id +
+                ", account=" + account +
+                ", title='" + title + '\'' +
+                ", routineId=" + routineId +
+                ", category=" + category +
+                ", fullyDoneCount=" + fullyDoneCount +
+                ", partiallyDoneCount=" + partiallyDoneCount +
+                ", notDoneCount=" + notDoneCount +
+                ", year=" + year +
+                ", month=" + month +
+                '}';
     }
 }
