@@ -6,6 +6,7 @@ public class AccountContent {
     }
     public static final String NOT_FOUND_USER_INFORMATION = "유저 정보를 찾을 수 없습니다";
     public static final String CHANGE_ALARM_TOGGLE = "알람 설정을 바꿨습니다.";
+    public static final String CHANGE_PROFILE_IMAGE = "프로필 사진을 바꿨습니다.";
     public static final String ACCOUNT_OK_MSG = "성공";
     public static final String ACCOUNT_NICKNAME_LENGTH_LIMIT = "닉네임 6자보다 더 많습니다.";
     public static final String LOGOUT_USER = "로그아웃된 사용자입니다.";

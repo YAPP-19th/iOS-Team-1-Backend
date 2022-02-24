@@ -1,6 +1,7 @@
 package com.yapp.project.account.service;
 
 
+import com.google.cloud.storage.BlobInfo;
 import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.SocialType;
 import com.yapp.project.account.domain.dto.AccountDto;
@@ -10,8 +11,11 @@ import com.yapp.project.account.util.SecurityUtil;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.aux.content.AccountContent;
+import com.yapp.project.aux.storage.CloudStorageUtil;
+import com.yapp.project.config.exception.account.AlreadyLogoutException;
 import com.yapp.project.config.exception.account.NotFoundUserInformationException;
 import com.yapp.project.config.exception.account.PasswordInvalidException;
+import com.yapp.project.config.exception.capture.InvalidCaptureException;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.mission.domain.repository.MissionRepository;
 import com.yapp.project.mission.service.MissionService;
@@ -23,15 +27,20 @@ import com.yapp.project.routine.domain.Routine;
 import com.yapp.project.routine.domain.RoutineRepository;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class AccountService {
+    @Value("${property.status}")
+    private String profile;
+    private static final String path = "/account/";
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     private final MissionRepository missionRepository;
@@ -39,7 +48,24 @@ public class AccountService {
     private final WeekReportRepository weekReportRepository;
     private final MonthRoutineReportRepository monthRoutineReportRepository;
     private final MissionService missionService;
+    private final CloudStorageUtil cloudStorageUtil;
 
+    @Transactional
+    public Message changeProfileImage(Account account, AccountDto.ProfileImageRequest request) throws IOException {
+        Account user = accountRepository.findById(account.getId()).orElseThrow(AlreadyLogoutException::new);
+        if (request.getImage() == null) {
+            throw new InvalidCaptureException();
+        }
+        String imagePath;
+        if (profile.equals("test")){
+            imagePath = "/path/to/file";
+        }else{
+            BlobInfo image = cloudStorageUtil.upload(request.getImage(), profile + path + user.getId() + "/");
+            imagePath = CloudStorageUtil.getImageURL(image);
+        }
+        user.changeProfileImage(imagePath);
+        return Message.of(StatusEnum.ACCOUNT_OK,AccountContent.CHANGE_PROFILE_IMAGE);
+    }
 
     @Transactional
     public Message clickAlarmToggle(Account account, Boolean on) {

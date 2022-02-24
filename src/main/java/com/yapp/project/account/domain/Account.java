@@ -98,4 +98,8 @@ public class Account {
         this.id = id;
     }
 
+    public void changeProfileImage(String profile) {
+        this.profile = profile;
+    }
+
 }

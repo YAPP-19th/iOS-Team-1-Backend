@@ -6,12 +6,10 @@ import com.yapp.project.account.domain.SocialType;
 import com.yapp.project.aux.Message;
 import com.yapp.project.aux.StatusEnum;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.yapp.project.aux.common.DateUtil.KST_LOCAL_DATETIME_NOW;
 
@@ -161,6 +159,13 @@ public class AccountDto {
     public static class ProfilePasswordRequest{
         @ApiModelProperty(value = "비밀번호", example = "test12$#@")
         private String password;
+    }
 
+    @Data
+    @Builder
+    @AllArgsConstructor
+    public static class ProfileImageRequest {
+        @ApiModelProperty(value = "이미지", example = "multipart/form-data 형식으로 보내주세요", required = true)
+        private MultipartFile image;
     }
 }

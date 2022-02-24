@@ -4,6 +4,7 @@ import com.yapp.project.account.domain.Account;
 import com.yapp.project.account.domain.dto.AccountDto;
 import com.yapp.project.account.domain.repository.AccountRepository;
 import com.yapp.project.aux.Message;
+import com.yapp.project.aux.StatusEnum;
 import com.yapp.project.aux.common.DateUtil;
 import com.yapp.project.aux.test.account.AccountTemplate;
 import com.yapp.project.aux.test.capture.CaptureTemplate;
@@ -17,21 +18,26 @@ import com.yapp.project.mission.domain.repository.MissionRepository;
 import com.yapp.project.organization.domain.Organization;
 import com.yapp.project.organization.domain.repository.OrganizationRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.NoSuchAlgorithmException;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@ExtendWith(MockitoExtension.class)
 @WithMockUser(value=AccountTemplate.EMAIL, password = AccountTemplate.PASSWORD)
 class AccountServiceTest {
 
@@ -115,6 +121,18 @@ class AccountServiceTest {
             assertThat(captureImageRepository.findAll()).isEmpty();
 
         }
+    }
 
+    @Test
+    @Transactional
+    void test_유저_이미지_바꾸기() throws IOException {
+        ReflectionTestUtils.setField(accountService, "profile", "test");
+        Account account = AccountTemplate.makeTestAccountForIntegration();
+        Account saveAccount = accountRepository.save(account);
+        FileInputStream fis = new FileInputStream("src/main/resources/static/test.jpeg");
+        MockMultipartFile image = new MockMultipartFile("file", fis);
+        AccountDto.ProfileImageRequest request = AccountDto.ProfileImageRequest.builder().image(image).build();
+        Message message = accountService.changeProfileImage(saveAccount, request);
+        assertThat(message.getStatus()).isEqualTo(StatusEnum.ACCOUNT_OK);
     }
 }

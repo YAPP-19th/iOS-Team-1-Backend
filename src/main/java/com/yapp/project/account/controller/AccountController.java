@@ -10,6 +10,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 import static com.yapp.project.account.domain.dto.AccountDto.*;
 import static com.yapp.project.aux.content.AccountContent.ACCOUNT_OK_MSG;
 
@@ -46,5 +48,12 @@ public class AccountController {
     public Message clickAlarmToggle(@RequestParam("is-on") Boolean isOn) {
         Account account = AccountUtil.getAccount();
         return accountService.clickAlarmToggle(account, isOn);
+    }
+
+    @ApiOperation(value = "프로필 사진 변경")
+    @PatchMapping("/profile")
+    public Message changeProfileImage(@RequestBody ProfileImageRequest request) throws IOException {
+        Account account = AccountUtil.getAccount();
+        return accountService.changeProfileImage(account, request);
     }
 }
