@@ -33,7 +33,6 @@
 👨‍💻 **Client**
 
 * [**고세림**](https://github.com/koserim)
-* [**박지윤**](https://github.com/glossyyoon)
 
 👨‍💻 **Designer**
 
