@@ -51,8 +51,8 @@ public class AccountController {
     }
 
     @ApiOperation(value = "프로필 사진 변경")
-    @PatchMapping("/profile")
-    public Message changeProfileImage(@RequestBody ProfileImageRequest request) throws IOException {
+    @PostMapping("/profile")
+    public Message changeProfileImage(ProfileImageRequest request) throws IOException {
         Account account = AccountUtil.getAccount();
         return accountService.changeProfileImage(account, request);
     }
