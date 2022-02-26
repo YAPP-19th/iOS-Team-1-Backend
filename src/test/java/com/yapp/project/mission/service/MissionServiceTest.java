@@ -114,7 +114,6 @@ class MissionServiceTest {
         //then
         assertThat(message.getMessage().getStatus()).isEqualTo(StatusEnum.MISSION_OK);
         assertThat(message.getData().get(0).getTitle()).isEqualTo("확언하기");
-        System.out.println(message.getData().get(0).getCategory());
         assertThat(message.getData().get(0).getCategory()).isEqualTo(Category.MIRACLE.getIndex());
         assertThat(message.getData().get(1).getTitle()).isEqualTo("시각화");
         assertThat(message.getData().get(2).getTitle()).isEqualTo("감사한 일 쓰기");

@@ -100,6 +100,8 @@ public class MissionDto {
     @Builder
     @ToString
     public static class MissionResponse{
+        @ApiModelProperty(value = "미션 아이디",example = "3")
+        private Long id;
         @ApiModelProperty(value = "그룹_사진",example = "s3/organization/3")
         private String image;
         @ApiModelProperty(value = "미션_남은_기간",example = "5")

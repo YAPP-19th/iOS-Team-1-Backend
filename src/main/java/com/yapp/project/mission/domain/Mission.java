@@ -127,7 +127,7 @@ public class Mission {
     public MissionDto.MissionResponse toMissionResponse(boolean isTodayCertificate){
         return MissionDto.MissionResponse.builder().image(organization.getImage()).title(organization.getTitle()).isTodayCertificate(isTodayCertificate)
                 .achievementRate(this.getAchievementRate()).period(this.getPeriod()).category(organization.getCategory().getIndex())
-                .weeks(weeks.stream().map(Cron::getWeek).collect(Collectors.toList())).build();
+                .weeks(weeks.stream().map(Cron::getWeek).collect(Collectors.toList())).id(id).build();
     }
 
     public MissionDto.MissionDetailResponse toMissionDetailResponse(){
