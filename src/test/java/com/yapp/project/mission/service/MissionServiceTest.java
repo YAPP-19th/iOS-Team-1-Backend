@@ -168,6 +168,8 @@ class MissionServiceTest {
         assertThat(responseMessage.getData().getBeginTime()).isEqualTo(OrganizationTemplate.BEGIN_TIME);
         assertThat(responseMessage.getData().getEndTime()).isEqualTo(OrganizationTemplate.END_TIME);
         assertThat(responseMessage.getData().getCategory()).isEqualTo(Category.MIRACLE.getIndex());
+        assertThat(responseMessage.getData().getDescription()).isEqualTo(OrganizationTemplate.DESCRIPTION);
+        assertThat(responseMessage.getData().getRecommend()).isEqualTo(OrganizationTemplate.RECOMMEND);
     }
 
     @Test

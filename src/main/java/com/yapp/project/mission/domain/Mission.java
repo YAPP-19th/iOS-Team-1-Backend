@@ -134,6 +134,8 @@ public class Mission {
         return MissionDto.MissionDetailResponse.builder()
                 .category(this.organization.getCategory().getIndex())
                 .title(this.organization.getTitle())
+                .description(this.organization.getDescription())
+                .recommend(this.organization.getRecommend())
                 .groupAchievementRate(this.organization.getRate())
                 .myAchievementRate(this.getAchievementRate())
                 .participant(this.organization.getParticipants())

@@ -58,6 +58,10 @@ public class MissionDto {
         private Integer category;
         @ApiModelProperty(value = "그룹_타이틀",example = "명상")
         private String title;
+        @ApiModelProperty(value = "그룹_설명",example = "----")
+        private String description;
+        @ApiModelProperty(value = "그룹_추천",example = "-----")
+        private String recommend;
         @ApiModelProperty(value = "그룹_성취율",example = "80")
         private Integer groupAchievementRate;
         @ApiModelProperty(value = "나의_성취율",example = "80")
