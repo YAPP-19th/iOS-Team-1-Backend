@@ -2,8 +2,6 @@ package com.yapp.project.account.domain;
 
 import com.yapp.project.account.domain.dto.AccountDto.*;
 import com.yapp.project.notification.domain.Notification;
-import com.yapp.project.report.domain.MonthRoutineReport;
-import com.yapp.project.report.domain.WeekReport;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -61,14 +59,6 @@ public class Account {
         this.isDelete= false;
         this.isAlarm= false;
     }
-
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private final List<WeekReport> weekReportList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private final List<MonthRoutineReport> monthRoutineReportList = new ArrayList<>();
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
