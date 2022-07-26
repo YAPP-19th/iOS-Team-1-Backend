@@ -9,7 +9,7 @@
 <p align="center"><img src="https://user-images.githubusercontent.com/64524916/146635466-fa7bcced-8752-43c0-8df6-3f848dc3ef93.png"></p>
 
 ## 📄 ERD
-![image](https://user-images.githubusercontent.com/64524916/146634932-da8c76ff-3135-4f1f-ad01-484439eeebee.png)
+![스크린샷 2022-07-26 오후 4 37 19](https://user-images.githubusercontent.com/64524916/180950494-7484c172-4519-46ef-a8e5-faa1d5084073.png)
 
 ##  Best PR
 - [@PrePersist에 대해서](https://github.com/YAPP-19th/iOS-Team-1-Backend/tree/develop/docs/pr_108.md)
