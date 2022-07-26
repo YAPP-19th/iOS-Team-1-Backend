@@ -19,10 +19,6 @@ import com.yapp.project.config.exception.capture.InvalidCaptureException;
 import com.yapp.project.mission.domain.Mission;
 import com.yapp.project.mission.domain.repository.MissionRepository;
 import com.yapp.project.mission.service.MissionService;
-import com.yapp.project.report.domain.MonthRoutineReport;
-import com.yapp.project.report.domain.MonthRoutineReportRepository;
-import com.yapp.project.report.domain.WeekReport;
-import com.yapp.project.report.domain.WeekReportRepository;
 import com.yapp.project.routine.domain.Routine;
 import com.yapp.project.routine.domain.RoutineRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,8 +41,6 @@ public class AccountService {
     private final PasswordEncoder passwordEncoder;
     private final MissionRepository missionRepository;
     private final RoutineRepository routineRepository;
-    private final WeekReportRepository weekReportRepository;
-    private final MonthRoutineReportRepository monthRoutineReportRepository;
     private final MissionService missionService;
     private final CloudStorageUtil cloudStorageUtil;
 
@@ -101,23 +95,9 @@ public class AccountService {
         List<Mission> list = missionRepository.findAllByAccount(account);
         missionService.deleteMyMissionIncludeCaptures(list);
         List<Routine> routineList = routineRepository.findAllByIsDeleteIsFalseAndAccount(account);
-        List<WeekReport> weekReportList = weekReportRepository.findAllByAccount(account);
-        List<MonthRoutineReport> monthRoutineReportList = monthRoutineReportRepository.findAllByAccount(account);
         deleteRoutine(routineList);
-        deleteWeekReport(weekReportList);
-        deleteMonthReport(monthRoutineReportList);
         accountRepository.delete(account);
         return Message.of(StatusEnum.ACCOUNT_OK, AccountContent.ACCOUNT_OK_MSG);
-    }
-
-    private void deleteMonthReport(List<MonthRoutineReport> monthRoutineReportList) {
-        monthRoutineReportList.forEach(MonthRoutineReport::deleteReport);
-        monthRoutineReportRepository.saveAll(monthRoutineReportList);
-    }
-
-    private void deleteWeekReport(List<WeekReport> weekReportList) {
-        weekReportList.forEach(WeekReport::deleteReport);
-        weekReportRepository.saveAll(weekReportList);
     }
 
     private void deleteRoutine(List<Routine> routineList) {
